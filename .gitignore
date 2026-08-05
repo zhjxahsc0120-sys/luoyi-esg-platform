@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+__pycache__/
+*.pyc
+*.log
+*.pid
+backend/data/
+backend/storage/uploads/
+
+# Local runtime and database archives
+runtime/
+database/archive/
+**/MYSQL_LOCAL_INSTANCE.md
+**/__pycache__/
+*.sqlite
+*.sqlite3
+*.db
