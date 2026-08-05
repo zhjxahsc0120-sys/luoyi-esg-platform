@@ -57,7 +57,7 @@ function handleClick() {
     @click="handleClick"
     @keydown.enter="handleClick"
     @keydown.space.prevent="handleClick">
-    <!-- V0.4.2：仅名称 + 数值 + 单位；名称占主视觉区；无 hint/环比 -->
+    <!-- 仅名称 + 数值 + 单位；名称第一视觉；无 hint/环比 -->
     <div class="kpi-label">{{ item.label }}</div>
     <div class="kpi-value-row">
       <span class="kpi-value" :style="{ color: themeColors[theme] }">
@@ -72,21 +72,21 @@ function handleClick() {
 @use '@/styles/tokens.scss' as *;
 
 .kpi-card {
-  /* V0.4.2：卡片吃满分组高度，名称占上部主视觉区，数值贴下部 */
+  /* 卡片填满可用高度；内容垂直居中；名称先于数值被阅读 */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: stretch;
   height: 100%;
   min-height: 0;
   min-width: 0;
-  padding: 8px 6px 10px;
+  padding: 4px 6px 8px;
   border: 1px solid var(--border-faint);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.02);
   cursor: pointer;
   transition: all 0.2s ease;
-  gap: 4px;
+  gap: 0;
   box-sizing: border-box;
 
   &:hover {
@@ -100,18 +100,16 @@ function handleClick() {
     border-color: var(--border-blue);
   }
 
-  /* 层级 1：指标名称 — 占卡片主要上部空间 */
+  /* 第一视觉：指标名称（最大、最亮、上下留白） */
   .kpi-label {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 auto;
     width: 100%;
-    font-size: 18px;
+    padding: 8px 2px 12px;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 1.22;
-    letter-spacing: 0;
-    color: #e8f3ff;
+    line-height: 1.25;
+    letter-spacing: 0.2px;
+    color: #ffffff;
     text-align: center;
     white-space: normal;
     overflow: visible;
@@ -120,28 +118,28 @@ function handleClick() {
     overflow-wrap: anywhere;
   }
 
-  /* 层级 2/3：核心数值（保持原尺寸）+ 单位（略增） */
+  /* 第二视觉：数值 + 单位作为整体居中（数值尺寸不变，弱化发光避免抢戏） */
   .kpi-value-row {
     flex: 0 0 auto;
-    display: flex;
+    display: inline-flex;
     align-items: baseline;
-    gap: 5px;
     justify-content: center;
+    align-self: center;
+    gap: 5px;
     min-width: 0;
-    padding-top: 2px;
 
     .kpi-value {
       font-family: var(--font-num);
       font-size: var(--fs-kpi-num);
       font-weight: 700;
       line-height: 1;
-      text-shadow: 0 0 6px currentColor;
+      text-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
       font-variant-numeric: tabular-nums;
     }
 
     .kpi-unit {
       font-size: 16px;
-      color: #b7cce3;
+      color: #c5d8ef;
       font-weight: 600;
       line-height: 1;
     }
