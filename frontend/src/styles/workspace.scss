@@ -1,0 +1,948 @@
+// ─────────────────────────────────────────────
+// 数据填报 Workspace 局部样式（仅由 WorkspacePage 引入）
+// 不改 layout.scss / tokens.scss 全局 token
+// ─────────────────────────────────────────────
+
+.workspace-page {
+  --ws-page-pad: 12px;
+  --ws-page-pad-y: 10px;
+  --ws-section-gap: 8px;
+  --ws-panel-pad: 10px 12px;
+  --ws-panel-radius: 8px;
+  --ws-card-gap: 8px;
+  --ws-control-h: 30px;
+  --ws-filter-gap: 6px;
+  --ws-table-header-h: 36px;
+  --ws-table-row-h: 44px;
+  --ws-pagination-h: 40px;
+
+  --ws-bg-panel: rgba(5, 26, 50, 0.8);
+  --ws-bg-input: rgba(0, 0, 0, 0.3);
+  --ws-border: rgba(47, 156, 255, 0.14);
+  --ws-border-soft: rgba(47, 156, 255, 0.08);
+  --ws-border-strong: rgba(47, 156, 255, 0.35);
+
+  --ws-text-primary: #e8f3ff;
+  --ws-text-secondary: #8fa9c8;
+  --ws-text-muted: #5a7a9a;
+
+  --ws-cyan: #2f9cff;
+  --ws-cyan-soft: #7fb6ef;
+  --ws-green: #69e36f;
+  --ws-purple: #a66cff;
+  --ws-yellow: #ffb347;
+  --ws-red: #ff4f5e;
+
+  --ws-primary-grad: linear-gradient(135deg, #1a8cff 0%, #2f9cff 55%, #4db3ff 100%);
+}
+
+// ─────────────────────────────────────────────
+// 页面容器
+// ─────────────────────────────────────────────
+.ws-page {
+  padding: var(--ws-page-pad-y) var(--ws-page-pad);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: var(--ws-section-gap);
+}
+
+.ws-page-scroll {
+  overflow-y: auto;
+}
+
+// ─────────────────────────────────────────────
+// 标题槽位
+// ─────────────────────────────────────────────
+.ws-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.ws-page-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ws-page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ws-text-primary);
+  line-height: 22px;
+}
+
+.ws-page-subtitle {
+  font-size: 12px;
+  color: var(--ws-text-secondary);
+  line-height: 16px;
+}
+
+.ws-page-header-extra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+// ─────────────────────────────────────────────
+// 页面消息
+// ─────────────────────────────────────────────
+.ws-page-message {
+  padding: 8px 12px;
+  border-radius: var(--ws-panel-radius);
+  font-size: 13px;
+  line-height: 1.4;
+  flex-shrink: 0;
+
+  &.info {
+    background: rgba(47, 156, 255, 0.1);
+    border: 1px solid rgba(47, 156, 255, 0.3);
+    color: #9fc7ff;
+  }
+
+  &.success {
+    background: rgba(105, 227, 111, 0.1);
+    border: 1px solid rgba(105, 227, 111, 0.3);
+    color: var(--ws-green);
+  }
+
+  &.error {
+    background: rgba(255, 79, 94, 0.1);
+    border: 1px solid rgba(255, 79, 94, 0.3);
+    color: var(--ws-red);
+  }
+}
+
+// ─────────────────────────────────────────────
+// 统计卡
+// ─────────────────────────────────────────────
+.ws-status-cards {
+  display: grid;
+  gap: var(--ws-card-gap);
+  flex-shrink: 0;
+}
+
+.ws-status-cards.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ws-status-cards.cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.ws-status-card {
+  background: var(--ws-bg-panel);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-panel-radius);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 54px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.ws-status-card:hover {
+  border-color: var(--accent-color, var(--ws-cyan));
+}
+
+.ws-status-card.active {
+  background: rgba(47, 156, 255, 0.08);
+  box-shadow: inset 0 -2px 0 var(--accent-color, var(--ws-cyan));
+}
+
+.ws-card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ws-text-secondary);
+  line-height: 16px;
+  margin-bottom: 1px;
+}
+
+.ws-card-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.ws-card-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent-color, var(--ws-cyan));
+  line-height: 26px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ws-card-unit {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ws-text-secondary);
+}
+
+.ws-card-subtext {
+  font-size: 11px;
+  color: var(--ws-text-muted);
+  line-height: 14px;
+  margin-top: 1px;
+}
+
+.ws-status-card.with-icon {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.ws-card-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(47, 156, 255, 0.1);
+  color: var(--accent-color, var(--ws-cyan));
+  flex-shrink: 0;
+}
+
+.ws-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// ─────────────────────────────────────────────
+// 面板 / 筛选条
+// ─────────────────────────────────────────────
+.ws-panel {
+  background: var(--ws-bg-panel);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-panel-radius);
+  padding: var(--ws-panel-pad);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ws-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.ws-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ws-text-primary);
+}
+
+.ws-panel-title-icon {
+  color: var(--ws-cyan);
+  flex-shrink: 0;
+}
+
+.ws-panel-count {
+  font-size: 11px;
+  color: var(--ws-text-muted);
+}
+
+.ws-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ws-text-primary);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 14px;
+    background: var(--ws-cyan);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+}
+
+.ws-filter-bar {
+  background: var(--ws-bg-panel);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-panel-radius);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-filter-gap);
+  flex-shrink: 0;
+}
+
+.ws-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-height: var(--ws-control-h);
+}
+
+.ws-filter-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ws-text-primary);
+}
+
+.ws-input,
+.ws-select,
+.ws-filter-bar select,
+.ws-filter-bar input[type='text'],
+.ws-filter-bar input[type='date'],
+.ws-filter-bar .filter-select,
+.ws-filter-bar .filter-input {
+  height: var(--ws-control-h);
+  padding: 0 10px;
+  background: var(--ws-bg-input);
+  border: 1px solid var(--ws-border);
+  border-radius: 6px;
+  color: var(--ws-text-primary);
+  font-size: 12px;
+  outline: none;
+  box-sizing: border-box;
+  min-width: 100px;
+}
+
+.ws-input::placeholder,
+.ws-filter-bar input::placeholder {
+  color: var(--ws-text-muted);
+}
+
+.ws-input-wrap,
+.ws-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--ws-control-h);
+  padding: 0 10px;
+  background: var(--ws-bg-input);
+  border: 1px solid var(--ws-border);
+  border-radius: 6px;
+  color: var(--ws-text-secondary);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.ws-input-wrap input,
+.ws-search-box input {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--ws-text-primary);
+  font-size: 12px;
+  outline: none;
+  min-width: 0;
+}
+
+.ws-input-wrap input::placeholder,
+.ws-search-box input::placeholder {
+  color: var(--ws-text-muted);
+}
+
+// ─────────────────────────────────────────────
+// 表格
+// ─────────────────────────────────────────────
+.ws-table-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--ws-bg-panel);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-panel-radius);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/*
+ * 单表滚动容器：thead+tbody 同表，列宽天然对齐。
+ * sticky thead 替代「表头表 + 表体表」双表方案（双表易因滚动条 gutter 错位）。
+ */
+.ws-table-scroll {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+}
+
+/*
+ * ≤10 条/页：表体按内容高度，不出现表体滚动条。
+ * 必须允许 shrink（flex-shrink: 1），否则在 overflow:hidden 面板内
+ * 会把下方分页条裁切掉。
+ */
+.ws-table-scroll.no-scroll {
+  flex: 0 1 auto;
+  overflow-y: hidden;
+  min-height: 0;
+}
+
+/* 分页在容器内时：表体让出底部空间，分页始终可见 */
+.ws-table-container:has(> .ws-pagination-bar) > .ws-table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.ws-table-container:has(> .ws-pagination-bar) > .ws-table-scroll.no-scroll {
+  flex: 1 1 auto;
+  overflow-y: hidden;
+  min-height: 0;
+}
+
+.ws-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.ws-table th,
+.ws-table td {
+  text-align: left;
+  padding: 0 12px;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.ws-table th:not(:last-child),
+.ws-table td:not(:last-child) {
+  border-right: 1px solid rgba(47, 156, 255, 0.1);
+}
+
+.ws-table th {
+  font-size: 12px;
+  color: var(--ws-text-secondary);
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.22);
+  white-space: nowrap;
+  height: var(--ws-table-header-h);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.ws-table thead {
+  border-bottom: 1px solid var(--ws-border);
+}
+
+.ws-table tbody tr {
+  cursor: pointer;
+  transition: background 0.2s;
+  height: var(--ws-table-row-h);
+}
+
+.ws-table tbody tr:hover {
+  background: rgba(47, 156, 255, 0.06);
+}
+
+.ws-table tbody tr.selected {
+  background: rgba(47, 156, 255, 0.1);
+}
+
+.ws-table td {
+  font-size: 13px;
+  color: var(--ws-text-primary);
+  border-bottom: 1px solid var(--ws-border-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 名称类列：允许省略；时间列禁止 ellipsis（见下） */
+.ws-table td.col-task-name,
+.ws-table td.col-name,
+.ws-table td.col-file {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 截止 / 提交 / 上传时间：完整展示 YYYY-MM-DD HH:mm(:ss)，不加省略号 */
+.ws-table td.col-deadline,
+.ws-table th.col-deadline,
+.ws-table td.col-time,
+.ws-table th.col-time {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+/* 标签 / 状态列：内容左对齐贴表头，避免在宽格内视觉居中 */
+.ws-table td.col-module,
+.ws-table td.col-status,
+.ws-table th.col-module,
+.ws-table th.col-status {
+  text-align: left;
+}
+
+.ws-table td.col-module .module-tag,
+.ws-table td.col-module .ws-tag,
+.ws-table td.col-status .status-tag,
+.ws-table td.col-status .ws-tag {
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+/* 进度列：进度条与文字统一左对齐 */
+.ws-table td.col-progress,
+.ws-table th.col-progress {
+  text-align: left;
+}
+
+.ws-table td.col-progress .ws-progress {
+  display: inline-flex;
+  width: 100%;
+  max-width: 140px;
+  vertical-align: middle;
+}
+
+.ws-table td.col-progress .ws-progress-bar {
+  flex: 1 1 auto;
+  min-width: 56px;
+  max-width: 80px;
+}
+
+/* 下一步 / 操作列：与表头左对齐 */
+.ws-table td.col-action,
+.ws-table th.col-action,
+.ws-table td.col-next,
+.ws-table th.col-next {
+  text-align: left;
+}
+
+.ws-table td.col-action .ws-btn,
+.ws-table td.col-next .ws-btn {
+  vertical-align: middle;
+}
+
+/*
+ * Home / Tasks 任务表列宽（~1100–1400px 内容区）
+ * checkbox 40 | 名称 remainder(~28–40%) | 模块 130 | 截止 176 | 进度 140 | 状态 96 | 下一步 120
+ */
+.home-table .ws-table,
+.tasks-table .ws-table {
+  col.col-check,
+  .col-check,
+  .checkbox-col {
+    width: 40px;
+  }
+
+  /* 名称列不设固定宽，吃剩余；固定列加总后约 28–40%，避免 ~60% 空洞 */
+  col.col-task-name,
+  .col-task-name {
+    width: auto;
+  }
+
+  col.col-module,
+  .col-module {
+    width: 130px;
+  }
+
+  col.col-deadline,
+  .col-deadline {
+    width: 176px;
+  }
+
+  col.col-progress,
+  .col-progress {
+    width: 140px;
+  }
+
+  col.col-status,
+  .col-status {
+    width: 96px;
+  }
+
+  col.col-next,
+  .col-next {
+    width: 120px;
+  }
+}
+
+// ─────────────────────────────────────────────
+// 分页
+// ─────────────────────────────────────────────
+.ws-pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(5, 26, 50, 0.6);
+  border: 1px solid var(--ws-border);
+  border-top: none;
+  border-radius: 0 0 var(--ws-panel-radius) var(--ws-panel-radius);
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  margin-top: auto;
+  min-height: var(--ws-pagination-h);
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* 分页作为面板/列表区直接子节点（表体容器外）时，始终贴底且不被裁切 */
+.ws-panel > .ws-pagination-bar,
+.ws-table-container + .ws-pagination-bar {
+  flex: 0 0 auto;
+  margin-top: auto;
+}
+
+.ws-pagination-info {
+  font-size: 12px;
+  color: var(--ws-text-secondary);
+
+  .highlight {
+    color: var(--ws-cyan);
+    font-weight: 600;
+  }
+}
+
+.ws-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ws-page-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--ws-border);
+  border-radius: 4px;
+  color: var(--ws-text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ws-page-btn:hover:not(:disabled) {
+  border-color: var(--ws-cyan);
+  color: var(--ws-cyan);
+}
+
+.ws-page-btn.active {
+  background: rgba(47, 156, 255, 0.2);
+  border-color: var(--ws-cyan);
+  color: var(--ws-cyan);
+  font-weight: 600;
+}
+
+.ws-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ws-page-size-select {
+  height: 28px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--ws-border);
+  border-radius: 4px;
+  padding: 0 8px;
+  color: var(--ws-text-primary);
+  font-size: 12px;
+  outline: none;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+// ─────────────────────────────────────────────
+// 右侧详情面板
+// ─────────────────────────────────────────────
+.ws-detail-panel {
+  background: var(--ws-bg-panel);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-panel-radius);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ws-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ws-border);
+  flex-shrink: 0;
+}
+
+.ws-detail-header-icon {
+  color: var(--ws-cyan);
+  flex-shrink: 0;
+}
+
+.ws-detail-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ws-text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ws-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  min-height: 0;
+}
+
+.ws-detail-section {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ws-detail-footer {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border-top: 1px solid var(--ws-border);
+  background: rgba(5, 26, 50, 0.6);
+}
+
+// ─────────────────────────────────────────────
+// 按钮：primary cyan / secondary ghost / danger|success outline
+// ─────────────────────────────────────────────
+.ws-btn {
+  height: var(--ws-control-h);
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.ws-btn-primary {
+  background: var(--ws-primary-grad);
+  color: #031020;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(47, 156, 255, 0.25);
+
+  &:hover {
+    opacity: 0.92;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.ws-btn-secondary,
+.ws-btn-view {
+  background: transparent;
+  border: 1px solid var(--ws-border-strong);
+  color: var(--ws-cyan-soft);
+
+  &:hover {
+    background: rgba(47, 156, 255, 0.1);
+    color: var(--ws-cyan);
+  }
+}
+
+.ws-btn-action {
+  background: transparent;
+  border: 1px solid rgba(47, 156, 255, 0.45);
+  color: var(--ws-cyan);
+
+  &:hover {
+    background: rgba(47, 156, 255, 0.12);
+  }
+}
+
+.ws-btn-success {
+  background: transparent;
+  border: 1px solid rgba(105, 227, 111, 0.45);
+  color: var(--ws-green);
+
+  &:hover {
+    background: rgba(105, 227, 111, 0.12);
+  }
+}
+
+.ws-btn-warn {
+  background: transparent;
+  border: 1px solid rgba(255, 179, 71, 0.5);
+  color: var(--ws-yellow);
+
+  &:hover {
+    background: rgba(255, 179, 71, 0.12);
+  }
+}
+
+.ws-btn-danger {
+  background: transparent;
+  border: 1px solid rgba(255, 79, 94, 0.5);
+  color: var(--ws-red);
+
+  &:hover {
+    background: rgba(255, 79, 94, 0.12);
+  }
+}
+
+.ws-btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+// ─────────────────────────────────────────────
+// Tags
+// ─────────────────────────────────────────────
+.ws-tag,
+.module-tag,
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.ws-tag-blue {
+  background: rgba(47, 156, 255, 0.12);
+  color: #7fb6ef;
+  border: 1px solid rgba(47, 156, 255, 0.25);
+}
+
+.ws-tag-yellow {
+  background: rgba(255, 179, 71, 0.12);
+  color: #ffb347;
+  border: 1px solid rgba(255, 179, 71, 0.25);
+}
+
+.ws-tag-purple {
+  background: rgba(166, 108, 255, 0.12);
+  color: #c4a5ff;
+  border: 1px solid rgba(166, 108, 255, 0.25);
+}
+
+.ws-tag-green {
+  background: rgba(105, 227, 111, 0.12);
+  color: var(--ws-green);
+  border: 1px solid rgba(105, 227, 111, 0.25);
+}
+
+.ws-tag-red {
+  background: rgba(255, 79, 94, 0.12);
+  color: var(--ws-red);
+  border: 1px solid rgba(255, 79, 94, 0.25);
+}
+
+.ws-tag-muted {
+  background: rgba(143, 169, 200, 0.1);
+  color: var(--ws-text-secondary);
+  border: 1px solid rgba(143, 169, 200, 0.2);
+}
+
+.ws-esg-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+
+  &.esg-e {
+    background: rgba(105, 227, 111, 0.15);
+    color: var(--ws-green);
+    border: 1px solid rgba(105, 227, 111, 0.3);
+  }
+
+  &.esg-s {
+    background: rgba(47, 156, 255, 0.15);
+    color: var(--ws-cyan);
+    border: 1px solid rgba(47, 156, 255, 0.3);
+  }
+
+  &.esg-g {
+    background: rgba(166, 108, 255, 0.15);
+    color: var(--ws-purple);
+    border: 1px solid rgba(166, 108, 255, 0.3);
+  }
+}
+
+// ─────────────────────────────────────────────
+// 底部操作栏
+// ─────────────────────────────────────────────
+.ws-bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ws-border);
+  flex-shrink: 0;
+}
+
+// ─────────────────────────────────────────────
+// 进度条（共用）
+// ─────────────────────────────────────────────
+.ws-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ws-progress-bar {
+  width: 80px;
+  height: 6px;
+  background: rgba(47, 156, 255, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ws-progress-fill {
+  height: 100%;
+  background: var(--ws-primary-grad);
+  border-radius: 3px;
+}
+
+.ws-progress-text {
+  font-size: 12px;
+  color: var(--ws-text-secondary);
+}

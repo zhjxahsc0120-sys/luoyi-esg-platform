@@ -1,0 +1,589 @@
+{
+  "packageId": "PACK-SUPERIOR-ENV-202607",
+  "intentKey": "pack.superior_env",
+  "inspectionType": "env",
+  "nature": "sample",
+  "title": "上级环保检查 · 合规资料包",
+  "subtitle": "合规资料包 · 2026年7月账期",
+  "downloadUrl": "/samples/assistant-compliance-packs/上级检查_环保合规资料包_202607.zip",
+  "folderUrl": "/samples/assistant-compliance-packs/上级检查_环保合规资料包_202607/",
+  "updatedAt": "2026-07-27",
+  "stats": {
+    "categoryCount": 11,
+    "requiredFileCount": 46,
+    "collectedCount": 42,
+    "pendingCount": 4
+  },
+  "categories": [
+    {
+      "id": "01",
+      "name": "01_审批文件与环评批复落实",
+      "requiredFileCount": 5,
+      "collectedCount": 5,
+      "pendingCount": 0,
+      "note": "环评/水保批复及落实台账"
+    },
+    {
+      "id": "02",
+      "name": "02_环保组织机构与管理制度",
+      "requiredFileCount": 4,
+      "collectedCount": 4,
+      "pendingCount": 0,
+      "note": "组织架构、责任制与管理制度"
+    },
+    {
+      "id": "03",
+      "name": "03_施工环保方案及交底培训",
+      "requiredFileCount": 4,
+      "collectedCount": 4,
+      "pendingCount": 0,
+      "note": "专项方案、交底与培训"
+    },
+    {
+      "id": "04",
+      "name": "04_日常巡查与污染防治设施运行",
+      "requiredFileCount": 5,
+      "collectedCount": 5,
+      "pendingCount": 0,
+      "note": "巡查、抑尘、设施运行"
+    },
+    {
+      "id": "05",
+      "name": "05_施工期环境监测",
+      "requiredFileCount": 5,
+      "collectedCount": 3,
+      "pendingCount": 2,
+      "note": "监测方案、季报/月报与超标处置"
+    },
+    {
+      "id": "06",
+      "name": "06_环保监理检查",
+      "requiredFileCount": 4,
+      "collectedCount": 4,
+      "pendingCount": 0,
+      "note": "监理通知、巡视与月报环保章节"
+    },
+    {
+      "id": "07",
+      "name": "07_环保问题整改与闭环",
+      "requiredFileCount": 4,
+      "collectedCount": 4,
+      "pendingCount": 0,
+      "note": "问题台账、整改回单与销项（对齐 E02）"
+    },
+    {
+      "id": "08",
+      "name": "08_固废危废及应急管理",
+      "requiredFileCount": 4,
+      "collectedCount": 3,
+      "pendingCount": 1,
+      "note": "固废危废台账、应急预案及演练"
+    },
+    {
+      "id": "09",
+      "name": "09_生态保护与水土保持",
+      "requiredFileCount": 4,
+      "collectedCount": 4,
+      "pendingCount": 0,
+      "note": "水保监测、表土保护与植被恢复"
+    },
+    {
+      "id": "10",
+      "name": "10_环保月报及阶段总结",
+      "requiredFileCount": 3,
+      "collectedCount": 2,
+      "pendingCount": 1,
+      "note": "环保月报与阶段总结"
+    },
+    {
+      "id": "11",
+      "name": "11_上级检查、投诉及处罚整改",
+      "requiredFileCount": 4,
+      "collectedCount": 4,
+      "pendingCount": 0,
+      "note": "上级检查、投诉与处罚整改"
+    }
+  ],
+  "inventory": [
+    {
+      "categoryId": "01",
+      "category": "01_审批文件与环评批复落实",
+      "name": "罗宜高速环境影响评价报告书_摘要",
+      "path": "01_审批文件与环评批复落实/罗宜高速环境影响评价报告书_摘要.md",
+      "status": "collected",
+      "note": "环评报告摘要",
+      "kind": "report"
+    },
+    {
+      "categoryId": "01",
+      "category": "01_审批文件与环评批复落实",
+      "name": "罗宜高速环境影响评价批复",
+      "path": "01_审批文件与环评批复落实/罗宜高速环境影响评价批复.md",
+      "status": "collected",
+      "note": "环评批复",
+      "kind": "other"
+    },
+    {
+      "categoryId": "01",
+      "category": "01_审批文件与环评批复落实",
+      "name": "罗宜高速水土保持方案批复",
+      "path": "01_审批文件与环评批复落实/罗宜高速水土保持方案批复.md",
+      "status": "collected",
+      "note": "水保方案批复",
+      "kind": "other"
+    },
+    {
+      "categoryId": "01",
+      "category": "01_审批文件与环评批复落实",
+      "name": "环评及水保批复落实台账",
+      "path": "01_审批文件与环评批复落实/环评及水保批复落实台账.md",
+      "status": "collected",
+      "note": "批复落实对照",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "01",
+      "category": "01_审批文件与环评批复落实",
+      "name": "重大变更及备案说明",
+      "path": "01_审批文件与环评批复落实/重大变更及备案说明.md",
+      "status": "collected",
+      "note": "变更备案（如有）",
+      "kind": "other"
+    },
+    {
+      "categoryId": "02",
+      "category": "02_环保组织机构与管理制度",
+      "name": "项目环境保护组织架构及职责分工",
+      "path": "02_环保组织机构与管理制度/项目环境保护组织架构及职责分工.md",
+      "status": "collected",
+      "note": "组织机构",
+      "kind": "other"
+    },
+    {
+      "categoryId": "02",
+      "category": "02_环保组织机构与管理制度",
+      "name": "环境保护目标责任书",
+      "path": "02_环保组织机构与管理制度/环境保护目标责任书.md",
+      "status": "collected",
+      "note": "责任制",
+      "kind": "other"
+    },
+    {
+      "categoryId": "02",
+      "category": "02_环保组织机构与管理制度",
+      "name": "环境保护管理制度汇编",
+      "path": "02_环保组织机构与管理制度/环境保护管理制度汇编.md",
+      "status": "collected",
+      "note": "制度汇编",
+      "kind": "other"
+    },
+    {
+      "categoryId": "02",
+      "category": "02_环保组织机构与管理制度",
+      "name": "专职环保管理人员任命文件",
+      "path": "02_环保组织机构与管理制度/专职环保管理人员任命文件.md",
+      "status": "collected",
+      "note": "人员任命",
+      "kind": "other"
+    },
+    {
+      "categoryId": "03",
+      "category": "03_施工环保方案及交底培训",
+      "name": "施工环境保护专项方案",
+      "path": "03_施工环保方案及交底培训/施工环境保护专项方案.md",
+      "status": "collected",
+      "note": "专项方案",
+      "kind": "report"
+    },
+    {
+      "categoryId": "03",
+      "category": "03_施工环保方案及交底培训",
+      "name": "环保技术交底记录",
+      "path": "03_施工环保方案及交底培训/环保技术交底记录.md",
+      "status": "collected",
+      "note": "交底记录",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "03",
+      "category": "03_施工环保方案及交底培训",
+      "name": "环保培训签到表及课件摘要",
+      "path": "03_施工环保方案及交底培训/环保培训签到表及课件摘要.md",
+      "status": "collected",
+      "note": "培训签到",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "03",
+      "category": "03_施工环保方案及交底培训",
+      "name": "专项方案审批意见",
+      "path": "03_施工环保方案及交底培训/专项方案审批意见.md",
+      "status": "collected",
+      "note": "方案审批",
+      "kind": "other"
+    },
+    {
+      "categoryId": "04",
+      "category": "04_日常巡查与污染防治设施运行",
+      "name": "施工现场环保日常巡查记录",
+      "path": "04_日常巡查与污染防治设施运行/施工现场环保日常巡查记录.md",
+      "status": "collected",
+      "note": "日常巡查",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "04",
+      "category": "04_日常巡查与污染防治设施运行",
+      "name": "洒水抑尘作业台账",
+      "path": "04_日常巡查与污染防治设施运行/洒水抑尘作业台账.md",
+      "status": "collected",
+      "note": "抑尘台账",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "04",
+      "category": "04_日常巡查与污染防治设施运行",
+      "name": "沉淀池及污水处理设施运行台账",
+      "path": "04_日常巡查与污染防治设施运行/沉淀池及污水处理设施运行台账.md",
+      "status": "collected",
+      "note": "设施运行",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "04",
+      "category": "04_日常巡查与污染防治设施运行",
+      "name": "噪声污染防治措施落实记录",
+      "path": "04_日常巡查与污染防治设施运行/噪声污染防治措施落实记录.md",
+      "status": "collected",
+      "note": "噪声防治",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "04",
+      "category": "04_日常巡查与污染防治设施运行",
+      "name": "施工扬尘防治检查表",
+      "path": "04_日常巡查与污染防治设施运行/施工扬尘防治检查表.md",
+      "status": "collected",
+      "note": "扬尘检查",
+      "kind": "checklist"
+    },
+    {
+      "categoryId": "05",
+      "category": "05_施工期环境监测",
+      "name": "施工期环境监测方案",
+      "path": "05_施工期环境监测/施工期环境监测方案.md",
+      "status": "collected",
+      "note": "监测方案",
+      "kind": "report"
+    },
+    {
+      "categoryId": "05",
+      "category": "05_施工期环境监测",
+      "name": "罗宜高速_2026年第二季度施工期环境监测季报",
+      "path": "05_施工期环境监测/罗宜高速_2026年第二季度施工期环境监测季报.md",
+      "status": "pending",
+      "note": "对齐 G04「环境监测季报」",
+      "kind": "report"
+    },
+    {
+      "categoryId": "05",
+      "category": "05_施工期环境监测",
+      "name": "罗宜高速_2026年6月施工期环境监测月报",
+      "path": "05_施工期环境监测/罗宜高速_2026年6月施工期环境监测月报.md",
+      "status": "collected",
+      "note": "月报",
+      "kind": "report"
+    },
+    {
+      "categoryId": "05",
+      "category": "05_施工期环境监测",
+      "name": "超标监测处置与复测记录",
+      "path": "05_施工期环境监测/超标监测处置与复测记录.md",
+      "status": "collected",
+      "note": "超标处置",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "06",
+      "category": "06_环保监理检查",
+      "name": "环保监理通知单汇编",
+      "path": "06_环保监理检查/环保监理通知单汇编.md",
+      "status": "collected",
+      "note": "监理通知",
+      "kind": "other"
+    },
+    {
+      "categoryId": "06",
+      "category": "06_环保监理检查",
+      "name": "环保监理巡视记录",
+      "path": "06_环保监理检查/环保监理巡视记录.md",
+      "status": "collected",
+      "note": "巡视记录",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "06",
+      "category": "06_环保监理检查",
+      "name": "监理月报_环境保护专章_2026年6月",
+      "path": "06_环保监理检查/监理月报_环境保护专章_2026年6月.md",
+      "status": "collected",
+      "note": "监理月报环保章节",
+      "kind": "report"
+    },
+    {
+      "categoryId": "06",
+      "category": "06_环保监理检查",
+      "name": "监理旁站及平行检测摘要",
+      "path": "06_环保监理检查/监理旁站及平行检测摘要.md",
+      "status": "collected",
+      "note": "旁站/平行检测",
+      "kind": "other"
+    },
+    {
+      "categoryId": "07",
+      "category": "07_环保问题整改与闭环",
+      "name": "环保问题整改台账",
+      "path": "07_环保问题整改与闭环/环保问题整改台账.md",
+      "status": "collected",
+      "note": "问题台账（对齐 E02）",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "07",
+      "category": "07_环保问题整改与闭环",
+      "name": "整改回单及现场复核记录",
+      "path": "07_环保问题整改与闭环/整改回单及现场复核记录.md",
+      "status": "collected",
+      "note": "整改回单",
+      "kind": "other"
+    },
+    {
+      "categoryId": "07",
+      "category": "07_环保问题整改与闭环",
+      "name": "复查销项证明材料清单",
+      "path": "07_环保问题整改与闭环/复查销项证明材料清单.md",
+      "status": "collected",
+      "note": "销项证明",
+      "kind": "checklist"
+    },
+    {
+      "categoryId": "07",
+      "category": "07_环保问题整改与闭环",
+      "name": "未闭环环保问题摘要说明",
+      "path": "07_环保问题整改与闭环/未闭环环保问题摘要说明.txt",
+      "status": "collected",
+      "note": "未闭环摘要",
+      "kind": "other"
+    },
+    {
+      "categoryId": "08",
+      "category": "08_固废危废及应急管理",
+      "name": "一般工业固体废物产生及处置台账",
+      "path": "08_固废危废及应急管理/一般工业固体废物产生及处置台账.md",
+      "status": "collected",
+      "note": "固废台账",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "08",
+      "category": "08_固废危废及应急管理",
+      "name": "危险废物转移联单及台账",
+      "path": "08_固废危废及应急管理/危险废物转移联单及台账.md",
+      "status": "collected",
+      "note": "危废联单",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "08",
+      "category": "08_固废危废及应急管理",
+      "name": "突发环境事件应急预案",
+      "path": "08_固废危废及应急管理/突发环境事件应急预案.md",
+      "status": "collected",
+      "note": "应急预案",
+      "kind": "report"
+    },
+    {
+      "categoryId": "08",
+      "category": "08_固废危废及应急管理",
+      "name": "罗宜高速_突发环境事件应急预案演练记录_2026年第二季度",
+      "path": "08_固废危废及应急管理/罗宜高速_突发环境事件应急预案演练记录_2026年第二季度.md",
+      "status": "pending",
+      "note": "对齐 G04「应急预案演练记录」",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "09",
+      "category": "09_生态保护与水土保持",
+      "name": "水土保持监测方案",
+      "path": "09_生态保护与水土保持/水土保持监测方案.md",
+      "status": "collected",
+      "note": "水保监测方案",
+      "kind": "report"
+    },
+    {
+      "categoryId": "09",
+      "category": "09_生态保护与水土保持",
+      "name": "罗宜高速_2026年7月水土保持监测月报摘要",
+      "path": "09_生态保护与水土保持/罗宜高速_2026年7月水土保持监测月报摘要.csv",
+      "status": "collected",
+      "note": "水保月报摘要",
+      "kind": "report"
+    },
+    {
+      "categoryId": "09",
+      "category": "09_生态保护与水土保持",
+      "name": "表土剥离与保护台账",
+      "path": "09_生态保护与水土保持/表土剥离与保护台账.md",
+      "status": "collected",
+      "note": "表土保护",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "09",
+      "category": "09_生态保护与水土保持",
+      "name": "临时用地植被恢复记录",
+      "path": "09_生态保护与水土保持/临时用地植被恢复记录.md",
+      "status": "collected",
+      "note": "植被恢复",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "10",
+      "category": "10_环保月报及阶段总结",
+      "name": "罗宜高速_2026年6月环境保护月报",
+      "path": "10_环保月报及阶段总结/罗宜高速_2026年6月环境保护月报.md",
+      "status": "collected",
+      "note": "环保月报",
+      "kind": "report"
+    },
+    {
+      "categoryId": "10",
+      "category": "10_环保月报及阶段总结",
+      "name": "施工期环境保护阶段工作总结",
+      "path": "10_环保月报及阶段总结/施工期环境保护阶段工作总结.md",
+      "status": "collected",
+      "note": "阶段总结",
+      "kind": "report"
+    },
+    {
+      "categoryId": "10",
+      "category": "10_环保月报及阶段总结",
+      "name": "罗宜高速_环境保护合规性评价报告_2026",
+      "path": "10_环保月报及阶段总结/罗宜高速_环境保护合规性评价报告_2026.md",
+      "status": "pending",
+      "note": "对齐 G04「合规性评价报告」",
+      "kind": "report"
+    },
+    {
+      "categoryId": "11",
+      "category": "11_上级检查、投诉及处罚整改",
+      "name": "上级环保检查通知及反馈汇编",
+      "path": "11_上级检查、投诉及处罚整改/上级环保检查通知及反馈汇编.md",
+      "status": "collected",
+      "note": "检查通知/反馈",
+      "kind": "other"
+    },
+    {
+      "categoryId": "11",
+      "category": "11_上级检查、投诉及处罚整改",
+      "name": "环境信访投诉处置台账",
+      "path": "11_上级检查、投诉及处罚整改/环境信访投诉处置台账.md",
+      "status": "collected",
+      "note": "投诉处置",
+      "kind": "ledger"
+    },
+    {
+      "categoryId": "11",
+      "category": "11_上级检查、投诉及处罚整改",
+      "name": "行政处罚及整改闭环材料",
+      "path": "11_上级检查、投诉及处罚整改/行政处罚及整改闭环材料.md",
+      "status": "collected",
+      "note": "处罚整改（如有）",
+      "kind": "other"
+    },
+    {
+      "categoryId": "11",
+      "category": "11_上级检查、投诉及处罚整改",
+      "name": "上级环保检查核查项清单",
+      "path": "11_上级检查、投诉及处罚整改/上级环保检查核查项清单.md",
+      "status": "collected",
+      "note": "核查勾选表",
+      "kind": "checklist"
+    },
+    {
+      "categoryId": "05",
+      "category": "05_施工期环境监测",
+      "name": "罗宜高速_2026年第三季度环境监测送检委托及计划",
+      "path": "05_施工期环境监测/罗宜高速_2026年第三季度环境监测送检委托及计划.md",
+      "status": "pending",
+      "note": "季报送检计划待归档",
+      "kind": "other"
+    }
+  ],
+  "requiredDocs": [
+    {
+      "name": "资料目录及缺失说明",
+      "path": "00_资料目录及缺失说明/资料目录及缺失说明.md",
+      "kind": "checklist"
+    },
+    {
+      "name": "罗宜高速_2026年第二季度施工期环境监测季报",
+      "path": "05_施工期环境监测/罗宜高速_2026年第二季度施工期环境监测季报.md",
+      "kind": "report",
+      "status": "pending",
+      "note": "对齐 G04「环境监测季报」"
+    },
+    {
+      "name": "罗宜高速_突发环境事件应急预案演练记录_2026年第二季度",
+      "path": "08_固废危废及应急管理/罗宜高速_突发环境事件应急预案演练记录_2026年第二季度.md",
+      "kind": "ledger",
+      "status": "pending",
+      "note": "对齐 G04「应急预案演练记录」"
+    },
+    {
+      "name": "罗宜高速_环境保护合规性评价报告_2026",
+      "path": "10_环保月报及阶段总结/罗宜高速_环境保护合规性评价报告_2026.md",
+      "kind": "report",
+      "status": "pending",
+      "note": "对齐 G04「合规性评价报告」"
+    },
+    {
+      "name": "罗宜高速_2026年第三季度环境监测送检委托及计划",
+      "path": "05_施工期环境监测/罗宜高速_2026年第三季度环境监测送检委托及计划.md",
+      "kind": "other",
+      "status": "pending",
+      "note": "季报送检计划待归档"
+    },
+    {
+      "name": "罗宜高速环境影响评价批复",
+      "path": "01_审批文件与环评批复落实/罗宜高速环境影响评价批复.md",
+      "kind": "other",
+      "status": "collected"
+    },
+    {
+      "name": "罗宜高速_2026年7月水土保持监测月报摘要",
+      "path": "09_生态保护与水土保持/罗宜高速_2026年7月水土保持监测月报摘要.csv",
+      "kind": "report",
+      "status": "collected"
+    },
+    {
+      "name": "环保问题整改台账",
+      "path": "07_环保问题整改与闭环/环保问题整改台账.md",
+      "kind": "ledger",
+      "status": "collected"
+    },
+    {
+      "name": "上级环保检查核查项清单",
+      "path": "11_上级检查、投诉及处罚整改/上级环保检查核查项清单.md",
+      "kind": "checklist",
+      "status": "collected"
+    }
+  ],
+  "relatedIntents": [
+    "e02.open_issues",
+    "g04.material_gaps"
+  ],
+  "triggerQuestions": [
+    "应对上级环保检查应准备哪些合规资料？"
+  ]
+}

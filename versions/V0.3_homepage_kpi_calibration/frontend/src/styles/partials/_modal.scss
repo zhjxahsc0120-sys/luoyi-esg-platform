@@ -1,0 +1,200 @@
+// ── 弹窗基础样式 ──
+// 统一各弹窗组件的遮罩/容器/头部/底部视觉，使用 tokens.scss 中的设计 token
+
+@use '../tokens.scss' as *;
+
+// ── 遮罩层 ──
+@mixin overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 11, 24, 0.72);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modalFadeIn var(--duration-normal) var(--ease-out);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ── 弹窗容器 ──
+@mixin modal-container {
+  background: linear-gradient(180deg, rgba(7, 22, 44, 0.96) 0%, rgba(5, 18, 38, 0.96) 100%);
+  border: 1px solid rgba(105, 227, 111, 0.2);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideUp var(--duration-normal) var(--ease-out);
+  box-shadow:
+    0 0 0 1px rgba(0, 174, 255, 0.3),
+    var(--shadow-lg);
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── 弹窗头部 ──
+@mixin modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(105, 227, 111, 0.1);
+  flex-shrink: 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.4), transparent);
+  }
+}
+
+// ── 弹窗标题 ──
+@mixin modal-title {
+  font-size: var(--fs-module-title);
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+// ── 弹窗内容区 ──
+@mixin modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-6);
+  min-height: 0;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(143, 169, 200, 0.2); border-radius: 2px; }
+}
+
+// ── 弹窗底部 ──
+@mixin modal-footer {
+  padding: var(--space-4) var(--space-6);
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(105, 227, 111, 0.1);
+  flex-shrink: 0;
+}
+
+// ── 弹窗操作按钮栏 ──
+@mixin modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6) var(--space-4);
+  flex-shrink: 0;
+}
+
+// ── 弹窗标签页导航 ──
+@mixin modal-tabs {
+  display: flex;
+  gap: var(--space-1);
+  padding: 0 var(--space-6) var(--space-2);
+  border-bottom: 1px solid rgba(143, 169, 200, 0.08);
+  flex-shrink: 0;
+}
+
+// ── 工作台弹窗尺寸 ──
+// 适用于 TaskModal 等工作台弹窗
+@mixin modal-workspace-size {
+  width: 66vw;
+  max-height: 80vh;
+}
+
+// ── 领导层 KPI 弹窗尺寸 ──
+// 适用于 KpiDetailModal
+@mixin modal-kpi-size {
+  width: 68vw;
+  max-width: 1280px;
+  height: 80vh;
+  max-height: 80vh;
+}
+
+// ── 小型选择弹窗 ──
+// 适用于 document-selector 等子弹窗
+@mixin modal-small {
+  width: 500px;
+  background: rgba(5, 26, 50, 0.95);
+  border: 1px solid rgba(105, 227, 111, 0.2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+// ── Vue Transition 类 ──
+// 遮罩层淡入淡出
+@mixin overlay-transition($name: 'modal-overlay') {
+  .#{$name}-enter-active,
+  .#{$name}-leave-active {
+    transition: opacity var(--duration-normal) var(--ease-out);
+  }
+  .#{$name}-enter-from,
+  .#{$name}-leave-to {
+    opacity: 0;
+  }
+}
+
+// 弹窗容器上滑进入/下滑离开
+@mixin panel-transition($name: 'modal-panel') {
+  .#{$name}-enter-active {
+    transition:
+      opacity var(--duration-normal) var(--ease-out),
+      transform var(--duration-normal) var(--ease-out);
+  }
+  .#{$name}-leave-active {
+    transition:
+      opacity var(--duration-fast) ease,
+      transform var(--duration-fast) ease;
+  }
+  .#{$name}-enter-from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .#{$name}-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+// 提示条滑入/滑出
+@mixin toast-transition($name: 'toast') {
+  .#{$name}-enter-active {
+    transition:
+      opacity var(--duration-normal) var(--ease-out),
+      transform var(--duration-normal) var(--ease-out);
+  }
+  .#{$name}-leave-active {
+    transition:
+      opacity var(--duration-fast) ease,
+      transform var(--duration-fast) ease;
+  }
+  .#{$name}-enter-from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .#{$name}-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

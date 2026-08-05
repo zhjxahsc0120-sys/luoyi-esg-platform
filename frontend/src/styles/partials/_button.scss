@@ -1,0 +1,191 @@
+// ── 按钮基础样式 ──
+// 统一各组件中的按钮视觉，使用 tokens.scss 中的设计 token
+
+@use '../tokens.scss' as *;
+
+// ── 基础按钮 ──
+// 通用按钮底座，所有按钮变体均继承此 mixin
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    opacity var(--duration-fast) ease,
+    transform var(--duration-normal) var(--ease-out);
+  line-height: 1.4;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+// ── 主要按钮（渐变强调） ──
+@mixin btn-primary {
+  @include btn-base;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  border: none;
+  color: #031020;
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+}
+
+// ── 幽灵按钮（弱边框） ──
+@mixin btn-ghost {
+  @include btn-base;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-faint);
+  color: var(--text-muted);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-blue-dim);
+    color: var(--text-main);
+    background: var(--bg-hover);
+  }
+}
+
+// ── 描边按钮 ──
+@mixin btn-outline {
+  @include btn-base;
+  background: transparent;
+  border: 1px solid var(--border-blue-dim);
+  color: var(--text-main);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-blue);
+    background: rgba(0, 174, 255, 0.06);
+  }
+}
+
+// ── 危险按钮（退回/删除） ──
+@mixin btn-danger {
+  @include btn-base;
+  background: rgba(255, 79, 94, 0.1);
+  border: 1px solid rgba(255, 79, 94, 0.3);
+  color: var(--danger);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 79, 94, 0.18);
+    border-color: rgba(255, 79, 94, 0.5);
+  }
+}
+
+// ── 小型操作按钮（表格行内） ──
+@mixin btn-sm {
+  @include btn-base;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--fs-caption);
+  border-radius: var(--radius-sm);
+}
+
+// ── 标签页按钮（筛选/切换） ──
+@mixin btn-tab {
+  @include btn-base;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--fs-caption);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+
+  &:hover {
+    color: var(--text-main);
+    border-color: var(--border-blue-dim);
+  }
+
+  &.active {
+    color: var(--text-main);
+    border-color: var(--border-blue);
+    background: rgba(0, 174, 255, 0.1);
+  }
+}
+
+// ── ESG 模块色按钮 ──
+// 传入模块色变量，生成带色按钮
+@mixin btn-module($color) {
+  @include btn-base;
+  background: rgba($color, 0.1);
+  border: 1px solid rgba($color, 0.3);
+  color: $color;
+
+  &:hover:not(:disabled) {
+    background: rgba($color, 0.18);
+    border-color: rgba($color, 0.5);
+  }
+}
+
+// ── 关闭按钮 ──
+@mixin btn-close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-faint);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    background var(--duration-fast) ease;
+
+  &:hover {
+    color: var(--text-main);
+    border-color: var(--border-blue-dim);
+    background: rgba(255, 79, 94, 0.1);
+  }
+}
+
+// ── 页码按钮 ──
+@mixin btn-page {
+  @include btn-base;
+  padding: var(--space-1) var(--space-2);
+  min-width: 28px;
+  height: 28px;
+  background: rgba(105, 227, 111, 0.1);
+  border: 1px solid rgba(105, 227, 111, 0.2);
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+
+  &:hover:not(:disabled) {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    border: none;
+    color: #031020;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// ── 按钮按下态 ──
+// 适用于所有主要/强调按钮的 active 反馈
+@mixin btn-press {
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+    transition-duration: 0.08s;
+  }
+}

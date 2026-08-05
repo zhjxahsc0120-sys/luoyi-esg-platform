@@ -1,0 +1,140 @@
+:root {
+  --bg-page: #020711;
+  --bg-deep: #03101f;
+  --bg-panel: rgba(4, 25, 48, 0.94);
+  --bg-panel-strong: rgba(5, 31, 58, 0.98);
+  --bg-card: rgba(8, 40, 69, 0.62);
+  --bg-card-hover: rgba(12, 50, 84, 0.82);
+  --overlay-bg: rgba(0, 8, 18, 0.76);
+  --screen-bg: var(--bg-deep);
+  --screen-bg-deep: var(--bg-page);
+
+  --line-base: rgba(31, 132, 220, 0.42);
+  --line-strong: rgba(28, 143, 255, 0.78);
+  --line-soft: rgba(87, 145, 192, 0.18);
+
+  --border-base: var(--line-base);
+  --border-soft: var(--line-soft);
+  --border-active: var(--line-strong);
+  --border-blue: var(--line-strong);
+  --border-blue-dim: var(--line-base);
+  --border-faint: var(--line-soft);
+
+  --grid-line: rgba(73, 132, 178, 0.2);
+
+  --text-primary: #f3f8ff;
+  --text-secondary: #c3d4e8;
+  --text-tertiary: #8ba6c3;
+  --text-muted: #8ba6c3;
+  --text-disabled: #5f7895;
+  --text-main: var(--text-primary);
+  --text-faint: var(--text-muted);
+
+  --cyan: #25b9ff;
+  --blue: #1687ff;
+  --green: #43d36b;
+  --purple: #8b5cf6;
+  --orange: #ff9f2f;
+  --red: #ff4b55;
+
+  --color-e: var(--green);
+  --color-e-soft: #2abf76;
+  --color-e-rgb: 67, 211, 107;
+  --color-s: var(--blue);
+  --color-s-soft: var(--cyan);
+  --color-s-rgb: 22, 135, 255;
+  --color-g: var(--purple);
+  --color-g-soft: #7652ee;
+  --color-g-rgb: 139, 92, 246;
+
+  --color-success: #46d87a;
+  --color-warning: var(--orange);
+  --color-danger: var(--red);
+  --color-info: var(--blue);
+  --color-cyan: var(--cyan);
+
+  --warning: var(--orange);
+  --danger: var(--red);
+
+  --font-sans: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans CN", Arial, sans-serif;
+  --font-num: Bahnschrift, "DIN Alternate", "Arial Narrow", var(--font-sans);
+
+  --fs-platform-title: clamp(24px, 3.2vh, 34px);
+  --fs-nav: clamp(15px, 1.8vh, 18px);
+  --fs-group-title: clamp(20px, 2.5vh, 26px);
+  --fs-module-title: clamp(18px, 2.2vh, 22px);
+  --fs-modal-title: clamp(24px, 3vh, 30px);
+  --fs-subtitle: clamp(13px, 1.6vh, 16px);
+  --fs-status: clamp(13px, 1.6vh, 16px);
+  --fs-body: clamp(13px, 1.65vh, 16px);
+  --fs-label: clamp(13px, 1.7vh, 16px);
+  --fs-caption: clamp(12px, 1.5vh, 14px);
+  --fs-kpi-num: clamp(28px, 3.5vh, 38px);
+  --fs-metric-num: clamp(22px, 3vh, 30px);
+  --fs-unit: clamp(11px, 1.4vh, 14px);
+
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-18: 18px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+
+  --icon-sm: 16px;
+
+  /* 与领导首页固定标题区对齐；跨路由切换时不可再随 vh 伸缩 */
+  --dashboard-header-h: 80px;
+  --kpi-h: clamp(132px, 15.5vh, 164px);
+  --timeline-h: clamp(88px, 10.5vh, 116px);
+  --main-gap: clamp(6px, 0.8vh, 10px);
+
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  --panel-radius: var(--radius-md);
+  --panel-pad: clamp(6px, 0.8vh, 10px);
+  --panel-pad-sm: 6px;
+
+  --shadow-blue: 0 0 18px rgba(22, 135, 255, 0.18);
+  --shadow-green: 0 0 18px rgba(67, 211, 107, 0.14);
+  --shadow-purple: 0 0 18px rgba(139, 92, 246, 0.15);
+  --shadow-panel: inset 0 1px 0 rgba(255, 255, 255, 0.025), 0 12px 32px rgba(0, 8, 20, 0.2);
+  --shadow-e: var(--shadow-green);
+  --shadow-s: var(--shadow-blue);
+  --shadow-g: var(--shadow-purple);
+}
+
+@mixin panel-base {
+  background: var(--bg-panel);
+  border: 1px solid var(--line-base);
+  border-radius: var(--panel-radius);
+  box-shadow: var(--shadow-panel);
+}
+
+@mixin panel-accent {
+  @include panel-base;
+  border-color: var(--line-strong);
+}
+
+@mixin kpi-border($color) {
+  border: 1px solid rgba($color, 0.42);
+}
+
+@mixin text-glow($color) {
+  text-shadow: none;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

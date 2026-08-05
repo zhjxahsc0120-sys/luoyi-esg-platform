@@ -1,0 +1,27 @@
+{
+  "current_owner": "Cursor",
+  "current_task": "Cesium map Phase 1 pedestal upgrade (KML+SPX); ESG business GIS fusion deferred",
+  "task_files": [
+    "_handoff/Cesium地图模块替换实施说明_V1.0_20260804.md"
+  ],
+  "task_file": "_handoff/Cesium地图模块替换实施说明_V1.0_20260804.md",
+  "design_file": "_handoff/cesium_handover_20260804/罗宜高速ESG_Cesium地图模块交接包_20260804/地图模块接入与替换说明.md",
+  "verify_file": "_handoff/Cesium地图模块替换实施说明_V1.0_20260804.md",
+  "report_file": "_handoff/Cesium地图模块替换实施说明_V1.0_20260804.md",
+  "status": "IMPLEMENTED_cesium_phase1_pedestal_only_business_fusion_deferred",
+  "phase_b1": "IMPLEMENTED",
+  "phase_c_g": "IMPLEMENTED",
+  "phase_c_s": "NOT_STARTED",
+  "cesium_phase1": "IMPLEMENTED",
+  "cesium_phase2_business_gis": "NOT_STARTED",
+  "updated_at": "2026-08-04",
+  "claimed_files": [
+    "public/gis/s1-6/",
+    "src/modules/traffic-gis-overview/",
+    "src/views/GisPreviewPage.vue",
+    "_handoff/Cesium地图模块替换实施说明_V1.0_20260804.md",
+    "_handoff/NEXT_FOR_TRAE.md",
+    "_handoff/handoff_status.json"
+  ],
+  "notes": "Phase 1 map pedestal done: real KML+SPX Worker/Primitive. Kept GisOverviewCesiumPanel ESG hooks. No backend API changes. No commit. Business GIS fusion deferred."
+}

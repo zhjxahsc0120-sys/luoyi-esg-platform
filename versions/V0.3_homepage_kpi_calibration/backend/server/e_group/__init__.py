@@ -1,0 +1,145 @@
+"""
+E组公共闭环 & E01 V1.1 Python 包
+
+导出枚举、常量、校验函数和表描述元数据。
+"""
+
+from .enums import (
+    # 枚举类型
+    CaseStatus,
+    CaseDomain,
+    DataNature,
+    EffectiveStatus,
+    VerificationStatus,
+    ResultValidity,
+    Judgement,
+    JudgementSource,
+    TestStage,
+    EvidenceRole,
+    PartyRole,
+    CaseRelationType,
+    MonitorCategory,
+    TaskStatus,
+    RetestOutcome,
+    RetestReviewStatus,
+    TransitionResult,
+    BatchStatus,
+    SampleStatus,
+    EvidenceValidityStatus,
+    CoordinateSourceType,
+    CoordinateVerificationStatus,
+    ExecutionStatus,
+    PlanStatus,
+    ActiveStatus,
+    MappingStatus,
+    ReconciliationClass,
+    CaseRectLinkRole,
+    MigrationExecutionStatus,
+    EventLatestRetestOutcome,
+    # 动作码常量
+    ACTION_CREATE_CASE,
+    ACTION_ISSUE_RECTIFICATION,
+    ACTION_START_RECTIFICATION,
+    ACTION_SUBMIT_RECTIFICATION,
+    ACTION_REVIEW_REJECT,
+    ACTION_REVIEW_PASS,
+    ACTION_CLOSE_CASE,
+    ACTION_CLOSURE_REJECT,
+    ACTION_REOPEN_CASE,
+    ACTION_SUSPEND_CASE,
+    ACTION_RESUME_CASE,
+    ACTION_CANCEL_CASE,
+    ACTION_MERGE_CASE,
+    ACTION_CORRECT_HISTORY,
+    # 状态转换矩阵与状态集合
+    CASE_TRANSITION_MATRIX,
+    TERMINAL_STATUSES,
+    NON_TERMINAL_STATUSES,
+    SUSPENDABLE_STATUSES,
+    CANCELLABLE_STATUSES,
+    MERGEABLE_STATUSES,
+    REOPENABLE_STATUSES,
+    # source_table 白名单
+    E01_SOURCE_TABLE,
+    # 校验函数
+    validate_data_nature_consistency,
+    is_formal_kpi_eligible,
+)
+
+from .models import (
+    # 元数据数据类
+    ColumnDef,
+    IndexDef,
+    CheckDef,
+    TableDef,
+    # 全部表定义
+    ALL_TABLE_DEFS,
+    T_ESG_SCHEMA_MIGRATION_HISTORY,
+    T_E01_MONITOR_POINT,
+    T_E01_MONITOR_PLAN,
+    T_E01_MONITOR_PLAN_ITEM,
+    T_E01_MONITOR_BATCH,
+    T_E01_MONITOR_SAMPLE,
+    T_E01_FACTOR_DEFINITION,
+    T_E01_STANDARD_VERSION,
+    T_E01_STANDARD_LIMIT,
+    T_E_CLOSURE_CASE,
+    T_E_CASE_STATUS_HISTORY,
+    T_E_CASE_PARTY,
+    T_E_CASE_EVIDENCE,
+    T_E_CASE_RELATION,
+    T_E_RECTIFICATION_TASK,
+    T_E_CASE_RECTIFICATION_LINK,
+    T_E01_EXCEED_EVENT,
+    T_E01_RECTIFICATION_ROUND,
+    T_E01_RETEST_ROUND,
+    T_E01_RETEST_RESULT_LINK,
+    T_E01_LEGACY_RECORD_MAPPING,
+    T_E01_FACTOR_RESULT,
+)
+
+__all__ = [
+    # 枚举类型
+    "CaseStatus", "CaseDomain", "DataNature", "EffectiveStatus",
+    "VerificationStatus", "ResultValidity", "Judgement", "JudgementSource",
+    "TestStage", "EvidenceRole", "PartyRole", "CaseRelationType",
+    "MonitorCategory", "TaskStatus", "RetestOutcome", "RetestReviewStatus",
+    "TransitionResult", "BatchStatus", "SampleStatus",
+    "EvidenceValidityStatus", "CoordinateSourceType",
+    "CoordinateVerificationStatus", "ExecutionStatus", "PlanStatus",
+    "ActiveStatus", "MappingStatus", "ReconciliationClass",
+    "CaseRectLinkRole", "MigrationExecutionStatus", "EventLatestRetestOutcome",
+    # 动作码常量
+    "ACTION_CREATE_CASE", "ACTION_ISSUE_RECTIFICATION",
+    "ACTION_START_RECTIFICATION", "ACTION_SUBMIT_RECTIFICATION",
+    "ACTION_REVIEW_REJECT", "ACTION_REVIEW_PASS",
+    "ACTION_CLOSE_CASE", "ACTION_CLOSURE_REJECT",
+    "ACTION_REOPEN_CASE", "ACTION_SUSPEND_CASE",
+    "ACTION_RESUME_CASE", "ACTION_CANCEL_CASE",
+    "ACTION_MERGE_CASE", "ACTION_CORRECT_HISTORY",
+    # 状态转换矩阵与状态集合
+    "CASE_TRANSITION_MATRIX", "TERMINAL_STATUSES",
+    "NON_TERMINAL_STATUSES", "SUSPENDABLE_STATUSES",
+    "CANCELLABLE_STATUSES", "MERGEABLE_STATUSES",
+    "REOPENABLE_STATUSES",
+    # source_table 白名单
+    "E01_SOURCE_TABLE",
+    # 校验函数
+    "validate_data_nature_consistency", "is_formal_kpi_eligible",
+    # 元数据数据类
+    "ColumnDef", "IndexDef", "CheckDef", "TableDef",
+    # 全部表定义
+    "ALL_TABLE_DEFS",
+    "T_ESG_SCHEMA_MIGRATION_HISTORY",
+    "T_E01_MONITOR_POINT", "T_E01_MONITOR_PLAN",
+    "T_E01_MONITOR_PLAN_ITEM", "T_E01_MONITOR_BATCH",
+    "T_E01_MONITOR_SAMPLE", "T_E01_FACTOR_DEFINITION",
+    "T_E01_STANDARD_VERSION", "T_E01_STANDARD_LIMIT",
+    "T_E_CLOSURE_CASE", "T_E_CASE_STATUS_HISTORY",
+    "T_E_CASE_PARTY", "T_E_CASE_EVIDENCE",
+    "T_E_CASE_RELATION", "T_E_RECTIFICATION_TASK",
+    "T_E_CASE_RECTIFICATION_LINK", "T_E01_EXCEED_EVENT",
+    "T_E01_RECTIFICATION_ROUND", "T_E01_RETEST_ROUND",
+    "T_E01_RETEST_RESULT_LINK", "T_E01_LEGACY_RECORD_MAPPING",
+    "T_E01_FACTOR_RESULT",
+]

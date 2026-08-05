@@ -1,0 +1,144 @@
+// ── 标签/徽章基础样式 ──
+// 统一各组件中的状态标签、模块标签视觉，使用 tokens.scss 中的设计 token
+
+@use '../tokens.scss' as *;
+
+// ── 状态标签 ──
+// 通用状态标签底座
+@mixin status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+// ── 状态标签色系变体 ──
+@mixin tag-green {
+  color: var(--green);
+  background: rgba(105, 227, 111, 0.12);
+  border: 1px solid rgba(105, 227, 111, 0.3);
+}
+
+@mixin tag-blue {
+  color: var(--blue);
+  background: rgba(47, 156, 255, 0.12);
+  border: 1px solid rgba(47, 156, 255, 0.3);
+}
+
+@mixin tag-purple {
+  color: var(--purple);
+  background: rgba(166, 108, 255, 0.12);
+  border: 1px solid rgba(166, 108, 255, 0.3);
+}
+
+@mixin tag-red {
+  color: var(--danger);
+  background: rgba(255, 79, 94, 0.12);
+  border: 1px solid rgba(255, 79, 94, 0.3);
+}
+
+@mixin tag-orange {
+  color: var(--warning);
+  background: rgba(255, 179, 71, 0.12);
+  border: 1px solid rgba(255, 179, 71, 0.3);
+}
+
+@mixin tag-cyan {
+  color: var(--cyan);
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+// ── ESG 模块标签 ──
+// 传入模块色，生成模块标签
+@mixin module-tag($color) {
+  @include status-tag;
+  background: rgba($color, 0.12);
+  color: $color;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--fs-body);
+}
+
+// ── 主题色标签 ──
+// KPI 弹窗中按主题色区分的 status-tag
+@mixin tag-theme($theme) {
+  @include status-tag;
+
+  @if $theme == 'green' {
+    @include tag-green;
+  } @else if $theme == 'blue' {
+    @include tag-blue;
+  } @else if $theme == 'purple' {
+    @include tag-purple;
+  }
+}
+
+// ── 必填/选填标签 ──
+@mixin required-tag {
+  @include status-tag;
+  padding: 2px var(--space-2);
+
+  &.required {
+    background: rgba(255, 79, 94, 0.15);
+    color: var(--danger);
+  }
+
+  &.optional {
+    background: rgba(47, 156, 255, 0.15);
+    color: var(--blue);
+  }
+}
+
+// ── AI 标签（资料中心） ──
+@mixin ai-tag {
+  @include status-tag;
+  background: rgba(47, 156, 255, 0.15);
+  border: 1px solid rgba(47, 156, 255, 0.3);
+  color: var(--blue);
+  padding: var(--space-1) var(--space-2);
+}
+
+// ── 提示/消息标签 ──
+@mixin tip-badge {
+  @include status-tag;
+  padding: 2px var(--space-1);
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  color: #031020;
+  border: none;
+}
+
+// ── 内联消息条 ──
+// submit-message / page-message 通用
+@mixin inline-message {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  text-align: center;
+
+  &.success {
+    background: rgba(105, 227, 111, 0.1);
+    border: 1px solid rgba(105, 227, 111, 0.3);
+    color: var(--green);
+  }
+
+  &.error {
+    background: rgba(255, 79, 94, 0.1);
+    border: 1px solid rgba(255, 79, 94, 0.3);
+    color: var(--danger);
+  }
+
+  &.info {
+    background: rgba(47, 156, 255, 0.1);
+    border: 1px solid rgba(47, 156, 255, 0.3);
+    color: #9fc7ff;
+  }
+}

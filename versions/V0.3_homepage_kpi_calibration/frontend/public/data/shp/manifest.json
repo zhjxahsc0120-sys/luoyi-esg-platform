@@ -1,0 +1,247 @@
+{
+  "generatedAt": "2026-07-16T02:57:36.443Z",
+  "sourceDir": "data/source-shapefiles",
+  "crs": "EPSG:4326",
+  "layers": [
+    {
+      "id": "section-1",
+      "name": "1标段",
+      "geometryType": "line",
+      "enabled": true,
+      "objectType": "road-section",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/1标段.geojson"
+      },
+      "style": {
+        "color": "#4DA3FF",
+        "width": 3,
+        "opacity": 1,
+        "showLabel": true,
+        "labelSize": 15,
+        "labelField": "__layerName",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "section-2",
+      "name": "2标段",
+      "geometryType": "line",
+      "enabled": true,
+      "objectType": "road-section",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/2标段.geojson"
+      },
+      "style": {
+        "color": "#2EC8A6",
+        "width": 3,
+        "opacity": 1,
+        "showLabel": true,
+        "labelSize": 15,
+        "labelField": "__layerName",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "section-3",
+      "name": "3标段",
+      "geometryType": "line",
+      "enabled": true,
+      "objectType": "road-section",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/3标段.geojson"
+      },
+      "style": {
+        "color": "#F0B429",
+        "width": 3,
+        "opacity": 1,
+        "showLabel": true,
+        "labelSize": 15,
+        "labelField": "__layerName",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "waste-1",
+      "name": "弃渣点1",
+      "geometryType": "polygon",
+      "enabled": true,
+      "objectType": "spoil-site",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/弃渣点1.geojson"
+      },
+      "style": {
+        "color": "#c77d2d",
+        "width": 3,
+        "opacity": 0.26,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "waste-2",
+      "name": "弃渣点2",
+      "geometryType": "polygon",
+      "enabled": true,
+      "objectType": "spoil-site",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/弃渣点2.geojson"
+      },
+      "style": {
+        "color": "#c77d2d",
+        "width": 3,
+        "opacity": 0.26,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "water-1",
+      "name": "水源保护区1",
+      "geometryType": "polygon",
+      "enabled": true,
+      "objectType": "water-source",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/水源保护区1.geojson"
+      },
+      "style": {
+        "color": "#28a9e0",
+        "width": 2,
+        "opacity": 0.22,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "water-2",
+      "name": "水源保护区2",
+      "geometryType": "polygon",
+      "enabled": true,
+      "objectType": "water-source",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/水源保护区2.geojson"
+      },
+      "style": {
+        "color": "#28a9e0",
+        "width": 2,
+        "opacity": 0.22,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "eco-1",
+      "name": "生态保护区1",
+      "geometryType": "polygon",
+      "enabled": true,
+      "objectType": "ecological-zone",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/生态保护区1.geojson"
+      },
+      "style": {
+        "color": "#35a853",
+        "width": 2,
+        "opacity": 0.18,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "slope-1",
+      "name": "边坡监测点1",
+      "geometryType": "point",
+      "enabled": true,
+      "objectType": "slope-monitor",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/边坡监测点1.geojson"
+      },
+      "style": {
+        "color": "#f05a47",
+        "width": 12,
+        "opacity": 1,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    },
+    {
+      "id": "slope-2",
+      "name": "边坡监测点2",
+      "geometryType": "point",
+      "enabled": true,
+      "objectType": "slope-monitor",
+      "featureCount": 1,
+      "fields": [
+        "NAME"
+      ],
+      "source": {
+        "type": "geojson",
+        "url": "/data/shp/边坡监测点2.geojson"
+      },
+      "style": {
+        "color": "#f05a47",
+        "width": 12,
+        "opacity": 1,
+        "showLabel": true,
+        "labelSize": 14,
+        "labelField": "NAME",
+        "labelColor": "#ffffff"
+      }
+    }
+  ]
+}

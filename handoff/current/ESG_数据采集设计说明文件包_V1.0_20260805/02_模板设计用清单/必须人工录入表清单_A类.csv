@@ -1,0 +1,93 @@
+﻿表名,中文用途/注释,ESG分类,表类型,录入属性,当前行数
+appeal_record,群众诉求记录,S,业务事实表,必须人工录入,7
+biz_construction_slope,Demo E02 施工边坡对象,E,业务事实表,必须人工录入,2
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,业务事实表,必须人工录入,4
+biz_design_change,Demo G03 设计变更,G,业务事实表,必须人工录入,4
+biz_ecological_protection_object,Demo E03 生态保护对象,E,业务事实表,必须人工录入,2
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,业务事实表,必须人工录入,2
+biz_env_monitor_point,E,E,业务事实表,必须人工录入,3
+biz_env_monitor_result,E,E,业务事实表,必须人工录入,12
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,业务事实表,必须人工录入,2
+biz_night_construction_record,Demo G02 夜间施工记录,G,业务事实表,必须人工录入,2
+biz_risk_disposal,Demo ESG 风险处置,综合,业务事实表,必须人工录入,4
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,业务事实表,必须人工录入,2
+biz_temporary_land_use,Demo E02 临时用地对象,E,业务事实表,必须人工录入,2
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,业务事实表,必须人工录入,2
+carbon_accounting_batch,碳排放核算批次（§5.3）,E,业务事实表,必须人工录入,1
+carbon_accounting_boundary,碳排放核算边界配置（按来源维度，§5.2）,E,业务事实表,必须人工录入,4
+carbon_emission_activity,碳排放活动数据,E,业务事实表,必须人工录入,6
+carbon_emission_baseline,碳排放基准方案,E,业务事实表,必须人工录入,6
+carbon_emission_factor,碳排放因子元数据（含演示测试因子）,E,业务事实表,必须人工录入,6
+carbon_emission_segment_detail,碳排放月度-标段-来源-材料演示明细,E,业务事实表,必须人工录入,108
+carbon_material_usage,碳排放材料用量,E,业务事实表,必须人工录入,18
+carbon_measure_monthly_performance,低碳措施月度成效,E,业务事实表,必须人工录入,4
+carbon_reduction_accounting,月度低碳增益核算,E,业务事实表,必须人工录入,6
+carbon_reduction_measure,低碳措施及成本台账,E,业务事实表,必须人工录入,4
+compliance_material_gap,待补齐合规资料,G,业务事实表,必须人工录入,4
+compliance_procedure,合规手续,G,业务事实表,必须人工录入,7
+construction_stage_record,项目工期主阶段,综合,业务事实表,必须人工录入,5
+data_mapping_rule,多源字段映射规则表,综合,关联表,必须人工录入,14
+data_quality_check_result,数据质量校验结果表,综合,业务事实表,必须人工录入,92
+data_source_registry,数据来源登记表,综合,业务事实表,必须人工录入,11
+deduplication_record,文件去重记录,综合,业务事实表,必须人工录入,39
+dict_esg_module,ESG模块字典,综合,配置表,必须人工录入,3
+e01_factor_definition,E,E,配置表,必须人工录入,6
+e01_factor_result,E,E,业务事实表,必须人工录入,37
+e01_legacy_record_mapping,E,E,关联表,必须人工录入,0
+e01_monitor_batch,E,E,业务事实表,必须人工录入,19
+e01_monitor_plan,E,E,业务事实表,必须人工录入,3
+e01_monitor_plan_item,E,E,业务事实表,必须人工录入,4
+e01_monitor_point,E,E,业务事实表,必须人工录入,4
+e01_monitor_sample,E,E,业务事实表,必须人工录入,19
+e01_rectification_round,E,E,业务事实表,必须人工录入,3
+e01_retest_result_link,E,E,关联表,必须人工录入,1
+e01_retest_round,E,E,业务事实表,必须人工录入,1
+e01_standard_limit,E,E,业务事实表,必须人工录入,6
+e01_standard_version,E,E,业务事实表,必须人工录入,3
+e_case_party,综合,综合,业务事实表,必须人工录入,41
+e_case_rectification_link,综合,综合,关联表,必须人工录入,3
+e_case_relation,综合,综合,关联表,必须人工录入,0
+e_closure_case,综合,综合,业务事实表,必须人工录入,17
+e_rectification_task,综合,综合,业务事实表,必须人工录入,3
+engineering_object_phase,综合,综合,业务事实表,必须人工录入,4
+env_issue_record,环保问题记录,E,业务事实表,必须人工录入,10
+env_monitoring_record,环境监测记录,E,业务事实表,必须人工录入,3
+esg_demo_indicator_detail,Demo 指标对象明细,综合,业务事实表,必须人工录入,12
+gis_feature,综合,综合,业务事实表,必须人工录入,10
+gis_feature_business_relation,综合,综合,关联表,必须人工录入,29
+gis_layer,综合,综合,业务事实表,必须人工录入,10
+indicator_definition,指标定义,综合,配置表,必须人工录入,12
+indicator_source_dependency,指标数据源依赖表,综合,业务事实表,必须人工录入,15
+labor_dispute_record,劳务纠纷记录,S,业务事实表,必须人工录入,3
+manual_confirmation_log,人工确认记录,综合,业务事实表,必须人工录入,181
+monitor_frequency_rule,E,E,配置表,必须人工录入,5
+monitor_point_object_relation,E,E,关联表,必须人工录入,4
+monthly_report_chapter,月报章节清单,综合,业务事实表,必须人工录入,6
+monthly_report_cycle,月报周期主表,综合,业务事实表,必须人工录入,1
+monthly_report_gap,月报缺项清单,综合,业务事实表,必须人工录入,6
+monthly_report_group_progress,月报分组完成进度,综合,业务事实表,必须人工录入,3
+monthly_report_status_chain,月报状态链,综合,业务事实表,必须人工录入,5
+monthly_report_task_instance,月报资料任务实例统计扩展表,综合,业务事实表,必须人工录入,22
+monthly_report_task_material_link,月报任务所需资料及资料关联,综合,关联表,必须人工录入,22
+monthly_report_task_validation,月报任务完整性校验与补正记录,综合,业务事实表,必须人工录入,22
+org_unit,组织机构,综合,业务事实表,必须人工录入,5
+permit_record,许可事项,G,业务事实表,必须人工录入,5
+project_engineering_object,综合,综合,业务事实表,必须人工录入,4
+project_phase_period,综合,综合,业务事实表,必须人工录入,3
+project_section,综合,综合,业务事实表,必须人工录入,3
+rectification_record,整改事项,G,业务事实表,必须人工录入,9
+review_record,审核记录,综合,业务事实表,必须人工录入,61
+review_requirement,审核补正要求,综合,业务事实表,必须人工录入,39
+review_timeline,审核轨迹,综合,业务事实表,必须人工录入,174
+s01_confirmation_batch,S01 建设单位确认批次,S,业务事实表,必须人工录入,1
+safety_incident_record,安全生产事故台账,S,业务事实表,必须人工录入,0
+safety_production_record,连续安全生产记录,S,业务事实表,必须人工录入,2
+safety_risk_point,安全风险点,S,业务事实表,必须人工录入,10
+salary_payment_record,工资支付记录,S,业务事实表,必须人工录入,0
+source_record_trace,业务记录来源追溯表,综合,业务事实表,必须人工录入,92
+special_plan_approval,ESG risk special-plan approval facts,G,业务事实表,必须人工录入,0
+task_candidate_document,任务办理候选关联资料,综合,业务事实表,必须人工录入,5
+task_match_candidate,AI候选任务匹配,综合,业务事实表,必须人工录入,205
+task_review_timeline,任务办理审核时间线,综合,业务事实表,必须人工录入,201
+user_account,用户账号,综合,业务事实表,必须人工录入,5
+water_protection_issue,水保问题记录,E,业务事实表,必须人工录入,16

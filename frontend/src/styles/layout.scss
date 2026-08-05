@@ -1,0 +1,139 @@
+@use './tokens.scss' as *;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-main);
+  font-size: var(--fs-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.dashboard-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--main-gap);
+  gap: var(--main-gap);
+  // 多层背景：顶部横向光带 + 轻微径向光 + 暗纹理底
+  background:
+    // 顶部横向光带
+    linear-gradient(180deg, rgba(0, 174, 255, 0.06) 0%, transparent 8%),
+    // 左上径向光
+    radial-gradient(circle at 18% 12%, rgba(0, 174, 255, 0.05) 0%, transparent 30%),
+    // 右下径向光
+    radial-gradient(circle at 85% 88%, rgba(166, 108, 255, 0.04) 0%, transparent 30%),
+    // 暗纹理底
+    var(--bg-page);
+}
+
+.dashboard-header {
+  height: var(--dashboard-header-h);
+  flex-shrink: 0;
+}
+
+.dashboard-body {
+  flex: 1;
+  display: flex;
+  gap: var(--main-gap);
+  min-height: 0;
+}
+
+.dashboard-left {
+  width: 66%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--main-gap);
+  min-width: 0;
+}
+
+.dashboard-right {
+  width: 34%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--main-gap);
+  min-width: 0;
+}
+
+/* E01/E02/E03/S02 激活时仍占用与 G 组同列的 34% 栅格，仅收紧面板区间距 */
+.dashboard-right.is-e01-workspace,
+.dashboard-right.is-e02-workspace,
+.dashboard-right.is-e03-workspace,
+.dashboard-right.is-e04-workspace,
+.dashboard-right.is-s02-workspace {
+  .dashboard-e01-slot {
+    gap: 0;
+  }
+}
+
+.dashboard-kpi {
+  height: var(--kpi-h);
+  flex-shrink: 0;
+}
+
+.dashboard-e01-slot {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--main-gap);
+}
+
+.dashboard-e01-slot > .e01-panel,
+.dashboard-e01-slot > .e02-panel,
+.dashboard-e01-slot > .e03-panel,
+.dashboard-e01-slot > .e04-panel,
+.dashboard-e01-slot > .s02-panel {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
+.dashboard-gis {
+  flex: 1;
+  min-height: 0;
+}
+
+.dashboard-timeline {
+  height: var(--timeline-h);
+  flex-shrink: 0;
+}
+
+.dashboard-compliance,
+.dashboard-carbon,
+.dashboard-monthly {
+  flex: 1;
+  min-height: 0;
+}
+
+// ── 一级模块标题 ──
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-module-title);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+  flex-shrink: 0;
+
+  .panel-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--cyan);
+  }
+}

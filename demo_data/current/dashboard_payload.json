@@ -1,0 +1,2525 @@
+{
+  "kpiDetails": {
+    "E01": {
+      "key": "E01",
+      "fullName": "环境监测超标项次",
+      "theme": "green",
+      "summary": [
+        {
+          "label": "本月超标项次",
+          "value": 2,
+          "unit": "项次"
+        },
+        {
+          "label": "已完成复测",
+          "value": 1,
+          "unit": "项次"
+        },
+        {
+          "label": "待复测",
+          "value": 1,
+          "unit": "项次"
+        },
+        {
+          "label": "复测仍超标",
+          "value": 0,
+          "unit": "项次"
+        },
+        {
+          "label": "涉及监测点",
+          "value": 2,
+          "unit": "个"
+        }
+      ],
+      "chartTitle": "近6个月超标项趋势",
+      "detailTitle": "超标明细",
+      "detailColumns": [
+        {
+          "key": "point",
+          "label": "监测点",
+          "width": "21%"
+        },
+        {
+          "key": "time",
+          "label": "监测时间",
+          "width": "11%"
+        },
+        {
+          "key": "factor",
+          "label": "类别/因子",
+          "width": "16%"
+        },
+        {
+          "key": "initialValue",
+          "label": "初检值",
+          "width": "11%"
+        },
+        {
+          "key": "recheckValue",
+          "label": "复测值",
+          "width": "13%"
+        },
+        {
+          "key": "limit",
+          "label": "标准限值",
+          "width": "12%"
+        },
+        {
+          "key": "multiple",
+          "label": "超标倍数",
+          "width": "8%"
+        },
+        {
+          "key": "status",
+          "label": "复测状态",
+          "width": "8%"
+        }
+      ],
+      "detailData": [
+        {
+          "id": 410001,
+          "category": "噪声",
+          "point": "K12+000 路基监测点",
+          "time": "2026-07-05",
+          "factor": "噪声/昼间等效声级",
+          "initialValue": "—",
+          "recheckValue": "68.2 dB(A)",
+          "limit": "70 dB(A)",
+          "multiple": "—",
+          "status": "复测达标"
+        },
+        {
+          "id": 410002,
+          "category": "扬尘",
+          "point": "K18+500 弃渣场监测点",
+          "time": "2026-07-08",
+          "factor": "扬尘/PM10",
+          "initialValue": "185 μg/m³",
+          "recheckValue": "—",
+          "limit": "150 μg/m³",
+          "multiple": "1.23",
+          "status": "待复测"
+        }
+      ],
+      "dataSource": "第三方监测机构",
+      "updateTime": "2026-07-13 10:30",
+      "updateFrequency": "每周更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "E02": {
+      "key": "E02",
+      "fullName": "当前未闭环环保问题事项数",
+      "theme": "green",
+      "summary": [
+        {
+          "label": "当前未闭环",
+          "value": 5,
+          "unit": "项"
+        },
+        {
+          "label": "整改中",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "待复查",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "待销项",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "已逾期",
+          "value": 1,
+          "unit": "项"
+        }
+      ],
+      "statusData": [
+        { "name": "整改中", "value": 2 },
+        { "name": "待复查", "value": 2 },
+        { "name": "待销项", "value": 1 }
+      ],
+      "chartTitle": "当前未闭环事项办理状态",
+      "detailTitle": "未闭环问题明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "问题名称",
+          "width": "22%"
+        },
+        {
+          "key": "category",
+          "label": "问题类型",
+          "width": "11%"
+        },
+        {
+          "key": "time",
+          "label": "发现时间",
+          "width": "11%"
+        },
+        {
+          "key": "level",
+          "label": "等级",
+          "width": "8%"
+        },
+        {
+          "key": "department",
+          "label": "责任部门",
+          "width": "14%"
+        },
+        {
+          "key": "deadline",
+          "label": "整改截止",
+          "width": "11%"
+        },
+        {
+          "key": "mainStatus",
+          "label": "办理状态",
+          "width": "11%"
+        },
+        {
+          "key": "deadlineStatus",
+          "label": "时限状态",
+          "width": "12%"
+        }
+      ],
+      "detailData": [
+        {
+          "id": "E02-001", "rawId": 420002, "category": "废水处理",
+          "name": "施工废水处理设施故障", "time": "2026-07-05", "level": "较大",
+          "department": "安全环保部", "deadline": "2026-07-10", "status": "整改中",
+          "mainStatus": "整改中", "overdue": true, "deadlineStatus": "已逾期"
+        },
+        {
+          "id": "E02-003", "rawId": 420001, "category": "扬尘管控",
+          "name": "弃渣场扬尘控制不到位", "time": "2026-07-02", "level": "一般",
+          "department": "工程管理部", "deadline": "2026-07-15", "status": "整改中",
+          "mainStatus": "整改中", "overdue": false, "deadlineStatus": "正常"
+        },
+        {
+          "id": "E02-004", "rawId": 420004, "category": "噪声扰民",
+          "name": "噪声超标投诉处理", "time": "2026-06-26", "level": "一般",
+          "department": "安全环保部", "deadline": "2026-07-18", "status": "待复查",
+          "mainStatus": "待复查", "overdue": false, "deadlineStatus": "正常"
+        },
+        {
+          "id": "E02-002", "rawId": 420003, "category": "水土保持",
+          "name": "临时堆土场防护不足", "time": "2026-06-28", "level": "一般",
+          "department": "工程管理部", "deadline": "2026-07-20", "status": "待复查",
+          "mainStatus": "待复查", "overdue": false, "deadlineStatus": "正常"
+        },
+        {
+          "id": "E02-005", "rawId": 420005, "category": "生态保护",
+          "name": "生态敏感区施工管控", "time": "2026-06-25", "level": "重大",
+          "department": "总工办", "deadline": "2026-07-25", "status": "待销项",
+          "mainStatus": "待销项", "overdue": false, "deadlineStatus": "正常"
+        }
+      ],
+      "dataSource": "环保问题明细表 env_issue_record",
+      "statisticsAsOf": "2026-07-13",
+      "updateTime": "2026-07-13 09:00",
+      "updateFrequency": "实时更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "E03": {
+      "key": "E03",
+      "fullName": "当前未闭环水保问题事项数",
+      "theme": "green",
+      "summary": [
+        {
+          "label": "当前未闭环",
+          "value": 7,
+          "unit": "项"
+        },
+        {
+          "label": "本月新增未闭环",
+          "value": 3,
+          "unit": "项"
+        },
+        {
+          "label": "本月闭环",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "逾期未闭环",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "涉及标段",
+          "value": 3,
+          "unit": "个"
+        }
+      ],
+      "chartTitle": "各标段未闭环水保问题分布",
+      "detailTitle": "未闭环水保问题明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "问题名称",
+          "width": "20%"
+        },
+        {
+          "key": "segment",
+          "label": "所属标段",
+          "width": "10%"
+        },
+        {
+          "key": "category",
+          "label": "问题类型",
+          "width": "10%"
+        },
+        {
+          "key": "time",
+          "label": "发现时间",
+          "width": "11%"
+        },
+        {
+          "key": "department",
+          "label": "责任部门",
+          "width": "14%"
+        },
+        {
+          "key": "deadline",
+          "label": "整改截止",
+          "width": "11%"
+        },
+        {
+          "key": "mainStatus",
+          "label": "办理状态",
+          "width": "12%"
+        },
+        {
+          "key": "deadlineStatus",
+          "label": "时限状态",
+          "width": "12%"
+        }
+      ],
+      "detailData": [
+        {
+          "id": 710001,
+          "name": "弃渣场挡墙未按设计施工",
+          "segment": "标段一",
+          "category": "弃渣场",
+          "time": "2026-06-28",
+          "department": "工程管理部",
+          "deadline": "2026-07-10",
+          "mainStatus": "未闭环",
+          "overdue": true,
+          "deadlineStatus": "已逾期",
+          "statusStageKnown": false
+        },
+        {
+          "id": 710002,
+          "name": "临时排水系统不完善",
+          "segment": "标段二",
+          "category": "排水",
+          "time": "2026-07-01",
+          "department": "安全环保部",
+          "deadline": "2026-07-15",
+          "mainStatus": "整改中",
+          "overdue": false,
+          "deadlineStatus": "正常",
+          "statusStageKnown": true
+        },
+        {
+          "id": 710003,
+          "name": "边坡防护措施不到位",
+          "segment": "标段一",
+          "category": "边坡",
+          "time": "2026-07-03",
+          "department": "工程管理部",
+          "deadline": "2026-07-18",
+          "mainStatus": "待整改",
+          "overdue": false,
+          "deadlineStatus": "正常",
+          "statusStageKnown": true
+        },
+        {
+          "id": 710004,
+          "name": "复绿面积不足",
+          "segment": "标段三",
+          "category": "复绿",
+          "time": "2026-06-30",
+          "department": "工程管理部",
+          "deadline": "2026-07-22",
+          "mainStatus": "待整改",
+          "overdue": false,
+          "deadlineStatus": "正常",
+          "statusStageKnown": true
+        },
+        {
+          "id": 710005,
+          "name": "水土保持监测频次不足",
+          "segment": "标段二",
+          "category": "监测",
+          "time": "2026-06-26",
+          "department": "安全环保部",
+          "deadline": "2026-07-20",
+          "mainStatus": "整改中",
+          "overdue": false,
+          "deadlineStatus": "正常",
+          "statusStageKnown": true
+        },
+        {
+          "id": 710006,
+          "name": "取土场恢复滞后",
+          "segment": "标段三",
+          "category": "取土场",
+          "time": "2026-07-10",
+          "department": "工程管理部",
+          "deadline": "2026-07-25",
+          "mainStatus": "待整改",
+          "overdue": false,
+          "deadlineStatus": "正常",
+          "statusStageKnown": true
+        },
+        {
+          "id": 710007,
+          "name": "施工便道水土流失",
+          "segment": "标段一",
+          "category": "便道",
+          "time": "2026-06-25",
+          "department": "安全环保部",
+          "deadline": "2026-07-05",
+          "mainStatus": "未闭环",
+          "overdue": true,
+          "deadlineStatus": "已逾期",
+          "statusStageKnown": false
+        }
+      ],
+      "dataSource": "水保问题明细表 water_protection_issue",
+      "updateTime": "2026-07-13 08:30",
+      "updateFrequency": "每周更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "E04": {
+      "key": "E04",
+      "fullName": "项目累计碳排放",
+      "theme": "green",
+      "summary": [
+        {
+          "label": "累计碳排放",
+          "value": 12856,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "本期排放",
+          "value": 1256,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "核算期间",
+          "value": "2026年2月—7月"
+        },
+        {
+          "label": "排放来源",
+          "value": 4,
+          "unit": "类"
+        },
+        {
+          "label": "数据性质",
+          "value": "演示数据"
+        }
+      ],
+      "chartTitle": "月度排放与累计碳排放",
+      "detailTitle": "排放来源核算汇总",
+      "detailColumns": [
+        {
+          "key": "source",
+          "label": "排放来源",
+          "width": "14%"
+        },
+        {
+          "key": "activityValue",
+          "label": "活动数据",
+          "width": "21%"
+        },
+        {
+          "key": "emissionFactor",
+          "label": "排放因子",
+          "width": "25%"
+        },
+        {
+          "key": "emission",
+          "label": "排放量",
+          "width": "14%"
+        },
+        {
+          "key": "share",
+          "label": "占比",
+          "width": "10%"
+        },
+        {
+          "key": "verificationStatus",
+          "label": "核验状态",
+          "width": "16%"
+        }
+      ],
+      "detailData": [
+        {
+          "sourceCode": "diesel",
+          "source": "施工用油",
+          "activityValue": 2100000,
+          "activityUnit": "L",
+          "emissionFactor": 2.68,
+          "factorUnit": "kgCO₂e/L",
+          "factorName": "施工用油演示排放因子",
+          "emission": 5628,
+          "share": 43.8,
+          "factorVersion": "DEMO-EF-2026-v0.1",
+          "factorSource": "系统演示测试数据，非正式核算依据",
+          "dataNature": "demo",
+          "verificationStatus": "待业务核验",
+          "evidenceStatus": "未关联"
+        },
+        {
+          "sourceCode": "electricity",
+          "source": "施工用电",
+          "activityValue": 6766666.67,
+          "activityUnit": "kWh",
+          "emissionFactor": 0.57,
+          "factorUnit": "kgCO₂e/kWh",
+          "factorName": "施工用电演示排放因子",
+          "emission": 3857,
+          "share": 30.0,
+          "factorVersion": "DEMO-EF-2026-v0.1",
+          "factorSource": "系统演示测试数据，非正式核算依据",
+          "dataNature": "demo",
+          "verificationStatus": "待业务核验",
+          "evidenceStatus": "未关联"
+        },
+        {
+          "sourceCode": "material",
+          "source": "主要材料",
+          "activityValue": 3200,
+          "activityUnit": "t",
+          "emissionFactor": null,
+          "factorUnit": "分项核算",
+          "factorName": "主要材料分项演示排放因子",
+          "emission": 2486,
+          "share": 19.3,
+          "factorVersion": "DEMO-EF-2026-v0.1",
+          "factorSource": "系统演示测试数据，非正式核算依据",
+          "dataNature": "demo",
+          "verificationStatus": "待业务核验",
+          "evidenceStatus": "未关联",
+          "materialDetails": [
+            { "material": "水泥", "activityValue": 2000, "activityUnit": "t", "emissionFactor": 0.8, "factorUnit": "tCO₂e/t", "emission": 1600, "factorName": "水泥演示排放因子", "factorVersion": "DEMO-EF-2026-v0.1", "factorSource": "系统演示测试数据，非正式核算依据", "dataNature": "demo", "verificationStatus": "待业务核验", "evidenceStatus": "未关联" },
+            { "material": "钢材", "activityValue": 1000, "activityUnit": "t", "emissionFactor": 0.75, "factorUnit": "tCO₂e/t", "emission": 750, "factorName": "钢材演示排放因子", "factorVersion": "DEMO-EF-2026-v0.1", "factorSource": "系统演示测试数据，非正式核算依据", "dataNature": "demo", "verificationStatus": "待业务核验", "evidenceStatus": "未关联" },
+            { "material": "沥青", "activityValue": 200, "activityUnit": "t", "emissionFactor": 0.68, "factorUnit": "tCO₂e/t", "emission": 136, "factorName": "沥青演示排放因子", "factorVersion": "DEMO-EF-2026-v0.1", "factorSource": "系统演示测试数据，非正式核算依据", "dataNature": "demo", "verificationStatus": "待业务核验", "evidenceStatus": "未关联" }
+          ]
+        },
+        {
+          "sourceCode": "transport",
+          "source": "施工运输",
+          "activityValue": 1000000,
+          "activityUnit": "t·km",
+          "emissionFactor": 0.000885,
+          "factorUnit": "tCO₂e/(t·km)",
+          "factorName": "施工运输演示排放因子",
+          "emission": 885,
+          "share": 6.9,
+          "factorVersion": "DEMO-EF-2026-v0.1",
+          "factorSource": "系统演示测试数据，非正式核算依据",
+          "dataNature": "demo",
+          "verificationStatus": "待业务核验",
+          "evidenceStatus": "未关联"
+        }
+      ],
+      "monthlyData": [
+        { "period": "2026-02", "monthlyEmission": 1860, "cumulativeEmission": 1860 },
+        { "period": "2026-03", "monthlyEmission": 2240, "cumulativeEmission": 4100 },
+        { "period": "2026-04", "monthlyEmission": 2140, "cumulativeEmission": 6240 },
+        { "period": "2026-05", "monthlyEmission": 2680, "cumulativeEmission": 8920 },
+        { "period": "2026-06", "monthlyEmission": 2680, "cumulativeEmission": 11600 },
+        { "period": "2026-07", "monthlyEmission": 1256, "cumulativeEmission": 12856 }
+      ],
+      "accountingBoundary": ["施工用油", "施工用电", "主要材料", "施工运输（演示）"],
+      "demoNotice": "当前活动数据及排放因子为系统演示测试数据，尚未作为正式核算依据。",
+      "statisticsAsOf": "2026-07",
+      "dataNature": "demo",
+      "dataSource": "碳排放活动明细表 carbon_emission_activity；材料用量表 carbon_material_usage；排放因子表 carbon_emission_factor",
+      "updateTime": "2026-07-18 00:00",
+      "updateFrequency": "每日更新",
+      "completeness": "待业务核验",
+      "completenessStatus": "pending",
+      "isMock": true
+    },
+    "S01": {
+      "key": "S01",
+      "fullName": "连续安全生产天数",
+      "theme": "blue",
+      "summary": [
+        {
+          "label": "连续天数",
+          "value": 368,
+          "unit": "天"
+        },
+        {
+          "label": "起始日期",
+          "value": "2025-07-10",
+          "unit": ""
+        },
+        {
+          "label": "本月安全检查",
+          "value": 8,
+          "unit": "次"
+        },
+        {
+          "label": "发现隐患",
+          "value": 12,
+          "unit": "项"
+        },
+        {
+          "label": "隐患闭环率",
+          "value": 91.7,
+          "unit": "%"
+        }
+      ],
+      "chartTitle": "近12个月安全生产天数统计",
+      "detailTitle": "近期安全检查记录",
+      "detailColumns": [
+        {
+          "key": "time",
+          "label": "检查时间",
+          "width": "18%"
+        },
+        {
+          "key": "type",
+          "label": "检查类型",
+          "width": "15%"
+        },
+        {
+          "key": "department",
+          "label": "检查部门",
+          "width": "18%"
+        },
+        {
+          "key": "findings",
+          "label": "发现隐患",
+          "width": "12%"
+        },
+        {
+          "key": "closed",
+          "label": "已闭环",
+          "width": "12%"
+        },
+        {
+          "key": "status",
+          "label": "整体状态",
+          "width": "25%"
+        }
+      ],
+      "detailData": [
+        {
+          "time": "2026-07-12",
+          "type": "专项检查",
+          "department": "安全环保部",
+          "findings": "3",
+          "closed": "3",
+          "status": "已闭环"
+        },
+        {
+          "time": "2026-07-10",
+          "type": "日常巡查",
+          "department": "监理单位",
+          "findings": "2",
+          "closed": "2",
+          "status": "已闭环"
+        },
+        {
+          "time": "2026-07-08",
+          "type": "联合检查",
+          "department": "项目管理部",
+          "findings": "4",
+          "closed": "3",
+          "status": "1项待闭环"
+        },
+        {
+          "time": "2026-07-05",
+          "type": "专项检查",
+          "department": "安全环保部",
+          "findings": "2",
+          "closed": "2",
+          "status": "已闭环"
+        },
+        {
+          "time": "2026-07-03",
+          "type": "日常巡查",
+          "department": "监理单位",
+          "findings": "1",
+          "closed": "0",
+          "status": "待闭环"
+        }
+      ],
+      "dataSource": "安全管理系统",
+      "updateTime": "2026-07-13 00:00",
+      "updateFrequency": "实时更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "S02": {
+      "key": "S02",
+      "fullName": "当前在管较大及以上安全风险点",
+      "theme": "blue",
+      "summary": [
+        {
+          "label": "较大风险点",
+          "value": 4,
+          "unit": "项"
+        },
+        {
+          "label": "重大风险点",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "本月新增",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "本月销号",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "涉及工点",
+          "value": 4,
+          "unit": "个"
+        }
+      ],
+      "chartTitle": "近6个月安全风险点变化趋势",
+      "detailTitle": "安全风险点明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "风险点名称",
+          "width": "25%"
+        },
+        {
+          "key": "level",
+          "label": "风险等级",
+          "width": "12%"
+        },
+        {
+          "key": "location",
+          "label": "所在工点",
+          "width": "18%"
+        },
+        {
+          "key": "type",
+          "label": "风险类型",
+          "width": "15%"
+        },
+        {
+          "key": "time",
+          "label": "管控起始",
+          "width": "15%"
+        },
+        {
+          "key": "status",
+          "label": "管控状态",
+          "width": "15%"
+        }
+      ],
+      "detailData": [
+        {
+          "name": "隧道施工塌方风险",
+          "level": "重大",
+          "location": "K25+300 隧道出口",
+          "type": "隧道施工",
+          "time": "2026-06-01",
+          "status": "持续管控"
+        },
+        {
+          "name": "高边坡坍塌风险",
+          "level": "重大",
+          "location": "K18+200 路基边坡",
+          "type": "路基施工",
+          "time": "2026-05-15",
+          "status": "持续管控"
+        },
+        {
+          "name": "桥梁吊装作业风险",
+          "level": "较大",
+          "location": "K32+500 大桥",
+          "type": "桥梁施工",
+          "time": "2026-07-01",
+          "status": "持续管控"
+        },
+        {
+          "name": "深基坑坍塌风险",
+          "level": "较大",
+          "location": "K12+800 涵洞基坑",
+          "type": "基坑施工",
+          "time": "2026-07-05",
+          "status": "持续管控"
+        },
+        {
+          "name": "爆破作业风险",
+          "level": "较大",
+          "location": "K28+000 石方段",
+          "type": "爆破作业",
+          "time": "2026-06-10",
+          "status": "持续管控"
+        },
+        {
+          "name": "起重机械倾覆风险",
+          "level": "较大",
+          "location": "K35+000 预制梁场",
+          "type": "起重作业",
+          "time": "2026-07-08",
+          "status": "持续管控"
+        }
+      ],
+      "dataSource": "安全风险分级管控系统",
+      "updateTime": "2026-07-13 11:00",
+      "updateFrequency": "实时更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "S03": {
+      "key": "S03",
+      "fullName": "当前未办结劳务纠纷",
+      "theme": "blue",
+      "summary": [
+        {
+          "label": "未办结纠纷",
+          "value": 4,
+          "unit": "项"
+        },
+        {
+          "label": "本月新增",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "本月办结",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "涉及人数",
+          "value": 18,
+          "unit": "人"
+        },
+        {
+          "label": "涉及金额",
+          "value": 68,
+          "unit": "万元"
+        }
+      ],
+      "chartTitle": "近6个月劳务纠纷办理趋势",
+      "detailTitle": "未办结劳务纠纷明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "纠纷事项",
+          "width": "30%"
+        },
+        {
+          "key": "time",
+          "label": "发生时间",
+          "width": "15%"
+        },
+        {
+          "key": "people",
+          "label": "涉及人数",
+          "width": "10%"
+        },
+        {
+          "key": "amount",
+          "label": "涉及金额",
+          "width": "15%"
+        },
+        {
+          "key": "department",
+          "label": "责任部门",
+          "width": "15%"
+        },
+        {
+          "key": "status",
+          "label": "办理状态",
+          "width": "15%"
+        }
+      ],
+      "detailData": [
+        {
+          "name": "班组工资拖欠",
+          "time": "2026-07-05",
+          "people": "8",
+          "amount": "32万元",
+          "department": "财务管理部",
+          "status": "协调中"
+        },
+        {
+          "name": "工伤赔偿争议",
+          "time": "2026-07-08",
+          "people": "1",
+          "amount": "15万元",
+          "department": "安全环保部",
+          "status": "待鉴定"
+        },
+        {
+          "name": "退场结算纠纷",
+          "time": "2026-07-10",
+          "people": "6",
+          "amount": "18万元",
+          "department": "工程管理部",
+          "status": "结算中"
+        },
+        {
+          "name": "加班工资争议",
+          "time": "2026-07-12",
+          "people": "3",
+          "amount": "3万元",
+          "department": "人力资源部",
+          "status": "调查中"
+        }
+      ],
+      "dataSource": "劳务管理系统",
+      "updateTime": "2026-07-13 10:00",
+      "updateFrequency": "实时更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "S04": {
+      "key": "S04",
+      "fullName": "当前未办结群众诉求",
+      "theme": "blue",
+      "summary": [
+        {
+          "label": "未办结诉求",
+          "value": 3,
+          "unit": "项"
+        },
+        {
+          "label": "本月新增",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "本月办结",
+          "value": 4,
+          "unit": "项"
+        },
+        {
+          "label": "逾期未办",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "平均办理时长",
+          "value": 7,
+          "unit": "天"
+        }
+      ],
+      "chartTitle": "近6个月群众诉求办理趋势",
+      "detailTitle": "未办结群众诉求明细",
+      "detailColumns": [
+        {
+          "key": "content",
+          "label": "诉求内容",
+          "width": "35%"
+        },
+        {
+          "key": "time",
+          "label": "受理时间",
+          "width": "15%"
+        },
+        {
+          "key": "source",
+          "label": "诉求来源",
+          "width": "12%"
+        },
+        {
+          "key": "location",
+          "label": "涉及地点",
+          "width": "15%"
+        },
+        {
+          "key": "deadline",
+          "label": "办结期限",
+          "width": "13%"
+        },
+        {
+          "key": "status",
+          "label": "办理状态",
+          "width": "10%"
+        }
+      ],
+      "detailData": [
+        {
+          "content": "夜间施工噪声扰民投诉",
+          "time": "2026-07-08",
+          "source": "12345热线",
+          "location": "K15+000 附近村庄",
+          "deadline": "2026-07-13",
+          "status": "办理中"
+        },
+        {
+          "content": "施工扬尘影响周边居民",
+          "time": "2026-07-10",
+          "source": "信访",
+          "location": "K18+500 弃渣场",
+          "deadline": "2026-07-15",
+          "status": "办理中"
+        },
+        {
+          "content": "临时用地占用农田补偿",
+          "time": "2026-06-28",
+          "source": "现场来访",
+          "location": "K22+000 临时用地",
+          "deadline": "2026-07-08",
+          "status": "逾期"
+        }
+      ],
+      "dataSource": "信访投诉系统",
+      "updateTime": "2026-07-13 09:30",
+      "updateFrequency": "实时更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "G01": {
+      "key": "G01",
+      "fullName": "当前未完成法定报批报建",
+      "theme": "purple",
+      "summary": [
+        {
+          "label": "未完成事项",
+          "value": 5,
+          "unit": "项"
+        },
+        {
+          "label": "本月新增",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "本月完成",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "逾期未办",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "预计本月完成",
+          "value": 2,
+          "unit": "项"
+        }
+      ],
+      "chartTitle": "近6个月报批报建完成趋势",
+      "detailTitle": "未完成报批报建明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "事项名称",
+          "width": "30%"
+        },
+        {
+          "key": "type",
+          "label": "审批类型",
+          "width": "15%"
+        },
+        {
+          "key": "status",
+          "label": "当前状态",
+          "width": "15%"
+        },
+        {
+          "key": "deadline",
+          "label": "完成时限",
+          "width": "15%"
+        },
+        {
+          "key": "department",
+          "label": "责任部门",
+          "width": "15%"
+        },
+        {
+          "key": "progress",
+          "label": "办理进度",
+          "width": "10%"
+        }
+      ],
+      "detailData": [
+        {
+          "name": "水土保持设施验收",
+          "type": "行政许可",
+          "status": "待评审",
+          "deadline": "2026-07-20",
+          "department": "安全环保部",
+          "progress": "70%"
+        },
+        {
+          "name": "环评变更审批",
+          "type": "行政许可",
+          "status": "待批复",
+          "deadline": "2026-07-25",
+          "department": "安全环保部",
+          "progress": "85%"
+        },
+        {
+          "name": "林地占用审批",
+          "type": "行政许可",
+          "status": "资料补正",
+          "deadline": "2026-07-18",
+          "department": "工程管理部",
+          "progress": "40%"
+        },
+        {
+          "name": "规划许可变更",
+          "type": "行政许可",
+          "status": "逾期未办",
+          "deadline": "2026-07-05",
+          "department": "总工办",
+          "progress": "30%"
+        },
+        {
+          "name": "消防设计审查",
+          "type": "行政许可",
+          "status": "待审查",
+          "deadline": "2026-08-05",
+          "department": "工程管理部",
+          "progress": "60%"
+        }
+      ],
+      "dataSource": "报批报建管理系统",
+      "updateTime": "2026-07-13 08:00",
+      "updateFrequency": "每周更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "G02": {
+      "key": "G02",
+      "fullName": "当前临期及逾期许可事项数",
+      "theme": "purple",
+      "summary": [
+        {
+          "label": "临期许可",
+          "value": 3,
+          "unit": "项"
+        },
+        {
+          "label": "逾期许可",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "本月到期",
+          "value": 4,
+          "unit": "项"
+        },
+        {
+          "label": "涉及部门",
+          "value": 3,
+          "unit": "个"
+        },
+        {
+          "label": "平均剩余有效期",
+          "value": 15,
+          "unit": "天"
+        }
+      ],
+      "chartTitle": "近6个月许可证到期趋势",
+      "detailTitle": "临期及逾期许可证明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "许可证名称",
+          "width": "30%"
+        },
+        {
+          "key": "number",
+          "label": "许可证编号",
+          "width": "18%"
+        },
+        {
+          "key": "type",
+          "label": "许可类型",
+          "width": "15%"
+        },
+        {
+          "key": "deadline",
+          "label": "有效期至",
+          "width": "15%"
+        },
+        {
+          "key": "department",
+          "label": "责任部门",
+          "width": "15%"
+        },
+        {
+          "key": "status",
+          "label": "状态",
+          "width": "7%"
+        }
+      ],
+      "detailData": [
+        {
+          "name": "安全生产许可证",
+          "number": "(鄂)JZ安许证字第XXXXX号",
+          "type": "安全生产",
+          "deadline": "2026-07-20",
+          "department": "安全环保部",
+          "status": "临期"
+        },
+        {
+          "name": "排污许可证",
+          "number": "鄂环排证字第XXXXX号",
+          "type": "环境保护",
+          "deadline": "2026-07-28",
+          "department": "安全环保部",
+          "status": "临期"
+        },
+        {
+          "name": "特种设备使用登记证",
+          "number": "鄂特登字第XXXXX号",
+          "type": "特种设备",
+          "deadline": "2026-08-05",
+          "department": "工程管理部",
+          "status": "临期"
+        },
+        {
+          "name": "道路运输经营许可证",
+          "number": "鄂交运管许可字第XXXXX号",
+          "type": "道路运输",
+          "deadline": "2026-06-30",
+          "department": "物资设备部",
+          "status": "逾期"
+        },
+        {
+          "name": "临时占用林地审批",
+          "number": "鄂林资临字第XXXXX号",
+          "type": "林地占用",
+          "deadline": "2026-07-05",
+          "department": "工程管理部",
+          "status": "逾期"
+        }
+      ],
+      "dataSource": "证照管理系统",
+      "updateTime": "2026-07-13 00:00",
+      "updateFrequency": "每月更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "G03": {
+      "key": "G03",
+      "fullName": "当前未关闭整改事项数",
+      "theme": "purple",
+      "summary": [
+        {
+          "label": "未关闭事项",
+          "value": 6,
+          "unit": "项"
+        },
+        {
+          "label": "本月新增",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "本月关闭",
+          "value": 3,
+          "unit": "项"
+        },
+        {
+          "label": "逾期未关闭",
+          "value": 2,
+          "unit": "项"
+        },
+        {
+          "label": "涉及检查",
+          "value": 3,
+          "unit": "次"
+        }
+      ],
+      "chartTitle": "近6个月整改事项关闭趋势",
+      "detailTitle": "未关闭整改事项明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "整改事项",
+          "width": "30%"
+        },
+        {
+          "key": "source",
+          "label": "来源检查",
+          "width": "18%"
+        },
+        {
+          "key": "level",
+          "label": "问题等级",
+          "width": "10%"
+        },
+        {
+          "key": "deadline",
+          "label": "整改时限",
+          "width": "15%"
+        },
+        {
+          "key": "department",
+          "label": "责任部门",
+          "width": "15%"
+        },
+        {
+          "key": "status",
+          "label": "状态",
+          "width": "12%"
+        }
+      ],
+      "detailData": [
+        {
+          "name": "安全管理制度不完善",
+          "source": "省交通厅检查",
+          "level": "一般",
+          "deadline": "2026-07-15",
+          "department": "安全环保部",
+          "status": "整改中"
+        },
+        {
+          "name": "环保设施运行台账不全",
+          "source": "生态环境局检查",
+          "level": "一般",
+          "deadline": "2026-07-18",
+          "department": "安全环保部",
+          "status": "整改中"
+        },
+        {
+          "name": "工程资料归档不及时",
+          "source": "业主专项检查",
+          "level": "一般",
+          "deadline": "2026-07-20",
+          "department": "工程管理部",
+          "status": "待整改"
+        },
+        {
+          "name": "应急预案未及时修订",
+          "source": "省交通厅检查",
+          "level": "较大",
+          "deadline": "2026-07-10",
+          "department": "安全环保部",
+          "status": "逾期"
+        },
+        {
+          "name": "监理履职不到位",
+          "source": "业主专项检查",
+          "level": "一般",
+          "deadline": "2026-07-08",
+          "department": "监理单位",
+          "status": "逾期"
+        },
+        {
+          "name": "合同管理不规范",
+          "source": "审计检查",
+          "level": "一般",
+          "deadline": "2026-07-25",
+          "department": "合约法务部",
+          "status": "待整改"
+        }
+      ],
+      "dataSource": "整改管理系统",
+      "updateTime": "2026-07-13 10:30",
+      "updateFrequency": "实时更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    },
+    "G04": {
+      "key": "G04",
+      "fullName": "当前待补齐合规资料项数",
+      "theme": "purple",
+      "summary": [
+        {
+          "label": "待补齐资料",
+          "value": 4,
+          "unit": "项"
+        },
+        {
+          "label": "本月需提交",
+          "value": 3,
+          "unit": "项"
+        },
+        {
+          "label": "逾期未提交",
+          "value": 1,
+          "unit": "项"
+        },
+        {
+          "label": "涉及模块",
+          "value": 3,
+          "unit": "个"
+        },
+        {
+          "label": "资料完备率",
+          "value": 85,
+          "unit": "%"
+        }
+      ],
+      "chartTitle": "近6个月合规资料完备率趋势",
+      "detailTitle": "待补齐合规资料明细",
+      "detailColumns": [
+        {
+          "key": "name",
+          "label": "资料名称",
+          "width": "30%"
+        },
+        {
+          "key": "module",
+          "label": "所属模块",
+          "width": "12%"
+        },
+        {
+          "key": "deadline",
+          "label": "提交时限",
+          "width": "18%"
+        },
+        {
+          "key": "owner",
+          "label": "责任单位",
+          "width": "20%"
+        },
+        {
+          "key": "status",
+          "label": "状态",
+          "width": "10%"
+        },
+        {
+          "key": "action",
+          "label": "操作",
+          "width": "10%"
+        }
+      ],
+      "detailData": [
+        {
+          "name": "安全生产费用使用台账",
+          "module": "S",
+          "deadline": "2026-07-15",
+          "owner": "安全环保部",
+          "status": "待提交",
+          "action": "上传"
+        },
+        {
+          "name": "环境监测季报",
+          "module": "E",
+          "deadline": "2026-07-20",
+          "owner": "安全环保部",
+          "status": "待提交",
+          "action": "上传"
+        },
+        {
+          "name": "合规性评价报告",
+          "module": "G",
+          "deadline": "2026-07-25",
+          "owner": "合约法务部",
+          "status": "待提交",
+          "action": "上传"
+        },
+        {
+          "name": "应急预案演练记录",
+          "module": "S",
+          "deadline": "2026-07-10",
+          "owner": "安全环保部",
+          "status": "逾期",
+          "action": "补交"
+        }
+      ],
+      "dataSource": "合规管理系统",
+      "updateTime": "2026-07-13 09:00",
+      "updateFrequency": "每周更新",
+      "completeness": "100%",
+      "completenessStatus": "complete",
+      "isMock": true
+    }
+  },
+  "carbonTopicDetail": {
+    "key": "CARBON",
+    "fullName": "碳足迹与低碳增益",
+    "theme": "green",
+    "summary": [
+      {
+        "label": "施工阶段累计碳足迹",
+        "value": 12856,
+        "unit": "tCO₂e"
+      },
+      {
+        "label": "累计核算减排量",
+        "value": 1445,
+        "unit": "tCO₂e"
+      },
+      {
+        "label": "较基准下降",
+        "value": 10.1,
+        "unit": "%"
+      },
+      {
+        "label": "低碳措施成本影响",
+        "value": 0,
+        "unit": "测算口径"
+      }
+    ],
+    "chartTitle": "碳排放来源构成",
+    "detailTitle": "碳排放来源明细",
+    "detailColumns": [
+      {
+        "key": "source",
+        "label": "排放源",
+        "width": "25%"
+      },
+      {
+        "key": "value",
+        "label": "碳排放量",
+        "width": "20%"
+      },
+      {
+        "key": "proportion",
+        "label": "占比",
+        "width": "15%"
+      },
+      {
+        "key": "trend",
+        "label": "环比变化",
+        "width": "20%"
+      },
+      {
+        "key": "note",
+        "label": "备注",
+        "width": "20%"
+      }
+    ],
+    "detailData": [
+      {
+        "source": "施工用油",
+        "value": "5,628 tCO₂e",
+        "proportion": "43.8%",
+        "trend": "↓ 2.3%",
+        "note": "柴油消耗优化"
+      },
+      {
+        "source": "施工用电",
+        "value": "3,857 tCO₂e",
+        "proportion": "30.0%",
+        "trend": "↑ 1.1%",
+        "note": "隧道掘进增加"
+      },
+      {
+        "source": "主要材料",
+        "value": "2,486 tCO₂e",
+        "proportion": "19.3%",
+        "trend": "↓ 3.5%",
+        "note": "低碳材料替代"
+      },
+      {
+        "source": "施工运输",
+        "value": "885 tCO₂e",
+        "proportion": "6.9%",
+        "trend": "↑ 0.8%",
+        "note": "系统演示测试数据，非正式核算依据"
+      }
+    ],
+    "dataSource": "碳排放监测系统",
+    "updateTime": "2026-07-13 00:00",
+    "updateFrequency": "每日更新",
+    "completeness": "95%",
+    "completenessStatus": "complete",
+    "isMock": true,
+    "isTopic": true,
+    "tabs": [
+      {
+        "key": "cumulative",
+        "label": "累计碳足迹"
+      },
+      {
+        "key": "benefit",
+        "label": "低碳增益"
+      },
+      {
+        "key": "source",
+        "label": "来源构成"
+      },
+      {
+        "key": "cost",
+        "label": "成本影响"
+      },
+      {
+        "key": "measures",
+        "label": "主要措施"
+      }
+    ]
+  },
+  "carbonTabData": {
+    "cumulative": {
+      "title": "累计碳足迹",
+      "chartTitle": "碳排放来源构成",
+      "summary": [
+        {
+          "label": "施工阶段累计碳足迹",
+          "value": 12856,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "本月新增",
+          "value": 1256,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "较基准下降",
+          "value": 10.1,
+          "unit": "%"
+        },
+        {
+          "label": "单位产值排放",
+          "value": 0.128,
+          "unit": "tCO₂e/万元"
+        }
+      ],
+      "months": [
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07"
+      ],
+      "monthlyData": [
+        1860,
+        2240,
+        2140,
+        2680,
+        2680,
+        1256
+      ],
+      "cumulativeData": [
+        1860,
+        4100,
+        6240,
+        8920,
+        11600,
+        12856
+      ],
+      "boundary": "当前演示核算边界包括施工用油、施工用电、主要材料和施工运输；活动数据及排放因子均为系统演示测试数据，非正式核算依据。"
+    },
+    "benefit": {
+      "title": "低碳增益",
+      "chartTitle": "累计核算减排量趋势",
+      "summary": [
+        {
+          "label": "累计核算减排量",
+          "value": 1445,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "较基准下降",
+          "value": 10.1,
+          "unit": "%"
+        },
+        {
+          "label": "预计全年减排",
+          "value": 2890,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "减排贡献率",
+          "value": 12.5,
+          "unit": "%"
+        }
+      ],
+      "months": [
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07"
+      ],
+      "baselineData": [
+        2069,
+        2492,
+        2380,
+        2981,
+        2981,
+        1398
+      ],
+      "actualData": [
+        1860,
+        2240,
+        2140,
+        2680,
+        2680,
+        1256
+      ],
+      "totalReduction": 1445,
+      "reductionRate": 10.1,
+      "formula": "减排量 = 基准情景排放量 - 实际排放量",
+      "note": "当前基准与实际排放均为系统演示测试数据，尚未作为正式核算依据。"
+    },
+    "source": {
+      "title": "来源构成",
+      "chartTitle": "碳排放来源构成",
+      "summary": [
+        {
+          "label": "施工用油",
+          "value": 5628,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "施工用电",
+          "value": 3857,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "主要材料",
+          "value": 2486,
+          "unit": "tCO₂e"
+        },
+        {
+          "label": "施工运输",
+          "value": 885,
+          "unit": "tCO₂e"
+        }
+      ],
+      "items": [
+        {
+          "name": "施工用油",
+          "value": 43.8,
+          "color": "#69e36f"
+        },
+        {
+          "name": "施工用电",
+          "value": 30,
+          "color": "#2f9cff"
+        },
+        {
+          "name": "主要材料",
+          "value": 19.3,
+          "color": "#a66cff"
+        },
+        {
+          "name": "施工运输",
+          "value": 6.9,
+          "color": "#ffb347"
+        }
+      ],
+      "detailColumns": [
+        {
+          "key": "source",
+          "label": "排放源",
+          "width": "25%"
+        },
+        {
+          "key": "value",
+          "label": "碳排放量",
+          "width": "20%"
+        },
+        {
+          "key": "proportion",
+          "label": "占比",
+          "width": "15%"
+        },
+        {
+          "key": "trend",
+          "label": "环比变化",
+          "width": "20%"
+        },
+        {
+          "key": "note",
+          "label": "备注",
+          "width": "20%"
+        }
+      ],
+      "detailData": [
+        {
+          "source": "施工用油",
+          "value": "5,628 tCO₂e",
+          "proportion": "43.8%",
+          "trend": "↓ 2.3%",
+          "note": "柴油消耗优化"
+        },
+        {
+          "source": "施工用电",
+          "value": "3,857 tCO₂e",
+          "proportion": "30.0%",
+          "trend": "↑ 1.1%",
+          "note": "隧道掘进增加"
+        },
+        {
+          "source": "主要材料",
+          "value": "2,486 tCO₂e",
+          "proportion": "19.3%",
+          "trend": "↓ 3.5%",
+          "note": "低碳材料替代"
+        },
+        {
+          "source": "施工运输",
+          "value": "885 tCO₂e",
+          "proportion": "6.9%",
+          "trend": "↑ 0.8%",
+          "note": "系统演示测试数据，非正式核算依据"
+        }
+      ]
+    },
+    "cost": {
+      "title": "成本影响",
+      "investment": 320,
+      "savings": 85,
+      "avoidedCost": 120,
+      "caliber": "低碳措施投入包括低碳材料增量成本、节能设备购置、工艺改造费用；节约成本包括能耗降低、材料优化、罚款避免；避免成本包括碳排放权购买、环保处罚、工期延误损失。",
+      "note": "非财务确认结论，仅供参考决策使用。"
+    },
+    "measures": {
+      "title": "主要措施",
+      "columns": [
+        {
+          "key": "name",
+          "label": "措施名称",
+          "width": "30%"
+        },
+        {
+          "key": "scope",
+          "label": "应用范围",
+          "width": "25%"
+        },
+        {
+          "key": "effect",
+          "label": "减排效果",
+          "width": "25%"
+        },
+        {
+          "key": "status",
+          "label": "实施状态",
+          "width": "20%"
+        }
+      ],
+      "list": [
+        {
+          "name": "低碳材料应用",
+          "scope": "路基填筑、路面结构",
+          "effect": "减排约 320 tCO₂e",
+          "status": "已实施"
+        },
+        {
+          "name": "弃渣与旧料资源化利用",
+          "scope": "弃渣场、路基",
+          "effect": "减排约 280 tCO₂e",
+          "status": "已实施"
+        },
+        {
+          "name": "运输组织优化",
+          "scope": "材料运输",
+          "effect": "减排约 150 tCO₂e",
+          "status": "实施中"
+        },
+        {
+          "name": "施工工艺节能应用",
+          "scope": "隧道、桥梁",
+          "effect": "减排约 200 tCO₂e",
+          "status": "实施中"
+        }
+      ]
+    }
+  },
+  "monthlyTopicDetail": {
+    "key": "MONTHLY",
+    "fullName": "月报准备与输出",
+    "theme": "blue",
+    "summary": [
+      {
+        "label": "月报完成度",
+        "value": 82,
+        "unit": "%"
+      },
+      {
+        "label": "待补资料",
+        "value": 6,
+        "unit": "项"
+      },
+      {
+        "label": "待确认",
+        "value": 4,
+        "unit": "项"
+      },
+      {
+        "label": "预计完成",
+        "value": "7月12日",
+        "unit": ""
+      }
+    ],
+    "chartTitle": "月报完成度进度",
+    "detailTitle": "待补齐资料明细",
+    "detailColumns": [
+      {
+        "key": "name",
+        "label": "资料名称",
+        "width": "25%"
+      },
+      {
+        "key": "group",
+        "label": "所属分组",
+        "width": "12%"
+      },
+      {
+        "key": "owner",
+        "label": "责任单位",
+        "width": "15%"
+      },
+      {
+        "key": "deadline",
+        "label": "截止日期",
+        "width": "15%"
+      },
+      {
+        "key": "status",
+        "label": "当前状态",
+        "width": "12%"
+      },
+      {
+        "key": "note",
+        "label": "备注",
+        "width": "21%"
+      }
+    ],
+    "detailData": [
+      {
+        "name": "噪声监测原始记录",
+        "group": "E组",
+        "owner": "安全环保部",
+        "deadline": "7月15日",
+        "status": "待补齐",
+        "note": "7月上半月数据"
+      },
+      {
+        "name": "碳排放因子确认",
+        "group": "E组",
+        "owner": "技术管理部",
+        "deadline": "7月14日",
+        "status": "待补齐",
+        "note": "7月因子更新"
+      },
+      {
+        "name": "安全检查记录归档",
+        "group": "S组",
+        "owner": "安全环保部",
+        "deadline": "7月16日",
+        "status": "待补齐",
+        "note": "6月检查记录"
+      },
+      {
+        "name": "安全数据核验",
+        "group": "S组",
+        "owner": "工程管理部",
+        "deadline": "7月16日",
+        "status": "待确认",
+        "note": "数据一致性核对"
+      },
+      {
+        "name": "临时用地批复复印件",
+        "group": "G组",
+        "owner": "工程管理部",
+        "deadline": "7月15日",
+        "status": "待补齐",
+        "note": "最新批复文件"
+      },
+      {
+        "name": "监理通知单回执",
+        "group": "G组",
+        "owner": "监理部",
+        "deadline": "7月17日",
+        "status": "待确认",
+        "note": "上月通知单"
+      }
+    ],
+    "dataSource": "月报管理系统",
+    "updateTime": "2026-07-13 10:00",
+    "updateFrequency": "每月更新",
+    "completeness": "82%",
+    "completenessStatus": "incomplete",
+    "isMock": true,
+    "isTopic": true,
+    "tabs": [
+      {
+        "key": "progress",
+        "label": "完成进度"
+      },
+      {
+        "key": "chapters",
+        "label": "章节清单"
+      },
+      {
+        "key": "gaps",
+        "label": "缺项清单"
+      }
+    ]
+  },
+  "monthlyTabData": {
+    "progress": {
+      "title": "完成进度",
+      "chartTitle": "月报完成度进度",
+      "summary": [
+        {
+          "label": "月报完成度",
+          "value": 82,
+          "unit": "%"
+        },
+        {
+          "label": "待补资料",
+          "value": 6,
+          "unit": "项"
+        },
+        {
+          "label": "待确认",
+          "value": 4,
+          "unit": "项"
+        },
+        {
+          "label": "预计完成",
+          "value": "7月12日",
+          "unit": ""
+        }
+      ],
+      "groups": [
+        {
+          "key": "E",
+          "label": "E组",
+          "value": 85,
+          "color": "#69e36f"
+        },
+        {
+          "key": "S",
+          "label": "S组",
+          "value": 78,
+          "color": "#2f9cff"
+        },
+        {
+          "key": "G",
+          "label": "G组",
+          "value": 80,
+          "color": "#a66cff"
+        }
+      ]
+    },
+    "chapters": {
+      "title": "章节清单",
+      "columns": [
+        {
+          "key": "index",
+          "label": "序号",
+          "width": "8%"
+        },
+        {
+          "key": "group",
+          "label": "分组",
+          "width": "10%"
+        },
+        {
+          "key": "name",
+          "label": "章节名称",
+          "width": "25%"
+        },
+        {
+          "key": "type",
+          "label": "资料类型",
+          "width": "12%"
+        },
+        {
+          "key": "status",
+          "label": "状态",
+          "width": "10%"
+        },
+        {
+          "key": "owner",
+          "label": "责任单位",
+          "width": "12%"
+        },
+        {
+          "key": "person",
+          "label": "责任人",
+          "width": "10%"
+        },
+        {
+          "key": "deadline",
+          "label": "截止日期",
+          "width": "13%"
+        }
+      ],
+      "list": [
+        {
+          "index": 1,
+          "group": "E组",
+          "name": "环境保护执行情况",
+          "type": "月度报告",
+          "status": "已完成",
+          "owner": "安全环保部",
+          "person": "张三",
+          "deadline": "7月10日"
+        },
+        {
+          "index": 2,
+          "group": "E组",
+          "name": "水土保持监测月报",
+          "type": "监测报告",
+          "status": "已完成",
+          "owner": "安全环保部",
+          "person": "李四",
+          "deadline": "7月10日"
+        },
+        {
+          "index": 3,
+          "group": "S组",
+          "name": "安全生产月报",
+          "type": "月度报告",
+          "status": "编制中",
+          "owner": "安全环保部",
+          "person": "王五",
+          "deadline": "7月12日"
+        },
+        {
+          "index": 4,
+          "group": "S组",
+          "name": "劳务用工情况统计",
+          "type": "统计报表",
+          "status": "待确认",
+          "owner": "人力资源部",
+          "person": "赵六",
+          "deadline": "7月12日"
+        },
+        {
+          "index": 5,
+          "group": "G组",
+          "name": "合规性检查报告",
+          "type": "检查报告",
+          "status": "待补充",
+          "owner": "合约法务部",
+          "person": "钱七",
+          "deadline": "7月15日"
+        },
+        {
+          "index": 6,
+          "group": "G组",
+          "name": "报批报建进度表",
+          "type": "进度报表",
+          "status": "编制中",
+          "owner": "工程管理部",
+          "person": "孙八",
+          "deadline": "7月15日"
+        }
+      ]
+    },
+    "statusChain": [
+      {
+        "key": "draft",
+        "label": "资料收集",
+        "status": "completed"
+      },
+      {
+        "key": "verify",
+        "label": "数据核验",
+        "status": "completed"
+      },
+      {
+        "key": "compile",
+        "label": "报告编制",
+        "status": "active"
+      },
+      {
+        "key": "review",
+        "label": "内部审核",
+        "status": "pending"
+      },
+      {
+        "key": "submit",
+        "label": "提交上报",
+        "status": "pending"
+      }
+    ]
+  },
+  "complianceMetrics": [
+    {
+      "label": "合规点位",
+      "value": 6,
+      "unit": "个"
+    },
+    {
+      "label": "碳排点位",
+      "value": 3,
+      "unit": "个"
+    },
+    {
+      "label": "敏感区",
+      "value": 2,
+      "unit": "处"
+    },
+    {
+      "label": "风险点",
+      "value": 2,
+      "unit": "处"
+    }
+  ],
+  "effectivenessItems": [
+    {
+      "label": "已化解重大风险",
+      "value": 12
+    },
+    {
+      "label": "保障关键施工节点",
+      "value": 8
+    },
+    {
+      "label": "因合规原因停工",
+      "value": 0
+    },
+    {
+      "label": "处罚及监管处分",
+      "value": 0
+    }
+  ],
+  "safeguardItems": [
+    "临时用地许可续办完成，保障路基施工连续推进",
+    "专项检查问题完成闭环，桥梁工点按期恢复施工",
+    "关键开工资料补正完成，隧道进洞节点按计划实施"
+  ],
+  "carbonMetrics": [
+    {
+      "label": "施工阶段累计碳足迹",
+      "value": 12856,
+      "unit": "tCO₂e",
+      "sub": "较基准下降 10.1%"
+    },
+    {
+      "label": "累计核算减排量",
+      "value": 1445,
+      "unit": "tCO₂e",
+      "sub": "预计全年 2890 tCO₂e"
+    },
+    {
+      "label": "低碳措施成本影响",
+      "value": 0,
+      "unit": "测算口径",
+      "sub": "非财务确认结论"
+    }
+  ],
+  "carbonSources": [
+    {
+      "name": "施工用油",
+      "value": 5628
+    },
+    {
+      "name": "施工用电",
+      "value": 3857
+    },
+    {
+      "name": "主要材料",
+      "value": 2486
+    }
+  ],
+  "reductionMeasures": [
+    {
+      "name": "低碳材料应用",
+      "level": "高"
+    },
+    {
+      "name": "弃渣与旧料资源化利用",
+      "level": "较高"
+    },
+    {
+      "name": "运输组织优化",
+      "level": "中"
+    },
+    {
+      "name": "施工工艺节能应用",
+      "level": "中"
+    }
+  ],
+  "monthlyReport": {
+    "month": "2026年7月",
+    "progress": 82,
+    "pendingCount": 6,
+    "confirmCount": 4,
+    "materials": [
+      {
+        "name": "噪声监测原始记录",
+        "owner": "安全环保部",
+        "deadline": "7月15日"
+      },
+      {
+        "name": "碳排放因子确认",
+        "owner": "技术管理部",
+        "deadline": "7月14日"
+      },
+      {
+        "name": "安全检查记录归档",
+        "owner": "安全环保部",
+        "deadline": "7月16日"
+      },
+      {
+        "name": "安全检查记录归档",
+        "owner": "安全环保部",
+        "deadline": "7月14日"
+      },
+      {
+        "name": "安全检查记录归档",
+        "owner": "安全环保部",
+        "deadline": "7月16日"
+      },
+      {
+        "name": "安全数据核验",
+        "owner": "工程管理部",
+        "deadline": "7月16日"
+      },
+      {
+        "name": "临时用地批复复印件",
+        "owner": "工程管理部",
+        "deadline": "7月15日"
+      },
+      {
+        "name": "监理通知单回执",
+        "owner": "监理部",
+        "deadline": "7月17日"
+      }
+    ]
+  },
+  "timelineSteps": [
+    {
+      "index": 1,
+      "label": "前期研究",
+      "completed": true
+    },
+    {
+      "index": 2,
+      "label": "勘察设计",
+      "completed": true
+    },
+    {
+      "index": 3,
+      "label": "用地与专项手续",
+      "completed": true
+    },
+    {
+      "index": 4,
+      "label": "招投标与合同",
+      "completed": true
+    },
+    {
+      "index": 5,
+      "label": "施工准备",
+      "completed": true
+    },
+    {
+      "index": 6,
+      "label": "路基桥隧施工",
+      "active": true,
+      "completed": true
+    },
+    {
+      "index": 7,
+      "label": "路面交安机电房建",
+      "completed": false
+    },
+    {
+      "index": 8,
+      "label": "环保水保恢复",
+      "completed": false
+    },
+    {
+      "index": 9,
+      "label": "交工验收",
+      "completed": false
+    },
+    {
+      "index": 10,
+      "label": "试运行",
+      "completed": false
+    },
+    {
+      "index": 11,
+      "label": "竣工验收/审计/移交",
+      "completed": false
+    }
+  ],
+  "routePoints": [
+    {
+      "id": "p1",
+      "name": "起点",
+      "x": 2,
+      "y": 45,
+      "type": "compliance"
+    },
+    {
+      "id": "p2",
+      "name": "K12+000",
+      "x": 15,
+      "y": 38,
+      "type": "carbon"
+    },
+    {
+      "id": "p3",
+      "name": "K18+500",
+      "x": 28,
+      "y": 32,
+      "type": "risk"
+    },
+    {
+      "id": "p4",
+      "name": "项目中心",
+      "x": 42,
+      "y": 40,
+      "type": "compliance"
+    },
+    {
+      "id": "p5",
+      "name": "K35+000",
+      "x": 58,
+      "y": 35,
+      "type": "sensitive"
+    },
+    {
+      "id": "p6",
+      "name": "K48+000",
+      "x": 72,
+      "y": 42,
+      "type": "compliance"
+    },
+    {
+      "id": "p7",
+      "name": "终点",
+      "x": 88,
+      "y": 45,
+      "type": "compliance"
+    }
+  ],
+  "routeSegments": [
+    {
+      "id": "s1",
+      "name": "标段一",
+      "points": [
+        [
+          2,
+          45
+        ],
+        [
+          35,
+          35
+        ]
+      ],
+      "status": "normal"
+    },
+    {
+      "id": "s2",
+      "name": "标段二",
+      "points": [
+        [
+          35,
+          35
+        ],
+        [
+          65,
+          40
+        ]
+      ],
+      "status": "warning"
+    },
+    {
+      "id": "s3",
+      "name": "标段三",
+      "points": [
+        [
+          65,
+          40
+        ],
+        [
+          88,
+          45
+        ]
+      ],
+      "status": "normal"
+    }
+  ],
+  "sensitiveAreas": [
+    {
+      "id": "sa1",
+      "name": "生态敏感区A",
+      "polygon": [
+        [
+          12,
+          25
+        ],
+        [
+          20,
+          28
+        ],
+        [
+          18,
+          35
+        ],
+        [
+          10,
+          32
+        ]
+      ]
+    },
+    {
+      "id": "sa2",
+      "name": "基本农田C",
+      "polygon": [
+        [
+          50,
+          28
+        ],
+        [
+          60,
+          30
+        ],
+        [
+          58,
+          38
+        ],
+        [
+          48,
+          36
+        ]
+      ]
+    },
+    {
+      "id": "sa3",
+      "name": "水源保护区B",
+      "polygon": [
+        [
+          30,
+          50
+        ],
+        [
+          40,
+          52
+        ],
+        [
+          38,
+          60
+        ],
+        [
+          28,
+          58
+        ]
+      ]
+    }
+  ]
+}

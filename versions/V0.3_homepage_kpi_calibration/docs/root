@@ -1,0 +1,159 @@
+# 罗宜高速 ESG 领导层首页剩余弹窗与专题接口接入说明 V1.1
+
+更新时间：2026-07-16
+
+## 1. 本轮完成范围
+
+本轮继续推进领导层 ESG 看板首页剩余内容的后端 API 化接入，覆盖：
+
+- 12 项 KPI 顶部卡片；
+- S01「连续安全生产天数」专属弹窗；
+- 除 S01 外的 11 个 KPI 通用详情弹窗；
+- 右侧专题模块：
+  - 合规保障与风险防控成效；
+  - 碳足迹与低碳增益；
+  - 月报准备与输出；
+- 首页右侧面板及底部/地图相关原型数据：
+  - 合规成效面板；
+  - 碳足迹面板；
+  - 月报面板；
+  - 建设阶段时间线；
+  - GIS 点位、路线段、敏感区。
+
+## 2. 已新增/接入接口
+
+| 接口 | 用途 | 当前数据来源 |
+| --- | --- | --- |
+| `GET /api/dashboard/kpis` | 首页 12 项 KPI 卡片 | MySQL 优先，fallback |
+| `GET /api/dashboard/kpi/S01` | S01 专属安全生产弹窗 | MySQL 优先，fallback |
+| `GET /api/dashboard/kpi/{code}` | E01-E04、S02-S04、G01-G04 通用指标弹窗 | `server/dashboard_payload.json` |
+| `GET /api/dashboard/topics/carbon` | 碳足迹与低碳增益专题弹窗 | `server/dashboard_payload.json` |
+| `GET /api/dashboard/topics/monthly-report` | 月报准备与输出专题弹窗 | `server/dashboard_payload.json` |
+| `GET /api/dashboard/panels` | 首页右侧专题面板、GIS、时间线等 | `server/dashboard_payload.json` |
+
+## 3. 前端接入位置
+
+| 文件 | 接入内容 |
+| --- | --- |
+| `src/services/api.ts` | 新增领导层首页详情、专题、面板 API 方法 |
+| `src/stores/dashboard.store.ts` | 新增 `loadPanels()`，首页右侧面板/GIS/时间线从 API 加载 |
+| `src/views/DashboardPage.vue` | KPI 弹窗点击时优先请求 API；专题模块点击时优先请求 API |
+| `src/components/modal/KpiDetailModal.vue` | 碳足迹、月报专题支持 `topicData` 接口数据 |
+| `src/types/dashboard.ts` | `KpiDetailConfig` 增加 `topicData` 扩展字段 |
+
+## 4. 当前边界说明
+
+当前完成的是“前端页面可联调的 API 数据服务”，并非所有领导层首页弹窗都已经拆成 MySQL 明细表实时查询。
+
+- S01 已有专属接口结构，可继续向数据库表深化；
+- 其余 11 个 KPI 弹窗当前由 `dashboard_payload.json` 承接原型数据；
+- 碳足迹、月报专题当前由 `topicData` 承接原型数据；
+- 合规保障、碳足迹、月报首页面板当前由 `/api/dashboard/panels` 输出；
+- 前端仍保留 mock fallback，API 不可用时页面不应空白。
+
+## 5. 给前端样式同事/Trae 的协作边界
+
+可以放心调整：
+
+- 弹窗宽高、间距、字号、颜色、卡片样式；
+- 专题模块 tabs 样式；
+- 图表容器尺寸；
+- 首页面板视觉层级；
+- 按钮样式和 hover 状态。
+
+尽量不要改动：
+
+- `DashboardPage.vue` 中 `handleKpiSelect`、`handleTopicSelect` 的 API 加载逻辑；
+- `dashboard.store.ts` 中 `loadKpis()`、`loadPanels()`；
+- `KpiDetailModal.vue` 中 `topicData` 相关 computed 字段；
+- `api.ts` 中新增的 dashboard API 方法命名。
+
+如确需重构组件，建议保持接口字段兼容：
+
+- KPI 详情：`KpiDetailConfig`
+- 专题详情：`KpiDetailConfig.topicData`
+- 首页面板：`DashboardPanels`
+
+## 6. 验证命令
+
+后端启动：
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+$py='C:\Users\TB\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+& $py server\app.py
+```
+
+接口验收：
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+$py='C:\Users\TB\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+& $py server\dashboard_acceptance_test.py
+& $py server\workspace_acceptance_test.py
+& $py server\smoke_test.py
+```
+
+前端检查与构建：
+
+```powershell
+npm run check
+npm run build
+```
+
+## 7. 当前验收结果
+
+已通过：
+
+- 领导层首页接入验收；
+- 工作台只读接口验收；
+- 后端 API 冒烟测试；
+- MySQL 冒烟测试；
+- 审核处理写闭环测试；
+- `npm run check`；
+- `npm run build`。
+
+说明：
+
+- 当前已启动 E 盘 MySQL 实例：`E:\Mysql\mysql-8.4.9-winx64`；
+- 当前 MySQL 端口：`127.0.0.1:3307`；
+- 当前数据库：`luoyi_esg`；
+- 当前应用账号：`luoyi_app`；
+- `server/review_action_flow_test.py` 已在 MySQL 真实库态下通过，验证范围包括审核通过、退回、补正再提交、任务状态回写、补正要求与审核轨迹。
+
+## 8. E 盘 MySQL 启动与验证
+
+启动 MySQL：
+
+```powershell
+Start-Process -FilePath 'E:\Mysql\mysql-8.4.9-winx64\bin\mysqld.exe' `
+  -ArgumentList @('--defaults-file=E:\Mysql\my-luoyi.cnf') `
+  -WorkingDirectory 'E:\Mysql\mysql-8.4.9-winx64\bin' `
+  -WindowStyle Hidden
+```
+
+确认端口：
+
+```powershell
+netstat -ano | Select-String ':3307'
+```
+
+确认后端健康状态：
+
+```powershell
+Invoke-WebRequest http://127.0.0.1:8765/health -UseBasicParsing
+```
+
+完整回归：
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+$py='C:\Users\TB\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+& $py server\mysql_smoke_test.py
+& $py server\dashboard_acceptance_test.py
+& $py server\workspace_acceptance_test.py
+& $py server\smoke_test.py
+& $py server\review_action_flow_test.py
+& 'C:\Program Files\nodejs\npm.cmd' run check
+& 'C:\Program Files\nodejs\npm.cmd' run build
+```

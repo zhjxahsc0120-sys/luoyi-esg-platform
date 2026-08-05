@@ -1,0 +1,23 @@
+﻿工作簿建议,Sheet建议名,对应主表,录入属性,说明
+E_环境采集模板,监测点主数据,e01_monitor_point,A,一点一行
+E_环境采集模板,监测结果,e01_factor_result,A,一批次/因子一行
+E_环境采集模板,环保问题,env_issue_record,A,一问题一行
+E_环境采集模板,水保问题,water_protection_issue,A,一问题一行
+E_环境采集模板,E02对象台账,biz_soil_disposal_site等,A,可按对象类型分Sheet
+E_环境采集模板,生态文物对象,biz_ecological_* / biz_cultural_relic_object,A,对象清单
+E_环境采集模板,碳活动材料措施,carbon_*,A,月度活动/材料/措施
+S_社会采集模板,安全风险点,safety_risk_point,A,一风险点一行
+S_社会采集模板,安全生产确认,s01_confirmation_batch,A,确认批次
+S_社会采集模板,劳务纠纷,labor_dispute_record,A,一事项一行
+S_社会采集模板,工资支付汇总,biz_worker_payment_summary,A,一周期一行
+S_社会采集模板,群众诉求,appeal_record,A,一诉求一行
+G_治理采集模板,合规手续,compliance_procedure,A,一手续一行
+G_治理采集模板,许可记录,permit_record,A,一许可一行
+G_治理采集模板,专项方案审批,special_plan_approval,A,禁止删除列
+G_治理采集模板,设计变更,biz_design_change,A,一变更一行
+G_治理采集模板,内控问题,biz_internal_control_issue,A,一问题一行
+综合_闭环与资料,闭环案件,e_closure_case,A,一案件一行
+综合_闭环与资料,整改完成填报,e_rectification_task,A,仅完成日期/填报人由甲方填
+综合_闭环与资料,资料清单,document_record / file_asset,C,文件先上传再关联
+主数据,组织单位,org_unit,A,下拉字典来源
+主数据,工程标段,project_section,A,下拉字典来源

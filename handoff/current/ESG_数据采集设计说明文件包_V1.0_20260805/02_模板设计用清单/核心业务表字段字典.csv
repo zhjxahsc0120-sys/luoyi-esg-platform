@@ -1,0 +1,899 @@
+﻿表名,表注释,ESG分类,录入属性,字段名,类型,是否可空,默认值,字段注释,键,额外,模板建议
+biz_env_monitor_point,,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_env_monitor_point,,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,point_code,varchar(64),否,,,,,建议人工填
+biz_env_monitor_point,,E,必须人工录入,point_name,varchar(200),否,,,,,建议人工填
+biz_env_monitor_point,,E,必须人工录入,monitor_category,varchar(32),否,,,,,建议人工填
+biz_env_monitor_point,,E,必须人工录入,location_desc,varchar(500),是,,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,longitude,"decimal(10,7)",是,,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,latitude,"decimal(10,7)",是,,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,active_status,varchar(16),否,ACTIVE,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,case_status,varchar(32),是,,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,responsible_unit,varchar(200),是,,,,,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_env_monitor_point,,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_env_monitor_result,,E,必须人工录入,point_id,bigint unsigned,否,,,,,建议人工填
+biz_env_monitor_result,,E,必须人工录入,factor_code,varchar(64),否,,,,,建议人工填
+biz_env_monitor_result,,E,必须人工录入,factor_name,varchar(128),否,,,,,建议人工填
+biz_env_monitor_result,,E,必须人工录入,detected_value,"decimal(18,4)",是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,limit_value,"decimal(18,4)",是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,unit,varchar(32),是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,judgement,varchar(20),否,,,,,建议人工填
+biz_env_monitor_result,,E,必须人工录入,exceed_multiple,"decimal(12,4)",是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,sampled_at,datetime,是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,case_status,varchar(32),是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,is_closed,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,rectification_note,varchar(500),是,,,,,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_env_monitor_result,,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,monitor_date,date,是,,,MUL,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,monitor_type,varchar(50),是,,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,exceed_count,int,否,0,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,dust_exceed_count,int,否,0,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,noise_exceed_count,int,否,0,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,module_code,varchar(10),否,E,,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,monitor_point,varchar(255),是,,监测点,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,factor_name,varchar(100),是,,监测因子,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,detected_value,varchar(50),是,,检测值,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,initial_detected_value,varchar(50),是,,初检值,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,recheck_detected_value,varchar(50),是,,复测值,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,limit_value,varchar(50),是,,标准限值,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,exceed_multiple,"decimal(10,2)",是,,超标倍数,,,可隐藏/系统
+env_monitoring_record,环境监测记录,E,必须人工录入,recheck_status,varchar(30),是,,复测状态,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,issue_type,varchar(100),是,,,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,issue_count,int,否,1,,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,issue_status,varchar(30),是,,,MUL,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,overdue,tinyint,否,0,,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,found_date,date,是,,,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,closed_date,date,是,,,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,issue_name,varchar(255),是,,问题名称,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,issue_level,varchar(50),是,,问题等级,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,responsible_department,varchar(100),是,,责任部门,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,deadline,date,是,,整改截止,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,duration_days,int,是,,处置时长,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,is_demo,tinyint(1),否,0,是否演示数据,MUL,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,data_nature,varchar(20),否,formal,数据性质,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,business_code,varchar(80),是,,业务编号,MUL,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,responsible_org_name,varchar(100),是,,责任单位名称,,,可隐藏/系统
+env_issue_record,环保问题记录,E,必须人工录入,location_text,varchar(255),是,,位置描述,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,issue_status,varchar(30),是,,,MUL,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,found_date,date,是,,,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,closed_date,date,是,,,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,issue_name,varchar(255),是,,水保问题名称,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,issue_type,varchar(100),是,,问题类型,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,segment_name,varchar(100),是,,所属标段,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,deadline,date,是,,整改时限,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,overdue,tinyint,否,0,是否逾期,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,responsible_department,varchar(100),是,,责任部门,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,is_demo,tinyint(1),否,0,demo data flag,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,data_nature,varchar(20),否,formal,"formal, demo, or platform_calc",,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,effective_status,varchar(30),否,EFFECTIVE,"EFFECTIVE, INEFFECTIVE, or DRAFT",,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,business_code,varchar(80),是,,"business code, for example E03-D01",,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,responsible_org_name,varchar(100),是,,responsible organization,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,location_text,varchar(255),是,,location description,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,description,text,是,,issue description,,,可隐藏/系统
+water_protection_issue,水保问题记录,E,必须人工录入,discovery_basis,varchar(100),是,,discovery basis,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,work_point_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,object_code,varchar(64),否,,,,,建议人工填
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,object_name,varchar(200),否,,,,,建议人工填
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,location_desc,varchar(500),是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,longitude,"decimal(10,7)",是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,latitude,"decimal(10,7)",是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,approved_flag,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,capacity_m3,"decimal(18,2)",是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,disposal_status,varchar(32),否,,,,,建议人工填
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,control_measure,varchar(500),是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,measure_rate,"decimal(5,2)",是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_soil_disposal_site,Demo E02 弃土弃渣场对象,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,work_point_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,object_code,varchar(64),否,,,,,建议人工填
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,object_name,varchar(200),否,,,,,建议人工填
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,land_type,varchar(64),否,,,,,建议人工填
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,area_mu,"decimal(18,2)",是,,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,approval_status,varchar(32),否,,,,,建议人工填
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,restore_status,varchar(32),否,,,,,建议人工填
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,measure_rate,"decimal(5,2)",是,,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_temporary_land_use,Demo E02 临时用地对象,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,work_point_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,object_code,varchar(64),否,,,,,建议人工填
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,object_name,varchar(200),否,,,,,建议人工填
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,planned_area_mu,"decimal(18,2)",是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,completed_area_mu,"decimal(18,2)",是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,completion_rate,"decimal(5,2)",是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,storage_measure,varchar(500),是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,current_status,varchar(32),否,,,,,建议人工填
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_topsoil_stripping,Demo E02 表土剥离对象,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,work_point_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,object_code,varchar(64),否,,,,,建议人工填
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,object_name,varchar(200),否,,,,,建议人工填
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,slope_type,varchar(64),否,,,,,建议人工填
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,chainage,varchar(64),是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,greening_rate,"decimal(5,2)",是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,stability_status,varchar(32),否,,,,,建议人工填
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,protection_measure,varchar(500),是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_construction_slope,Demo E02 施工边坡对象,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,object_code,varchar(64),否,,,,,建议人工填
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,object_name,varchar(200),否,,,,,建议人工填
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,object_type,varchar(64),否,,,,,建议人工填
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,importance_level,varchar(32),是,,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,location_desc,varchar(500),是,,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,identification_status,varchar(32),否,,,,,建议人工填
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,inspection_status,varchar(32),否,,,,,建议人工填
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,protection_measure,varchar(500),是,,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_ecological_protection_object,Demo E03 生态保护对象,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,object_code,varchar(64),否,,,,,建议人工填
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,object_name,varchar(200),否,,,,,建议人工填
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,sensitive_type,varchar(64),否,,,,,建议人工填
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,location_desc,varchar(500),是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,area_mu,"decimal(18,2)",是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,protection_level,varchar(32),是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,identification_status,varchar(32),否,,,,,建议人工填
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,monitoring_status,varchar(32),否,,,,,建议人工填
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,protection_measure,varchar(500),是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_ecological_sensitive_area,Demo E03 生态敏感区,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,project_id,varchar(64),否,,,MUL,,建议人工填
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,section_id,bigint,是,,,MUL,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,relic_code,varchar(64),否,,,,,建议人工填
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,relic_name,varchar(200),否,,,,,建议人工填
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,relic_type,varchar(64),否,,,,,建议人工填
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,protection_level,varchar(64),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,location_desc,varchar(200),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,longitude,"decimal(12,8)",是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,latitude,"decimal(12,8)",是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,protection_scope,varchar(500),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,construction_impact,varchar(500),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,protection_measure,varchar(500),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,responsible_unit,varchar(200),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,risk_status,varchar(64),否,正常,,MUL,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,update_time,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,survey_status,varchar(32),否,COMPLETED,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,measure_rate,"decimal(5,2)",是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,impact_analysis,varchar(1000),是,,,,,可隐藏/系统
+biz_cultural_relic_object,E04 文物保护管控对象演示台账,E,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,point_code,varchar(80),否,,,UNI,,建议人工填
+e01_monitor_point,,E,必须人工录入,point_name,varchar(160),否,,,,,建议人工填
+e01_monitor_point,,E,必须人工录入,source_point_name,varchar(255),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,chainage,varchar(60),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,segment_code,varchar(80),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,segment_name,varchar(160),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,engineering_object_type,varchar(80),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,engineering_object_id,varchar(100),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,engineering_object_name,varchar(255),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,longitude,"decimal(11,8)",是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,latitude,"decimal(10,8)",是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_system,varchar(40),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_source_type,varchar(30),否,NONE,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_source_document_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_verification_status,varchar(30),否,NOT_PROVIDED,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_verified_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_verified_by,bigint,是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,coordinate_accuracy,"decimal(10,3)",是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,gis_feature_id,varchar(96),是,,,MUL,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,effective_from,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,effective_to,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,active_status,varchar(20),否,ACTIVE,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_monitor_point,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e01_monitor_point,,E,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,plan_code,varchar(80),否,,,UNI,,建议人工填
+e01_monitor_plan,,E,必须人工录入,plan_year,smallint,否,,,,,建议人工填
+e01_monitor_plan,,E,必须人工录入,quarter_code,char(7),否,,,,,建议人工填
+e01_monitor_plan,,E,必须人工录入,frequency_code,varchar(30),否,QUARTERLY,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,testing_provider_org_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,testing_provider_name,varchar(160),否,,,,,建议人工填
+e01_monitor_plan,,E,必须人工录入,owner_department_org_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,owner_department_name,varchar(160),否,,,,,建议人工填
+e01_monitor_plan,,E,必须人工录入,plan_document_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,version_no,varchar(30),否,,,,,建议人工填
+e01_monitor_plan,,E,必须人工录入,plan_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_monitor_plan,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e01_monitor_plan,,E,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,batch_code,varchar(80),否,,,UNI,,建议人工填
+e01_monitor_batch,,E,必须人工录入,plan_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,quarter_code,char(7),否,,,MUL,,建议人工填
+e01_monitor_batch,,E,必须人工录入,report_no,varchar(120),是,,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,testing_provider_org_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,testing_provider_name,varchar(160),否,,,,,建议人工填
+e01_monitor_batch,,E,必须人工录入,sample_start_at,datetime(6),否,,,,,建议人工填
+e01_monitor_batch,,E,必须人工录入,sample_end_at,datetime(6),否,,,,,建议人工填
+e01_monitor_batch,,E,必须人工录入,report_issued_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,received_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,source_document_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,source_file_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,ingestion_job_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,batch_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,idempotency_key,varchar(160),否,,,UNI,,建议人工填
+e01_monitor_batch,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_monitor_batch,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e01_monitor_batch,,E,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,sample_code,varchar(100),否,,,UNI,,建议人工填
+e01_monitor_sample,,E,必须人工录入,batch_id,bigint,否,,,MUL,,建议人工填
+e01_monitor_sample,,E,必须人工录入,plan_item_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,point_id,bigint,否,,,MUL,,建议人工填
+e01_monitor_sample,,E,必须人工录入,monitor_category,varchar(20),否,,,,,建议人工填
+e01_monitor_sample,,E,必须人工录入,sampled_at,datetime(6),否,,,MUL,,建议人工填
+e01_monitor_sample,,E,必须人工录入,sample_end_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,planned_sample_at_snapshot,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,planned_actual_variance_minutes,int,是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,sample_no,varchar(100),是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,idempotency_key,varchar(180),否,,,UNI,,建议人工填
+e01_monitor_sample,,E,必须人工录入,sample_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,void_reason,varchar(500),是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,duplicate_of_sample_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,raw_record_document_id,bigint,是,,,MUL,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_monitor_sample,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e01_monitor_sample,,E,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e01_factor_definition,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,factor_code,varchar(80),否,,,UNI,,建议人工填
+e01_factor_definition,,E,必须人工录入,factor_name,varchar(160),否,,,,,建议人工填
+e01_factor_definition,,E,必须人工录入,monitor_category,varchar(20),否,,,,,建议人工填
+e01_factor_definition,,E,必须人工录入,default_unit,varchar(60),是,,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,effective_from,datetime(6),是,,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,effective_to,datetime(6),是,,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_factor_definition,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_factor_definition,,E,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_factor_result,,E,必须人工录入,result_code,varchar(255),否,,,UNI,,建议人工填
+e01_factor_result,,E,必须人工录入,sample_id,bigint,否,,,MUL,,建议人工填
+e01_factor_result,,E,必须人工录入,factor_id,bigint,否,,,MUL,,建议人工填
+e01_factor_result,,E,必须人工录入,standard_version_id,bigint,否,,,MUL,,建议人工填
+e01_factor_result,,E,必须人工录入,test_stage,varchar(30),否,,,MUL,,建议人工填
+e01_factor_result,,E,必须人工录入,judgement,varchar(30),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,result_validity,varchar(20),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,detected_value_raw,varchar(100),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,limit_value_raw,varchar(100),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,standard_name_snapshot,varchar(255),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,reported_factor_name,varchar(160),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,reported_unit,varchar(60),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,judgement_source,varchar(30),是,,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_factor_result,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_factor_result,,E,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e01_factor_result,,E,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e01_standard_limit,,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,standard_version_id,bigint,否,,,MUL,,建议人工填
+e01_standard_limit,,E,必须人工录入,factor_id,bigint,否,,,MUL,,建议人工填
+e01_standard_limit,,E,必须人工录入,applicable_scene,varchar(255),是,,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,limit_operator,varchar(10),否,,,,,建议人工填
+e01_standard_limit,,E,必须人工录入,limit_value_raw,varchar(100),否,,,,,建议人工填
+e01_standard_limit,,E,必须人工录入,limit_value_num,"decimal(24,10)",是,,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,unit,varchar(60),否,,,,,建议人工填
+e01_standard_limit,,E,必须人工录入,period_description,varchar(255),是,,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e01_standard_limit,,E,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_standard_limit,,E,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,event_code,varchar(100),否,,,UNI,,建议人工填
+e01_exceed_event,,E,系统自动生成/计算,case_id,bigint,否,,,UNI,,建议人工填
+e01_exceed_event,,E,系统自动生成/计算,original_result_id,bigint,否,,,MUL,,建议人工填
+e01_exceed_event,,E,系统自动生成/计算,first_exceeded_at,datetime(6),否,,,,,建议人工填
+e01_exceed_event,,E,系统自动生成/计算,event_category,varchar(20),否,,,,,建议人工填
+e01_exceed_event,,E,系统自动生成/计算,current_retest_round,int,否,0,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,latest_retest_outcome,varchar(30),否,NOT_TESTED,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,closure_confirmed_at,datetime(6),是,,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,closure_confirmed_by,bigint,是,,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,effective_status,varchar(30),否,DRAFT,,MUL,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,effective_at,datetime(6),是,,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,effective_by,bigint,是,,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,data_nature,varchar(20),否,,,,,建议人工填
+e01_exceed_event,,E,系统自动生成/计算,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,active_original_result_id,bigint,是,,,UNI,STORED GENERATED,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e01_exceed_event,,E,系统自动生成/计算,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,period_value,varchar(50),是,,,MUL,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,diesel_usage,"decimal(24,8)",是,,,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,electricity_usage,"decimal(24,8)",是,,,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,material_usage,"decimal(24,8)",是,,,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,carbon_emission,"decimal(18,4)",是,,,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,output_value_wan,"decimal(18,4)",是,,完成产值，万元,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,baseline_emission,"decimal(18,4)",是,,基准情景排放量,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,diesel_emission,"decimal(18,4)",是,,施工用油排放量,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,electricity_emission,"decimal(18,4)",是,,施工用电排放量,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,material_emission,"decimal(18,4)",是,,主要材料排放量,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,other_emission,"decimal(18,4)",是,,其他排放量,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,diesel_unit,varchar(30),是,,施工用油活动单位,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,electricity_unit,varchar(30),是,,施工用电活动单位,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,transport_usage,"decimal(24,8)",是,,施工运输活动量,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,transport_unit,varchar(30),是,,施工运输活动单位,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,diesel_factor_id,bigint,是,,施工用油排放因子ID,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,electricity_factor_id,bigint,是,,施工用电排放因子ID,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,transport_factor_id,bigint,是,,施工运输排放因子ID,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,data_nature,varchar(30),是,,数据性质,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,verification_status,varchar(40),是,,核验状态,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,demo_note,varchar(255),是,,演示数据说明,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,updated_at,datetime,是,CURRENT_TIMESTAMP,更新时间,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,is_demo,tinyint(1),否,0,demo data flag,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,effective_status,varchar(30),是,,EFFECTIVE | INEFFECTIVE | NULL=待核实；正式KPI禁止IFNULL默认,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,evidence_status,varchar(40),否,MISSING,MISSING | PENDING | VERIFIED；禁止占位文件冒充,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,boundary_version,varchar(80),是,,写入时边界版本（审计冗余）,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,accounting_batch_id,bigint,是,,核算批次ID,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,is_current,tinyint(1),否,1,当前有效标志；0=被替代/作废,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,diesel_factor_snapshot_id,bigint,是,,施工用油因子快照ID,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,electricity_factor_snapshot_id,bigint,是,,施工用电因子快照ID,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,material_factor_snapshot_id,bigint,是,,主要材料因子快照ID（汇总引用）,,,可隐藏/系统
+carbon_emission_activity,碳排放活动数据,E,必须人工录入,transport_factor_snapshot_id,bigint,是,,施工运输因子快照ID,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,period_value,varchar(50),是,,,MUL,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,material_name,varchar(100),是,,,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,material_usage,"decimal(24,8)",是,,,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,material_unit,varchar(30),是,,,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,carbon_activity_id,bigint,是,,关联月度碳排活动记录ID,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,emission_factor_id,bigint,是,,排放因子ID,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,carbon_emission,"decimal(18,6)",是,,材料分项排放量，tCO₂e,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,data_nature,varchar(30),是,,数据性质,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,verification_status,varchar(40),是,,核验状态,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,demo_note,varchar(255),是,,演示数据说明,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,updated_at,datetime,是,CURRENT_TIMESTAMP,更新时间,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,is_demo,tinyint(1),否,0,demo data flag,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,effective_status,varchar(30),是,,EFFECTIVE | INEFFECTIVE | NULL=待核实,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,evidence_status,varchar(40),否,MISSING,MISSING | PENDING | VERIFIED,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,factor_snapshot_id,bigint,是,,材料因子快照ID,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,accounting_batch_id,bigint,是,,核算批次ID,,,可隐藏/系统
+carbon_material_usage,碳排放材料用量,E,必须人工录入,is_current,tinyint(1),否,1,当前有效标志,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,measure_code,varchar(80),否,,,UNI,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,measure_name,varchar(160),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,measure_category,varchar(80),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,application_scope,varchar(255),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,responsible_department,varchar(100),是,,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,start_date,date,是,,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,end_date,date,是,,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,implementation_status,varchar(40),否,,,MUL,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,estimated_reduction,"decimal(18,4)",是,,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,accounted_reduction,"decimal(18,4)",是,,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,verified_reduction,"decimal(18,4)",是,,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,reduction_unit,varchar(30),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,investment_cost,"decimal(18,4)",否,0.0000,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,operating_saving,"decimal(18,4)",否,0.0000,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,avoided_cost,"decimal(18,4)",否,0.0000,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,net_cost_impact,"decimal(18,4)",否,0.0000,,,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,currency_unit,varchar(30),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,calculation_method,varchar(255),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,data_nature,varchar(30),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,verification_status,varchar(40),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,evidence_status,varchar(40),否,,,,,建议人工填
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,is_demo,tinyint(1),否,0,,MUL,,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+carbon_reduction_measure,低碳措施及成本台账,E,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,risk_name,varchar(255),是,,,,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,risk_level,varchar(50),是,,,MUL,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,control_status,varchar(50),是,,,MUL,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,control_measure,text,是,,,,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,location,varchar(255),是,,,,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,risk_type,varchar(100),是,,风险类型,,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,control_start_date,date,是,,管控起始日期,,,可隐藏/系统
+safety_risk_point,安全风险点,S,必须人工录入,cancelled_date,date,是,,销号日期,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,project_id,varchar(50),否,LUOYI-ESG,项目标识,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,incident_code,varchar(60),是,,事故编码,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,occurred_date,date,是,,事故发生日期（冻结稿口径）,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,incident_date,date,否,,,MUL,,建议人工填
+safety_incident_record,安全生产事故台账,S,必须人工录入,incident_name,varchar(255),是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,incident_type,varchar(100),是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,incident_category,varchar(50),是,,事故分类,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,description,text,是,,事故描述,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,segment_name,varchar(100),是,,标段名称,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,responsible_unit,varchar(200),是,,责任单位,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,fatality_count,int,否,0,死亡人数,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,injury_count,int,否,0,受伤人数,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,responsibility_determination_status,varchar(30),否,PENDING,PENDING / RESPONSIBLE / NON_RESPONSIBLE,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,determination_effective_date,date,是,,认定生效日期,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,determination_summary,varchar(500),是,,认定摘要,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,incident_level,varchar(50),是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,interrupt_counting,tinyint,否,1,,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,responsible_department,varchar(100),是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,handling_status,varchar(50),是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,interrupt_reason,varchar(255),是,,,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,effective_status,varchar(30),否,DRAFT,DRAFT / EFFECTIVE / INEFFECTIVE,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,is_current,tinyint(1),否,1,当前有效版本,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,effective_at,datetime(6),是,,生效时间,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,effective_by,bigint,是,,生效操作人,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,data_nature,varchar(20),否,demo,demo / formal,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,is_demo,tinyint(1),否,1,是否演示数据（旧行默认 demo）,MUL,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,demo_batch_code,varchar(60),是,,关联演示批次编码,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,source_document_id,bigint,是,,来源资料ID,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,remark,varchar(500),是,,备注,,,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+safety_incident_record,安全生产事故台账,S,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),更新时间,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,project_id,varchar(50),否,LUOYI-ESG,项目标识,MUL,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,project_start_date,date,否,,,,,建议人工填
+safety_production_record,连续安全生产记录,S,必须人工录入,current_date,date,否,,,,,建议人工填
+safety_production_record,连续安全生产记录,S,必须人工录入,statistics_as_of,date,是,,统计期末,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,cycle_start_date,date,是,,当前安全生产周期起点,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,continuous_days,int,否,,,,,建议人工填
+safety_production_record,连续安全生产记录,S,必须人工录入,confirmation_batch_id,bigint,是,,关联确认批次ID,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,confirmation_status,varchar(30),否,PENDING,PENDING / CONFIRMED,MUL,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,PENDING_REVIEW / VERIFIED / REJECTED,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,effective_status,varchar(30),否,DRAFT,DRAFT / EFFECTIVE / INEFFECTIVE,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,is_current,tinyint(1),否,1,当前有效快照,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,data_nature,varchar(20),否,demo,demo / formal,MUL,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,is_demo,tinyint(1),否,0,是否演示数据,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,confirmed_at,datetime(6),是,,确认时间,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,confirmed_by,varchar(100),是,,确认人,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,current_stage,varchar(100),是,,,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,current_stage_detail,varchar(255),是,,,,,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,counting_status,varchar(30),否,,,,,建议人工填
+safety_production_record,连续安全生产记录,S,必须人工录入,update_time,datetime,否,,,,,建议人工填
+safety_production_record,连续安全生产记录,S,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+safety_production_record,连续安全生产记录,S,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),更新时间,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,batch_code,varchar(60),否,,批次编码，如 DEMO-S01-20260724,UNI,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,project_id,varchar(50),否,LUOYI-ESG,项目标识,MUL,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,confirmation_month,varchar(7),否,,确认月份，如 2026-07,MUL,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,statistics_as_of,date,否,,统计期末业务日期,,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,cycle_start_date,date,否,,当前安全生产周期起点,,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,continuous_days,int,否,,后端按冻结算法生成的快照值,,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,counting_status,varchar(30),否,,CONTINUOUS / PENDING_DETERMINATION / RESET_CYCLE,,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,confirmation_unit,varchar(200),是,,确认单位名称,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,confirmed_by,varchar(100),是,,确认人,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,confirmed_at,datetime(6),是,,确认时间,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,confirmation_status,varchar(30),否,PENDING,PENDING / CONFIRMED,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,PENDING_REVIEW / VERIFIED / REJECTED,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,effective_status,varchar(30),否,DRAFT,DRAFT / EFFECTIVE / INEFFECTIVE,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,effective_at,datetime(6),是,,生效时间,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,data_nature,varchar(20),否,,demo / formal,MUL,,建议人工填
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,is_demo,tinyint(1),否,0,是否演示数据,MUL,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,version_no,int,否,1,批次版本号,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,remark,varchar(500),是,,备注,,,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+s01_confirmation_batch,S01 建设单位确认批次,S,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,dispute_type,varchar(100),是,,,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,status,varchar(50),是,,,MUL,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,involved_people,int,是,,,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,overdue,tinyint,否,0,,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,dispute_name,varchar(255),是,,纠纷事项,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,occurred_date,date,是,,发生时间,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,amount_wan,"decimal(18,2)",是,,涉及金额，万元,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,responsible_department,varchar(100),是,,责任部门,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,closed_date,date,是,,办结日期,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,data_nature,varchar(30),否,formal,formal | demo,,,可隐藏/系统
+labor_dispute_record,劳务纠纷记录,S,必须人工录入,is_demo,tinyint,否,0,0=formal 1=demo,,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,payment_month,varchar(50),是,,,MUL,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,worker_count,int,是,,,,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,payment_amount,"decimal(18,2)",是,,,,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,payment_status,varchar(50),是,,,,,可隐藏/系统
+salary_payment_record,工资支付记录,S,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,period_start,date,否,,,,,建议人工填
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,period_end,date,否,,,,,建议人工填
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,worker_count,int unsigned,否,0,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,payable_amount,"decimal(18,2)",否,0.00,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,paid_amount,"decimal(18,2)",否,0.00,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,payment_rate,"decimal(5,2)",否,0.00,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,payment_status,varchar(32),否,,,,,建议人工填
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,overdue_amount,"decimal(18,2)",否,0.00,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,dispute_count,int unsigned,否,0,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,source_type,varchar(32),是,,"Data source type, such as finance system or manual entry",,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,record_date,date,是,,Actual entry or source record date; not derived from updated_at,,,可隐藏/系统
+biz_worker_payment_summary,Demo S03 工资支付周期汇总,S,系统自动生成/计算,created_at,datetime,是,,Technical creation time,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,appeal_type,varchar(100),是,,,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,status,varchar(50),是,,,MUL,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,source_channel,varchar(100),是,,,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,overdue,tinyint,否,0,,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,appeal_content,varchar(500),是,,诉求内容,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,accepted_date,date,是,,受理时间,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,location,varchar(255),是,,涉及地点,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,deadline,date,是,,办结期限,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,closed_date,date,是,,办结日期,,,可隐藏/系统
+appeal_record,群众诉求记录,S,必须人工录入,duration_days,int,是,,办理时长,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,procedure_name,varchar(255),是,,,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,status,varchar(50),是,,,MUL,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,impact_node,varchar(100),是,,,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,overdue,tinyint,否,0,,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,procedure_type,varchar(100),是,,审批类型,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,deadline,date,是,,完成时限,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,responsible_department,varchar(100),是,,责任部门,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,progress_percent,int,是,,办理进度百分比,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,completed_date,date,是,,完成日期,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,expected_complete_date,date,是,,预计完成日期,,,可隐藏/系统
+compliance_procedure,合规手续,G,必须人工录入,project_id,bigint,是,,Project ownership; new API writes must provide this value,,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,permit_name,varchar(255),是,,,,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,permit_no,varchar(100),是,,,,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,expire_date,date,是,,,MUL,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,status,varchar(50),是,,,MUL,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,permit_type,varchar(100),是,,许可类型,,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,responsible_department,varchar(100),是,,责任部门,,,可隐藏/系统
+permit_record,许可事项,G,必须人工录入,project_id,bigint,是,,Project ownership; new API writes must provide this value,,,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,project_id,bigint,否,,Project ownership; required for every new fact,MUL,,建议人工填
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,risk_point_id,bigint,否,,Reference to safety_risk_point.id,MUL,,建议人工填
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,plan_code,varchar(80),否,,Project-scoped special-plan code,,,建议人工填
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,plan_name,varchar(255),否,,Special-plan name,,,建议人工填
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,risk_level,varchar(50),否,,Existing project risk-level value; no new levels are defined here,,,建议人工填
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,approval_status,varchar(40),否,,Existing project approval-status value,,,建议人工填
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,approval_date,date,是,,Approval completion date,,,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,approval_file_id,bigint,是,,Reference to file_asset.id,MUL,,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,source_doc_ref,varchar(255),是,,Source document reference,,,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,data_nature,varchar(20),否,demo,demo/formal/platform_calc,,,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,is_demo,tinyint(1),否,1,,,,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+special_plan_approval,ESG risk special-plan approval facts,G,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,work_point_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,change_code,varchar(64),否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,change_type,varchar(64),否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,change_name,varchar(255),否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,location_desc,varchar(500),是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,change_reason,varchar(1000),是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,apply_date,date,否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,approve_status,varchar(32),否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,approve_date,date,是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,implementation_status,varchar(32),否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,attachment_status,varchar(32),否,,,,,建议人工填
+biz_design_change,Demo G03 设计变更,G,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_design_change,Demo G03 设计变更,G,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,issue_code,varchar(64),否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,issue_type,varchar(64),否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,issue_level,varchar(16),否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,issue_description,varchar(1000),否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,found_at,datetime,否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,current_status,varchar(32),否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,deadline,date,是,,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,closed_at,date,是,,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,recurrence_flag,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,evidence_status,varchar(32),否,,,,,建议人工填
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_internal_control_issue,Demo G04 内控廉洁问题,G,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,section_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,work_point_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,record_code,varchar(64),否,,,,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,construction_date,date,否,,,,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,start_time,datetime,否,,,,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,end_time,datetime,否,,,,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,permit_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,permit_status,varchar(32),否,,,,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,approval_status,varchar(32),否,,,,,建议人工填
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,noise_measure,varchar(500),是,,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,risk_status,varchar(16),否,NORMAL,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,source_doc_ref,varchar(255),是,,,,,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_night_construction_record,Demo G02 夜间施工记录,G,必须人工录入,is_deleted,tinyint unsigned,否,0,,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,document_id,bigint,是,,,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,item_name,varchar(255),是,,,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,status,varchar(50),是,,,MUL,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,source_type,varchar(100),是,,,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,overdue,tinyint,否,0,,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,closed_date,date,是,,,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,issue_level,varchar(50),是,,问题等级,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,deadline,date,是,,整改时限,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,responsible_department,varchar(100),是,,责任部门,,,可隐藏/系统
+rectification_record,整改事项,G,必须人工录入,check_batch,varchar(100),是,,检查批次，用于统计涉及检查次数,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e_closure_case,,综合,必须人工录入,case_code,varchar(80),否,,,UNI,,建议人工填
+e_closure_case,,综合,必须人工录入,case_domain,varchar(30),否,,,MUL,,建议人工填
+e_closure_case,,综合,必须人工录入,source_table,varchar(80),否,,,,,建议人工填
+e_closure_case,,综合,必须人工录入,source_record_id,bigint,否,,,,,建议人工填
+e_closure_case,,综合,必须人工录入,source_business_key,varchar(160),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,source_document_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,title,varchar(255),否,,,,,建议人工填
+e_closure_case,,综合,必须人工录入,location_text,varchar(255),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,gis_feature_id,varchar(96),是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,current_status,varchar(40),否,DISCOVERED,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,current_status_history_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,priority,varchar(30),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,severity,varchar(30),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,deadline,datetime(6),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,discovery_org_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,responsible_org_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,review_org_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,close_org_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,opened_at,datetime(6),否,,,,,建议人工填
+e_closure_case,,综合,必须人工录入,closed_at,datetime(6),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,reopened_at,datetime(6),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,closure_reason,varchar(500),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,merged_into_case_id,bigint,是,,,MUL,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e_closure_case,,综合,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,row_version,int,否,0,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,created_by,bigint,是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,updated_by,bigint,是,,,,,可隐藏/系统
+e_closure_case,,综合,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e_closure_case,,综合,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e_closure_case,,综合,必须人工录入,project_id,bigint,是,,Project ownership; legacy rows may remain NULL,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,task_code,varchar(80),否,,,UNI,,建议人工填
+e_rectification_task,,综合,必须人工录入,title,varchar(255),否,,,,,建议人工填
+e_rectification_task,,综合,必须人工录入,responsible_org_id,bigint,是,,,MUL,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,deadline,datetime(6),是,,,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,task_status,varchar(30),否,PENDING,,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+e_rectification_task,,综合,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,effective_status,varchar(30),否,DRAFT,,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,effective_at,datetime(6),是,,,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,effective_by,bigint,是,,,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+e_rectification_task,,综合,必须人工录入,rectification_completed_date,date,是,,Client-entered actual rectification completion date; never generated by the system,,,可隐藏/系统
+e_rectification_task,,综合,必须人工录入,rectification_completed_by,bigint,是,,User who entered the rectification completion date,MUL,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,case_id,bigint,否,,,MUL,,建议人工填
+e_case_evidence,,综合,文件上传关联,status_history_id,bigint,是,,,MUL,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,document_id,bigint,是,,,MUL,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,file_id,bigint,是,,,MUL,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,evidence_role,varchar(40),否,,,,,建议人工填
+e_case_evidence,,综合,文件上传关联,version_no,int,否,1,,,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,is_current,tinyint(1),否,1,,,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,validity_status,varchar(20),否,VALID,,,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,verification_status,varchar(30),否,PENDING_REVIEW,,,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,data_nature,varchar(20),否,,,,,建议人工填
+e_case_evidence,,综合,文件上传关联,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,created_by,bigint,是,,,,,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+e_case_evidence,,综合,文件上传关联,rectification_round_id,int,是,,rectification round id,,,可隐藏/系统
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,warning_code,varchar(64),否,,,UNI,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,project_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,domain_code,varchar(8),否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,kpi_key,varchar(16),否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,object_type,varchar(64),否,,,MUL,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,object_id,bigint unsigned,否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,object_name_snapshot,varchar(255),否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,warning_level,varchar(16),否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,warning_reason,varchar(1000),否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,trigger_time,datetime,否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,responsible_org_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,responsible_unit,varchar(255),是,,,,,可隐藏/系统
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,status,varchar(32),否,,,,,建议人工填
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,source_rule_id,bigint unsigned,是,,,,,可隐藏/系统
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+biz_risk_warning,Demo ESG 风险预警,综合,系统自动生成/计算,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,id,bigint unsigned,否,,,PRI,,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,warning_id,bigint unsigned,否,,,MUL,,建议人工填
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,project_id,bigint unsigned,否,,,,,建议人工填
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,responsible_unit,varchar(255),否,,,,,建议人工填
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,action_content,varchar(1000),是,,,,,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,handler,varchar(100),是,,,,,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,disposal_status,varchar(32),否,,,,,建议人工填
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,disposal_time,datetime,是,,,,,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,close_time,datetime,是,,,,,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,close_evidence,varchar(255),是,,,,,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+biz_risk_disposal,Demo ESG 风险处置,综合,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,id,bigint,否,,,PRI,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,file_code,varchar(64),否,,,UNI,,建议人工填
+file_asset,文件资产,综合,文件上传关联,original_name,varchar(255),否,,,,,建议人工填
+file_asset,文件资产,综合,文件上传关联,file_ext,varchar(20),是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,mime_type,varchar(100),是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,file_size,bigint,是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,storage_path,varchar(500),否,,,,,建议人工填
+file_asset,文件资产,综合,文件上传关联,storage_bucket,varchar(100),是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,sha256_hash,varchar(128),否,,,MUL,,建议人工填
+file_asset,文件资产,综合,文件上传关联,upload_source,varchar(50),否,,,,,建议人工填
+file_asset,文件资产,综合,文件上传关联,uploader_id,bigint,是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,uploader_name,varchar(100),是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,upload_time,datetime,否,,,MUL,,建议人工填
+file_asset,文件资产,综合,文件上传关联,duplicate_status,varchar(30),否,UNKNOWN,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,duplicate_of_file_id,bigint,是,,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,parse_status,varchar(30),否,PENDING,,MUL,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,is_deleted,tinyint,否,0,,,,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+file_asset,文件资产,综合,文件上传关联,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,id,bigint,否,,,PRI,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,document_code,varchar(64),否,,,UNI,,建议人工填
+document_record,资料主档,综合,文件上传关联,document_name,varchar(255),否,,,,,建议人工填
+document_record,资料主档,综合,文件上传关联,document_type,varchar(100),否,,,MUL,,建议人工填
+document_record,资料主档,综合,文件上传关联,module_code,varchar(10),否,,,MUL,,建议人工填
+document_record,资料主档,综合,文件上传关联,period_value,varchar(50),是,,,MUL,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,version_no,varchar(20),否,V1,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,source_name,varchar(100),是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,relation_count,int,否,0,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,validity_status,varchar(30),否,有效,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,document_status,varchar(30),否,ACTIVE,,MUL,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,confirm_status,varchar(30),否,CONFIRMED,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,file_id,bigint,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,parse_job_id,bigint,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,responsible_unit,varchar(100),是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,valid_start_date,date,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,valid_end_date,date,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,uploaded_at,datetime,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,created_by,bigint,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,updated_by,bigint,是,,,,,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+document_record,资料主档,综合,文件上传关联,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+gis_feature,,综合,必须人工录入,id,varchar(96),否,,,PRI,,可隐藏/系统
+gis_feature,,综合,必须人工录入,project_id,varchar(64),否,LUOYI-ESG,,,,可隐藏/系统
+gis_feature,,综合,必须人工录入,layer_id,varchar(64),否,,,MUL,,建议人工填
+gis_feature,,综合,必须人工录入,section_id,varchar(64),是,,,MUL,,可隐藏/系统
+gis_feature,,综合,必须人工录入,object_type,varchar(64),否,,,,,建议人工填
+gis_feature,,综合,必须人工录入,name,varchar(160),否,,,,,建议人工填
+gis_feature,,综合,必须人工录入,geometry_json,json,否,,,,,建议人工填
+gis_feature,,综合,必须人工录入,properties_json,json,否,,,,,建议人工填
+gis_feature,,综合,必须人工录入,status,varchar(32),是,,,,,可隐藏/系统
+gis_feature,,综合,必须人工录入,risk_level,int,是,,,,,可隐藏/系统
+gis_feature,,综合,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,project_id,varchar(64),否,LUOYI-ESG,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,feature_id,varchar(96),否,,,MUL,,建议人工填
+gis_feature_business_relation,,综合,必须人工录入,relation_type,varchar(64),否,,,MUL,,建议人工填
+gis_feature_business_relation,,综合,必须人工录入,relation_code,varchar(64),是,,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,relation_name,varchar(160),否,,,,,建议人工填
+gis_feature_business_relation,,综合,必须人工录入,relation_status,varchar(32),是,,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,risk_level,int,是,,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,source_table,varchar(80),是,,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,source_id,varchar(64),是,,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,summary,text,是,,,,,可隐藏/系统
+gis_feature_business_relation,,综合,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+org_unit,组织机构,综合,必须人工录入,id,bigint,否,,,PRI,,可隐藏/系统
+org_unit,组织机构,综合,必须人工录入,org_code,varchar(64),否,,,UNI,,建议人工填
+org_unit,组织机构,综合,必须人工录入,org_name,varchar(100),否,,,,,建议人工填
+org_unit,组织机构,综合,必须人工录入,parent_id,bigint,是,,,,,可隐藏/系统
+org_unit,组织机构,综合,必须人工录入,org_type,varchar(50),是,,,,,可隐藏/系统
+org_unit,组织机构,综合,必须人工录入,enabled,tinyint,否,1,,,,可隐藏/系统
+org_unit,组织机构,综合,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+org_unit,组织机构,综合,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+project_section,,综合,必须人工录入,id,bigint,否,,,PRI,auto_increment,可隐藏/系统
+project_section,,综合,必须人工录入,project_id,varchar(64),否,LUOYI-ESG,,MUL,,可隐藏/系统
+project_section,,综合,必须人工录入,section_code,varchar(40),否,,,,,建议人工填
+project_section,,综合,必须人工录入,section_name,varchar(160),否,,,,,建议人工填
+project_section,,综合,必须人工录入,chainage_start,varchar(40),否,,,,,建议人工填
+project_section,,综合,必须人工录入,chainage_end,varchar(40),否,,,,,建议人工填
+project_section,,综合,必须人工录入,start_km,"decimal(10,3)",否,,,,,建议人工填
+project_section,,综合,必须人工录入,end_km,"decimal(10,3)",否,,,,,建议人工填
+project_section,,综合,必须人工录入,section_type,varchar(40),否,CIVIL,,,,可隐藏/系统
+project_section,,综合,必须人工录入,active_status,varchar(20),否,ACTIVE,,,,可隐藏/系统
+project_section,,综合,必须人工录入,data_nature,varchar(20),否,,,,,建议人工填
+project_section,,综合,必须人工录入,is_demo,tinyint(1),否,0,,,,可隐藏/系统
+project_section,,综合,必须人工录入,created_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED,可隐藏/系统
+project_section,,综合,必须人工录入,updated_at,timestamp(6),否,CURRENT_TIMESTAMP(6),,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6),可隐藏/系统
+indicator_definition,指标定义,综合,必须人工录入,indicator_code,varchar(20),否,,,PRI,,建议人工填
+indicator_definition,指标定义,综合,必须人工录入,group_code,varchar(10),否,,,,,建议人工填
+indicator_definition,指标定义,综合,必须人工录入,indicator_name,varchar(100),否,,,,,建议人工填
+indicator_definition,指标定义,综合,必须人工录入,unit,varchar(30),否,,,,,建议人工填
+indicator_definition,指标定义,综合,必须人工录入,source_table,varchar(100),是,,,,,可隐藏/系统
+indicator_definition,指标定义,综合,必须人工录入,calculation_desc,varchar(500),是,,,,,可隐藏/系统
+indicator_definition,指标定义,综合,必须人工录入,display_order,int,否,,,,,建议人工填
+indicator_definition,指标定义,综合,必须人工录入,enabled,tinyint,否,1,,,,可隐藏/系统
+indicator_definition,指标定义,综合,必须人工录入,created_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED,可隐藏/系统
+indicator_definition,指标定义,综合,必须人工录入,updated_at,datetime,否,CURRENT_TIMESTAMP,,,DEFAULT_GENERATED on update CURRENT_TIMESTAMP,可隐藏/系统
+indicator_result,指标当前结果,综合,系统自动生成/计算,indicator_code,varchar(20),否,,,PRI,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,group_code,varchar(10),否,,,MUL,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,label,varchar(100),否,,,,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,full_name,varchar(100),否,,,,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,value,"decimal(18,4)",否,,,,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,value_text,varchar(100),是,,,,,可隐藏/系统
+indicator_result,指标当前结果,综合,系统自动生成/计算,unit,varchar(30),否,,,,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,display_order,int,否,,,,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,calculated_at,datetime,否,,,,,建议人工填
+indicator_result,指标当前结果,综合,系统自动生成/计算,published_at,datetime,否,,,,,建议人工填

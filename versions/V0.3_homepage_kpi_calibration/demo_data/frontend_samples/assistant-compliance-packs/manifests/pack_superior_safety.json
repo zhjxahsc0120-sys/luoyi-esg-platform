@@ -1,0 +1,35 @@
+{
+  "packageId": "PACK-SUPERIOR-SAFETY-202607",
+  "intentKey": "pack.superior_safety",
+  "inspectionType": "safety",
+  "nature": "sample",
+  "title": "上级安全检查 · 合规资料包",
+  "subtitle": "合规资料包 · 2026年7月账期",
+  "downloadUrl": "/samples/assistant-compliance-packs/上级检查_安全合规资料包_202607.zip",
+  "folderUrl": "/samples/assistant-compliance-packs/上级检查_安全合规资料包_202607/",
+  "updatedAt": "2026-07-27",
+  "requiredDocs": [
+    {
+      "name": "合规资料目录",
+      "path": "01_清单_合规资料目录.md",
+      "kind": "checklist"
+    },
+    {
+      "name": "在管安全风险台账",
+      "path": "02_风险台账/在管安全风险台账.csv",
+      "kind": "ledger"
+    },
+    {
+      "name": "上级安全检查核查项与台账缺口说明",
+      "path": "03_核查表/上级安全检查核查项与台账缺口.md",
+      "kind": "checklist"
+    }
+  ],
+  "relatedIntents": [
+    "s02.active_major_risks",
+    "cross.overdue_rectify"
+  ],
+  "triggerQuestions": [
+    "上级安全检查常见核查项与现有台账缺口？"
+  ]
+}

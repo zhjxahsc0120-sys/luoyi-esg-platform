@@ -1,0 +1,119 @@
+// ── 表格基础样式 ──
+// 统一各组件中的数据表格视觉，使用 tokens.scss 中的设计 token
+
+@use '../tokens.scss' as *;
+
+// ── 表格容器 ──
+@mixin table-wrapper {
+  overflow-x: auto;
+  background: var(--bg-panel-solid);
+  border: 1px solid rgba(105, 227, 111, 0.1);
+  border-radius: var(--radius-lg);
+
+  &::-webkit-scrollbar { width: 4px; height: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(143, 169, 200, 0.2); border-radius: 2px; }
+}
+
+// ── 基础表格 ──
+@mixin table-base {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body);
+
+  th {
+    position: sticky;
+    top: 0;
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    color: var(--text-muted);
+    background: rgba(5, 18, 38, 0.95);
+    border-bottom: 1px solid rgba(105, 227, 111, 0.1);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: var(--space-3) var(--space-4);
+    color: var(--text-main);
+    border-bottom: 1px solid rgba(143, 169, 200, 0.06);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ── 可交互行 ──
+@mixin table-interactive-rows {
+  tbody tr {
+    cursor: pointer;
+    transition: background var(--duration-fast) ease;
+
+    &:hover td {
+      background: rgba(0, 174, 255, 0.04);
+    }
+
+    &.selected td {
+      background: rgba(47, 156, 255, 0.12);
+      box-shadow: inset 2px 0 0 var(--blue);
+    }
+  }
+}
+
+// ── KPI 弹窗内小表格 ──
+// 适用于 KpiDetailModal 中 .detail-table 的紧凑样式
+@mixin table-compact {
+  @include table-base;
+
+  font-size: var(--fs-caption);
+
+  th {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--fs-caption);
+  }
+
+  td {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--fs-caption);
+  }
+
+  tr:hover td {
+    background: rgba(0, 174, 255, 0.04);
+  }
+
+  .no-data {
+    text-align: center;
+    color: var(--text-faint);
+    padding: var(--space-5);
+  }
+}
+
+// ── 工作台宽表格 ──
+// 适用于 WorkspaceTasks/WorkspaceReview/WorkspaceDocuments
+@mixin table-workspace {
+  @include table-base;
+  @include table-interactive-rows;
+
+  font-size: var(--fs-body);
+
+  th {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  td {
+    padding: calc(var(--space-3) + 2px) var(--space-4);
+    font-size: 13px;
+  }
+}
+
+// ── 分页栏 ──
+@mixin pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+}

@@ -1,0 +1,250 @@
+{
+  "project": {
+    "name": "罗宜高速",
+    "fullName": "罗宜高速公路项目",
+    "stage": "主体施工"
+  },
+  "documents": [
+    {
+      "id": "engineering-2026-05",
+      "matchKeywords": ["2026年5月", "2019年11月至2020年10月"],
+      "documentType": "监理月报",
+      "period": "2026年5月",
+      "confidence": "97.8%",
+      "documentUnderstanding": {
+        "fileType": "监理月报",
+        "project": "罗宜高速",
+        "period": "2026年5月",
+        "constructionStage": "主体施工"
+      },
+      "aiSummary": [
+        "本期资料识别为罗宜高速主体施工阶段监理月报，统计周期为2026年5月，覆盖路基、桥梁、隧道及互通相关工作面。",
+        "路基方面，TJ-01、TJ-02推进填筑及边坡防护；桥梁QL-01开展下部结构施工；隧道SD-01推进掌子面开挖与初期支护；互通HJ-01进行场地整理及临建设施施工。",
+        "安全与环保需持续关注高边坡、隧道及高处作业风险，并落实弃渣场防护、临时排水与沉沙池维护。结构化指标已提取，建议业务人员核对后入库。"
+      ],
+      "highlightItems": [
+        {
+          "name": "路基施工推进",
+          "type": "工程",
+          "content": "TJ-01、TJ-02 路基填筑及边坡防护持续推进，多工作面并行。",
+          "focus": "关注边坡稳定与临时排水措施落实情况"
+        },
+        {
+          "name": "桥梁下部结构施工",
+          "type": "工程",
+          "content": "QL-01 桥梁下部结构施工推进，涉及高处作业面。",
+          "focus": "关注高处作业防护与交叉施工协调"
+        },
+        {
+          "name": "隧道施工风险",
+          "type": "安全",
+          "content": "SD-01 掌子面施工及初期支护推进，属高风险作业面。",
+          "focus": "关注突水突泥风险与初期支护及时性"
+        },
+        {
+          "name": "互通区域施工",
+          "type": "工程",
+          "content": "HJ-01 互通区域场地整理及临建设施施工。",
+          "focus": "关注临时占地恢复与临建安全"
+        },
+        {
+          "name": "环保水保管理",
+          "type": "环境",
+          "content": "弃渣场防护、临时排水、沉沙池维护等措施需同步落实。",
+          "focus": "关注未闭环环保、水保问题整改闭环"
+        },
+        {
+          "name": "高处作业管控",
+          "type": "安全",
+          "content": "桥梁等高处作业面存在，需与施工进度同步管控。",
+          "focus": "关注防护措施检查与未关闭整改项"
+        }
+      ],
+      "structuredData": {
+        "engineering": [
+          { "label": "覆盖标段/工作面", "value": "TJ-01、TJ-02、QL-01、SD-01、HJ-01" },
+          { "label": "路线长度", "value": "78.6 km" },
+          { "label": "重点工作面", "value": "5 处" },
+          { "label": "专业类型", "value": "路基、桥梁、隧道、互通" }
+        ],
+        "safety": [
+          { "label": "连续安全生产", "value": "355 天" },
+          { "label": "较大及以上风险点", "value": "2 项" },
+          { "label": "未关闭整改", "value": "4 项" }
+        ],
+        "environment": [
+          { "label": "未闭环环保问题", "value": "7 项" },
+          { "label": "未闭环水保问题", "value": "7 项" },
+          { "label": "水保关注", "value": "弃渣场防护、临时排水、沉沙池维护" }
+        ]
+      },
+      "recognitionNotes": {
+        "chapterCount": 8,
+        "tableCount": 12,
+        "keyItemCount": 36,
+        "confirmHint": "以下内容建议业务人员确认后入库"
+      },
+      "coverage": ["TJ-01", "TJ-02", "QL-01", "SD-01", "HJ-01"]
+    },
+    {
+      "id": "engineering-2026-06",
+      "matchKeywords": ["2026年6月", "2020年11月至2021年9月"],
+      "documentType": "监理月报",
+      "period": "2026年6月",
+      "confidence": "98.1%",
+      "documentUnderstanding": {
+        "fileType": "监理月报",
+        "project": "罗宜高速",
+        "period": "2026年6月",
+        "constructionStage": "主体施工"
+      },
+      "aiSummary": [
+        "本期资料识别为罗宜高速主体施工阶段监理月报，统计周期为2026年6月，各专业工作面持续推进。",
+        "路基、桥梁、隧道及互通施工延续上期安排；监理关注重点转向汛期排水与高风险作业管控。",
+        "安全与环保方面需同步检查防汛措施、弃渣场防护及临时占地恢复。结构化指标已提取，建议业务人员核对后入库。"
+      ],
+      "highlightItems": [
+        {
+          "name": "路基施工推进",
+          "type": "工程",
+          "content": "TJ-01 路基填筑及边坡防护，TJ-02 路基成型及施工便道维护。",
+          "focus": "关注汛期排水与边坡稳定"
+        },
+        {
+          "name": "桥梁下部结构施工",
+          "type": "工程",
+          "content": "QL-01 桥梁下部结构施工持续推进。",
+          "focus": "关注高处作业防护"
+        },
+        {
+          "name": "隧道施工风险",
+          "type": "安全",
+          "content": "SD-01 掌子面施工及初期支护，汛期风险上升。",
+          "focus": "关注突水突泥风险"
+        },
+        {
+          "name": "环保水保管理",
+          "type": "环境",
+          "content": "汛期临时排水、弃渣场防护及临时占地恢复需重点落实。",
+          "focus": "关注汛期排水设施完好性"
+        },
+        {
+          "name": "多专业交叉施工",
+          "type": "工程",
+          "content": "路基、桥梁、隧道及互通多工作面并行，协调要求提高。",
+          "focus": "关注交叉施工安全与进度衔接"
+        }
+      ],
+      "structuredData": {
+        "engineering": [
+          { "label": "覆盖标段/工作面", "value": "TJ-01、TJ-02、QL-01、SD-01、HJ-01" },
+          { "label": "路线长度", "value": "78.6 km" },
+          { "label": "重点工作面", "value": "5 处" },
+          { "label": "专业类型", "value": "路基、桥梁、隧道、互通" }
+        ],
+        "safety": [
+          { "label": "连续安全生产", "value": "355 天" },
+          { "label": "较大及以上风险点", "value": "2 项" },
+          { "label": "未关闭整改", "value": "4 项" }
+        ],
+        "environment": [
+          { "label": "未闭环环保问题", "value": "7 项" },
+          { "label": "未闭环水保问题", "value": "7 项" },
+          { "label": "水保关注", "value": "汛期临时排水、弃渣场防护、临时占地恢复" }
+        ]
+      },
+      "recognitionNotes": {
+        "chapterCount": 8,
+        "tableCount": 14,
+        "keyItemCount": 38,
+        "confirmHint": "以下内容建议业务人员确认后入库"
+      },
+      "coverage": ["TJ-01", "TJ-02", "QL-01", "SD-01", "HJ-01"]
+    },
+    {
+      "id": "safety-2026-06",
+      "matchKeywords": ["安全监理", "安全月报"],
+      "documentType": "安全监理月报",
+      "period": "2026年6月",
+      "confidence": "98.6%",
+      "documentUnderstanding": {
+        "fileType": "安全监理月报",
+        "project": "罗宜高速",
+        "period": "2026年6月",
+        "constructionStage": "主体施工"
+      },
+      "aiSummary": [
+        "本期资料识别为罗宜高速主体施工阶段安全监理月报，统计周期为2026年6月。",
+        "报告重点记录高边坡、隧道、高处作业及防汛风险管控情况，并跟踪未关闭问题整改进度。",
+        "现场巡查覆盖临时用电、施工便道及防汛措施。相关结构化指标已提取，建议业务人员核对后入库。"
+      ],
+      "highlightItems": [
+        {
+          "name": "高边坡施工风险",
+          "type": "安全",
+          "content": "高边坡作业面纳入本期安全巡查与风险点复核。",
+          "focus": "关注防护措施与风险点闭环"
+        },
+        {
+          "name": "隧道施工风险",
+          "type": "安全",
+          "content": "隧道作业面检查覆盖突水突泥等关键风险。",
+          "focus": "关注初期支护与应急准备"
+        },
+        {
+          "name": "高处作业管控",
+          "type": "安全",
+          "content": "高处作业防护措施检查与问题整改跟踪。",
+          "focus": "关注未关闭整改项推进"
+        },
+        {
+          "name": "防汛与现场巡查",
+          "type": "安全",
+          "content": "检查临时用电、施工便道及防汛措施落实情况。",
+          "focus": "关注汛期排水与便道通行安全"
+        },
+        {
+          "name": "整改闭环跟踪",
+          "type": "安全",
+          "content": "跟踪未关闭问题整改进度，同步复核风险工点。",
+          "focus": "关注较大风险点与未关闭整改数量"
+        }
+      ],
+      "structuredData": {
+        "engineering": [
+          { "label": "覆盖标段/工作面", "value": "TJ-01、TJ-02、QL-01、SD-01、HJ-01" },
+          { "label": "风险工点管控", "value": "与施工计划同步管控" }
+        ],
+        "safety": [
+          { "label": "连续安全生产", "value": "355 天" },
+          { "label": "较大及以上风险点", "value": "2 项" },
+          { "label": "未关闭整改", "value": "4 项" }
+        ],
+        "environment": [
+          { "label": "汛期排水设施", "value": "同步检查" }
+        ]
+      },
+      "recognitionNotes": {
+        "chapterCount": 6,
+        "tableCount": 9,
+        "keyItemCount": 24,
+        "confirmHint": "以下内容建议业务人员确认后入库"
+      },
+      "coverage": ["TJ-01", "TJ-02", "QL-01", "SD-01", "HJ-01"]
+    }
+  ],
+  "ingestionSuggestion": {
+    "title": "入库建议",
+    "parseStatus": "解析完成",
+    "status": "pending_confirm",
+    "statusLabel": "待业务确认",
+    "objects": [
+      "工程进展记录",
+      "安全风险记录",
+      "环境管理记录",
+      "水保管理记录",
+      "月报归档记录"
+    ],
+    "usage": "ESG 月报填报与项目资料管理"
+  }
+}
