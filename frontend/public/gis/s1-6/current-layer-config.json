@@ -1,0 +1,129 @@
+{
+  "project": "罗宜高速红线与路线矢量图",
+  "sourceFile": "20260804/1原始数据/3提供的部分数据/红线位置/红线",
+  "coordinateSystemLabel": "WGS84 经纬度（EPSG:4326）",
+  "recommendedLoader": "Cesium.GeoJsonDataSource",
+  "stylePolicy": "redline-road-slope-semantic-style",
+  "selectionPolicy": "only-current-vector-data",
+  "groups": [
+    {
+      "id": "current_vector_layers",
+      "name": "本批矢量数据",
+      "order": 1,
+      "layers": [
+        {
+          "id": "road_edges",
+          "name": "道路边线",
+          "file": "layers/current/road-edges.geojson",
+          "format": "geojson",
+          "defaultVisible": true,
+          "loadMode": "eager",
+          "clampToGround": true,
+          "overviewRectangle": [
+            108.73298382,
+            24.47134133,
+            108.8457779,
+            24.76057626
+          ],
+          "featureCount": 312,
+          "coordinateCount": 119695,
+          "sourceLayers": [
+            "LJBX"
+          ],
+          "stylePolicy": "cyan-road-edge",
+          "note": "由道路边线.kml连续线段归并，跳过1条只有单坐标点的退化线。"
+        },
+        {
+          "id": "slope_lines",
+          "name": "边坡线",
+          "file": "layers/current/slope-lines.geojson",
+          "format": "geojson",
+          "defaultVisible": false,
+          "loadMode": "manual",
+          "clampToGround": true,
+          "overviewRectangle": [
+            108.73298382,
+            24.47134133,
+            108.8457779,
+            24.76057626
+          ],
+          "featureCount": 312,
+          "coordinateCount": 119695,
+          "sourceLayers": [
+            "LJBX"
+          ],
+          "stylePolicy": "orange-dashed-slope",
+          "dataStatus": "source-duplicates-road-edges",
+          "note": "按边坡线.kml原文件接入；该源文件除文档时间戳外与道路边线.kml完全相同，因此两层空间位置100%重合。"
+        },
+        {
+          "id": "route_center",
+          "name": "道路中间线",
+          "file": "layers/current/route-center.geojson",
+          "format": "geojson",
+          "defaultVisible": true,
+          "loadMode": "eager",
+          "clampToGround": true,
+          "overviewRectangle": [
+            108.7226485,
+            24.4620494,
+            108.85729869,
+            24.76509711
+          ],
+          "featureCount": 275,
+          "coordinateCount": 18304,
+          "sourceLayers": [
+            "zhix"
+          ],
+          "stylePolicy": "traffic-mainline-glow",
+          "note": "由道路中间线.kml连续线段归并，青色双层发光显示。"
+        },
+        {
+          "id": "spoil_sites",
+          "name": "弃渣场",
+          "file": "layers/current/spoil-sites.geojson",
+          "format": "geojson",
+          "defaultVisible": true,
+          "loadMode": "eager",
+          "clampToGround": true,
+          "overviewRectangle": [
+            108.73552391,
+            24.5318436,
+            108.84134064,
+            24.74202629
+          ],
+          "featureCount": 9,
+          "coordinateCount": 691,
+          "sourceLayers": [
+            "弃渣场（最终9处：6处原设计 + 3处新增）"
+          ],
+          "stylePolicy": "highlighted-spoil-site",
+          "note": "来自G7221罗城至宜州段弃渣场9处.kml，闭合边界转为高亮面。"
+        },
+        {
+          "id": "project_redline",
+          "name": "项目红线",
+          "file": "layers/project-redline/project-redline.geojson",
+          "format": "geojson",
+          "defaultVisible": true,
+          "loadMode": "eager",
+          "clampToGround": true,
+          "overviewRectangle": [
+            108.725818434307,
+            24.4711777361594,
+            108.844318163019,
+            24.7524941247232
+          ],
+          "featureCount": 12,
+          "coordinateCount": 7266,
+          "sourceLayers": [
+            "宜州段全线报盘0905",
+            "罗城段最新红线1115坐标报盘"
+          ],
+          "stylePolicy": "topmost-red-outline-transparent-fill",
+          "note": "来自宜州段红线.kmz和罗城段红线.kmz；最后加载且使用最高显示层级。"
+        }
+      ]
+    }
+  ]
+}

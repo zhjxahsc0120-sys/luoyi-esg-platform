@@ -43,14 +43,19 @@
     padding: 4px 3px 8px;
 
     .kpi-label {
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.2;
       padding: 8px 1px 10px;
       color: #ffffff;
-      white-space: normal;
-      overflow: visible;
-      text-overflow: clip;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &.kpi-card--long-label .kpi-label {
+      font-size: 14px;
+      letter-spacing: -0.02em;
     }
 
     .kpi-unit {
@@ -120,7 +125,8 @@
     flex: 1;
     min-height: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* G 组合并后可能为 3 卡；默认 4；由面板注入 --kpi-item-cols */
+    grid-template-columns: repeat(var(--kpi-item-cols, 4), 1fr);
     gap: 8px;
     align-items: stretch;
   }
@@ -145,13 +151,15 @@
   }
 
   .kpi-label {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.2;
     color: #ffffff;
     margin-bottom: 0;
     padding: 8px 2px 12px;
-    white-space: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .kpi-value-row {

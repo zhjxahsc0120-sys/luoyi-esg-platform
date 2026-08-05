@@ -38,6 +38,9 @@ export class ViewerManager {
       fullscreenButton: false,
       infoBox: false,
       selectionIndicator: false,
+      requestRenderMode: true,
+      maximumRenderTimeChange: Number.POSITIVE_INFINITY,
+      scene3DOnly: true,
     });
 
     const layer = this.viewer.imageryLayers.get(0);

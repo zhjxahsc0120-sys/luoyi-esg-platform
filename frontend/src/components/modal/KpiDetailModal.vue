@@ -12,14 +12,9 @@ import type {
   E03DetailRow,
 } from '@/types/dashboard'
 import { carbonTabData, monthlyTabData } from '@/data/dashboard.mock'
-import S01SafetyProductionModal from './S01SafetyProductionModal.vue'
+import ClassBMatterModal from './ClassBMatterModal.vue'
 import S02SafetyRiskModal from './S02SafetyRiskModal.vue'
-import S03LaborDisputeModal from './S03LaborDisputeModal.vue'
-import S04MassAppealModal from './S04MassAppealModal.vue'
-import G01ApprovalModal from './G01ApprovalModal.vue'
-import G02LicenseModal from './G02LicenseModal.vue'
-import G03DesignChangeModal from './G03DesignChangeModal.vue'
-import G04ComplianceModal from './G04ComplianceModal.vue'
+// Legacy dedicated modals retained on disk; Class B V1.0 uses ClassBMatterModal shell.
 // G03ContractorEvalModal / G03RectificationModal: legacy — do not bind on homepage.
 import CarbonBenefitModal from './CarbonBenefitModal.vue'
 import MonthlyReportModal from './MonthlyReportModal.vue'
@@ -1401,14 +1396,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <S01SafetyProductionModal v-if="detail.key === 'S01'" @close="emit('close')" />
+  <ClassBMatterModal
+    v-if="['S01', 'S03', 'S04', 'G01', 'G02', 'G03', 'G04'].includes(detail.key)"
+    :module-key="detail.key"
+    @close="emit('close')"
+  />
   <S02SafetyRiskModal v-else-if="detail.key === 'S02'" @close="emit('close')" />
-  <S03LaborDisputeModal v-else-if="detail.key === 'S03'" @close="emit('close')" />
-  <S04MassAppealModal v-else-if="detail.key === 'S04'" @close="emit('close')" />
-  <G01ApprovalModal v-else-if="detail.key === 'G01'" :focus-object-id="focusObjectId" @close="emit('close')" />
-  <G02LicenseModal v-else-if="detail.key === 'G02'" :focus-object-id="focusObjectId" @close="emit('close')" />
-  <G03DesignChangeModal v-else-if="detail.key === 'G03'" :focus-object-id="focusObjectId" @close="emit('close')" />
-  <G04ComplianceModal v-else-if="detail.key === 'G04'" :focus-object-id="focusObjectId" @close="emit('close')" />
   <!-- 首页 E04 已切换为文物保护工作台；不再打开碳排放弹窗。若仍请求 E04 detail 则走下方通用壳。 -->
   <CarbonBenefitModal v-else-if="detail.key === 'CARBON'" :detail="detail" @close="emit('close')" />
   <MonthlyReportModal v-else-if="detail.key === 'MONTHLY'" :detail="detail" @close="emit('close')" />

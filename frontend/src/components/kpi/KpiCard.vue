@@ -39,6 +39,9 @@ const showUnit = computed(() => {
 
 const isLongValue = computed(() => primaryText.value.length >= 5)
 
+/** 长标题（如「合规审批与许可」「重大风险专项方案」）略缩字号，保证单行完整可读 */
+const isLongLabel = computed(() => String(props.item.label || '').length >= 7)
+
 function handleClick() {
   emit('select', props.item.key)
 }
@@ -49,6 +52,7 @@ function handleClick() {
     class="kpi-card"
     :class="{
       'kpi-card--long-value': isLongValue,
+      'kpi-card--long-label': isLongLabel,
       'kpi-card--text-value': Boolean(item.displayText),
     }"
     :data-kpi-key="item.key"
@@ -100,22 +104,27 @@ function handleClick() {
     border-color: var(--border-blue);
   }
 
-  /* 第一视觉：指标名称（最大、最亮、上下留白） */
+  /* 第一视觉：指标名称（单行完整可读，禁止换行） */
   .kpi-label {
     flex: 0 0 auto;
     width: 100%;
     padding: 8px 2px 12px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: 0.2px;
+    line-height: 1.2;
+    letter-spacing: 0;
     color: #ffffff;
     text-align: center;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     word-break: keep-all;
-    overflow-wrap: anywhere;
+  }
+
+  &.kpi-card--long-label .kpi-label {
+    font-size: 15px;
+    letter-spacing: -0.02em;
+    padding: 8px 0 12px;
   }
 
   /* 第二视觉：数值 + 单位作为整体居中（数值尺寸不变，弱化发光避免抢戏） */

@@ -59,6 +59,12 @@ export interface E01OpenPoint {
 
 export type E01CategoryFilter = 'ALL' | 'WATER' | 'AIR' | 'NOISE'
 
+/** Business categories shown in E01 workbench (no "全部" chip). */
+export type E01BusinessCategory = 'WATER' | 'AIR' | 'NOISE'
+
+/** List/GIS scope: risk points only vs all monitor points from payload. */
+export type E01PointScope = 'risk' | 'all'
+
 export interface E01EventSummary {
   eventId: number
   eventCode: string

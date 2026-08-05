@@ -1,5 +1,154 @@
 import type { TrafficMapFeature } from "../types";
-
-// 交接包不携带任何演示路线或演示点位。
-// 生产环境请使用 data-mode="api" 从后端加载 ESG 业务要素。
-export const mockFeatures: TrafficMapFeature[] = [];
+export const mockFeatures: TrafficMapFeature[] = [
+  {
+    id: "route-01",
+    layerId: "highway-main",
+    objectType: "route",
+    name: "TJ-01 高速主线",
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [108.02, 22.72, 80],
+        [108.12, 22.76, 100],
+        [108.23, 22.73, 90],
+        [108.32, 22.78, 120],
+      ],
+    },
+    properties: { sectionId: "TJ-01", progress: "68%", length: "32.4km" },
+    status: "normal",
+  },
+  {
+    id: "route-02",
+    layerId: "highway-main",
+    objectType: "route",
+    name: "TJ-02 高速主线",
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [108.32, 22.78, 120],
+        [108.43, 22.75, 90],
+        [108.54, 22.81, 130],
+        [108.62, 22.78, 100],
+      ],
+    },
+    properties: { sectionId: "TJ-02", progress: "51%", length: "29.8km" },
+    status: "attention",
+  },
+  ...["K10+000", "K20+000", "K30+000", "K40+000", "K50+000"].map(
+    (name, i): TrafficMapFeature => ({
+      id: `mile-${i}`,
+      layerId: "milestones",
+      objectType: "milestone",
+      name,
+      geometry: {
+        type: "Point",
+        coordinates: [
+          [108.08, 22.74],
+          [108.18, 22.74],
+          [108.29, 22.77],
+          [108.42, 22.75],
+          [108.55, 22.8],
+        ][i],
+      },
+      properties: { sectionId: i < 3 ? "TJ-01" : "TJ-02" },
+      status: "normal",
+    }),
+  ),
+  {
+    id: "service-01",
+    layerId: "facilities",
+    objectType: "service-area",
+    name: "罗城服务区",
+    geometry: { type: "Point", coordinates: [108.26, 22.755] },
+    properties: { sectionId: "TJ-01", type: "服务区" },
+    status: "normal",
+  },
+  {
+    id: "toll-01",
+    layerId: "facilities",
+    objectType: "toll-station",
+    name: "宜州收费站",
+    geometry: { type: "Point", coordinates: [108.49, 22.78] },
+    properties: { sectionId: "TJ-02", type: "收费站" },
+    status: "normal",
+  },
+  {
+    id: "risk-01",
+    layerId: "risks",
+    objectType: "risk",
+    name: "K24+600 高边坡风险",
+    geometry: { type: "Point", coordinates: [108.22, 22.735] },
+    properties: {
+      sectionId: "TJ-01",
+      owner: "TJ-01项目部",
+      measure: "持续监测",
+    },
+    status: "warning",
+    riskLevel: 3,
+    updatedAt: "2026-07-15T09:30:00+08:00",
+  },
+  {
+    id: "risk-02",
+    layerId: "risks",
+    objectType: "risk",
+    name: "K45+200 临边作业风险",
+    geometry: { type: "Point", coordinates: [108.47, 22.765] },
+    properties: {
+      sectionId: "TJ-02",
+      owner: "TJ-02项目部",
+      measure: "限期整改",
+    },
+    status: "critical",
+    riskLevel: 4,
+    updatedAt: "2026-07-15T08:20:00+08:00",
+  },
+  {
+    id: "monitor-01",
+    layerId: "monitors",
+    objectType: "monitor",
+    name: "水质监测点 WQ-01",
+    geometry: { type: "Point", coordinates: [108.36, 22.77] },
+    properties: { sectionId: "TJ-02", latestValue: 7.2, unit: "pH" },
+    status: "normal",
+  },
+  {
+    id: "zone-01",
+    layerId: "work-zones",
+    objectType: "work-zone",
+    name: "TJ-02 临时施工区",
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [108.38, 22.735],
+          [108.44, 22.735],
+          [108.44, 22.77],
+          [108.38, 22.77],
+          [108.38, 22.735],
+        ],
+      ],
+    },
+    properties: { sectionId: "TJ-02", area: "18.6ha" },
+    status: "attention",
+  },
+  {
+    id: "eco-01",
+    layerId: "work-zones",
+    objectType: "eco-zone",
+    name: "生态敏感范围",
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [108.08, 22.77],
+          [108.15, 22.77],
+          [108.15, 22.82],
+          [108.08, 22.82],
+          [108.08, 22.77],
+        ],
+      ],
+    },
+    properties: { sectionId: "TJ-01", protection: "Ⅱ级" },
+    status: "normal",
+  },
+];

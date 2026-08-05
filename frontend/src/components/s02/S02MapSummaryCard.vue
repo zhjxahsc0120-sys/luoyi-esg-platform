@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  openDetail: []
+  openSpecialPlan: []
 }>()
 
 const loading = ref(false)
@@ -19,29 +19,38 @@ const error = ref('')
 const detail = ref<S02RiskDetail | null>(null)
 let loadSeq = 0
 
-const title = computed(
-  () => detail.value?.title || props.risk?.title || '安全风险点',
-)
-
+const title = computed(() => detail.value?.title || props.risk?.title || '风险源')
 const typeLine = computed(() => {
   const r = detail.value || props.risk
   if (!r) return ''
-  const section = extractSectionLabel(r.title, r.locationText) || ''
-  return typeWithSection(r.riskType || '安全风险', section)
+  const section = r.sectionCode || extractSectionLabel(r.title, r.locationText) || ''
+  return typeWithSection(r.businessCategoryLabel || r.riskType || '风险源', section)
 })
-
 const level = computed(() => detail.value?.riskLevel || props.risk?.riskLevel || '')
-const status = computed(() => detail.value?.status || props.risk?.status || '—')
 const location = computed(() => detail.value?.locationText || props.risk?.locationText || '—')
+const description = computed(() => detail.value?.description || props.risk?.description || '—')
 const measure = computed(() => detail.value?.controlMeasure || props.risk?.controlMeasure || '—')
-const startDate = computed(() => {
-  const raw = detail.value?.controlStartDate || props.risk?.controlStartDate
-  return raw ? String(raw).slice(0, 10) : '—'
+const specialPlan = computed(
+  () => detail.value?.specialPlanName || props.risk?.specialPlanName || '—',
+)
+const specialPlanStatus = computed(
+  () => detail.value?.specialPlanStatus || props.risk?.specialPlanStatus || '',
+)
+const approval = computed(
+  () => detail.value?.approvalStatus || props.risk?.approvalStatus || '—',
+)
+const responsible = computed(
+  () => detail.value?.responsibleOrgName || props.risk?.responsibleOrgName || '—',
+)
+const hasSpecialPlanLink = computed(() => {
+  const name = detail.value?.specialPlanName || props.risk?.specialPlanName
+  return Boolean(name)
 })
-const businessCode = computed(() => detail.value?.businessCode || props.risk?.businessCode || '—')
 
 function levelClass(lv: string) {
-  return lv === '重大' ? 'major' : 'larger'
+  if (lv === '重大') return 'major'
+  if (lv === '较大') return 'larger'
+  return 'general'
 }
 
 async function loadDetail(id: number) {
@@ -81,7 +90,7 @@ watch(
 </script>
 
 <template>
-  <aside v-if="visible && risk" class="s02-map-summary" aria-label="风险点摘要">
+  <aside v-if="visible && risk" class="s02-map-summary" aria-label="风险源摘要">
     <header class="s02-map-summary__head">
       <div>
         <p>{{ typeLine }}</p>
@@ -92,32 +101,48 @@ watch(
 
     <div class="s02-map-summary__meta">
       <span class="level" :class="levelClass(level)">{{ level || '—' }}</span>
-      <span>{{ businessCode }}</span>
+      <span>{{ risk.businessCode }}</span>
     </div>
 
     <div v-if="loading && !detail" class="s02-map-summary__state">加载详情…</div>
     <div v-else-if="error && !detail" class="s02-map-summary__state is-error">{{ error }}</div>
     <template v-else>
       <div class="s02-map-summary__metrics">
-        <div>
-          <span>管控状态</span>
-          <strong>{{ status }}</strong>
-        </div>
-        <div>
-          <span>起控日期</span>
-          <strong>{{ startDate }}</strong>
-        </div>
         <div class="full">
           <span>位置</span>
           <strong>{{ location }}</strong>
         </div>
         <div class="full">
+          <span>描述</span>
+          <strong class="measure">{{ description }}</strong>
+        </div>
+        <div class="full">
           <span>管控措施</span>
           <strong class="measure">{{ measure }}</strong>
         </div>
+        <div class="full">
+          <span>专项方案</span>
+          <strong>
+            {{ specialPlan }}
+            <em v-if="specialPlanStatus">（{{ specialPlanStatus }}）</em>
+          </strong>
+        </div>
+        <div>
+          <span>审批状态</span>
+          <strong>{{ approval }}</strong>
+        </div>
+        <div>
+          <span>责任单位</span>
+          <strong>{{ responsible }}</strong>
+        </div>
       </div>
-      <button type="button" class="s02-map-summary__detail" @click="emit('openDetail')">
-        查看管控详情
+      <button
+        v-if="hasSpecialPlanLink"
+        type="button"
+        class="s02-map-summary__detail"
+        @click="emit('openSpecialPlan')"
+      >
+        查看重大风险专项方案
       </button>
     </template>
   </aside>
@@ -126,135 +151,86 @@ watch(
 <style scoped lang="scss">
 .s02-map-summary {
   position: absolute;
-  right: 12px;
-  bottom: 12px;
+  right: 18px;
+  bottom: 18px;
   z-index: 20;
-  width: min(328px, calc(100% - 24px));
-  padding: 10px 12px 12px;
-  border-radius: 8px;
+  width: 380px;
+  max-height: min(56vh, 460px);
+  overflow: auto;
+  padding: 12px 14px 14px;
   border: 1px solid rgba(47, 156, 255, 0.45);
-  background: rgba(4, 22, 40, 0.92);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  background: rgba(4, 25, 48, 0.94);
   color: #d7e6f5;
-  backdrop-filter: blur(6px);
-  animation: s02-summary-in 0.22s ease-out;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
-
-@keyframes s02-summary-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .s02-map-summary__head {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  align-items: flex-start;
-
-  p {
-    margin: 0;
-    font-size: 12px;
-    color: #8ba6c3;
-  }
-
-  h3 {
-    margin: 3px 0 0;
-    font-size: 15px;
-    line-height: 1.35;
-    color: #f3f8ff;
-    font-weight: 700;
-  }
+  margin-bottom: 8px;
+  p { margin: 0 0 4px; font-size: 12px; color: #8ba6c3; }
+  h3 { margin: 0; font-size: 16px; color: #f3f8ff; line-height: 1.35; }
 }
-
 .s02-map-summary__close {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border: 1px solid rgba(47, 156, 255, 0.4);
-  border-radius: 5px;
-  background: rgba(8, 40, 69, 0.65);
+  background: rgba(8, 40, 69, 0.72);
   color: #f3f8ff;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  flex-shrink: 0;
 }
-
 .s02-map-summary__meta {
-  margin-top: 8px;
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
   align-items: center;
+  margin-bottom: 10px;
   font-size: 12px;
   color: #8ba6c3;
-
   .level {
-    border-radius: 3px;
-    padding: 1px 6px;
-    &.major {
-      color: #ff4f5e;
-      border: 1px solid rgba(255, 79, 94, 0.45);
-    }
-    &.larger {
-      color: #ffb347;
-      border: 1px solid rgba(255, 179, 71, 0.45);
-    }
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    &.major { color: #ff4f5e; background: rgba(255, 79, 94, 0.12); }
+    &.larger { color: #ffb347; background: rgba(255, 179, 71, 0.12); }
+    &.general { color: #2f9cff; background: rgba(47, 156, 255, 0.12); }
   }
 }
-
-.s02-map-summary__metrics {
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 10px;
-
-  .full { grid-column: 1 / -1; }
-
-  span {
-    display: block;
-    font-size: 11px;
-    color: #7f95ad;
-  }
-
-  strong {
-    display: block;
-    margin-top: 1px;
-    font-size: 13px;
-    color: #e8f3ff;
-    font-weight: 600;
-    line-height: 1.35;
-
-    &.measure {
-      font-weight: 500;
-      color: #c3d4e8;
-    }
-  }
-}
-
 .s02-map-summary__state {
-  margin-top: 12px;
-  min-height: 48px;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
+  padding: 12px 0;
+  text-align: center;
   color: #8ba6c3;
+  font-size: 12px;
   &.is-error { color: #ff9f2f; }
 }
-
+.s02-map-summary__metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    border-radius: 6px;
+    background: rgba(8, 40, 69, 0.55);
+    &.full { grid-column: 1 / -1; }
+    span { font-size: 11px; color: #8ba6c3; }
+    strong { font-size: 13px; color: #e8f3ff; font-weight: 600; }
+    .measure { font-weight: 500; line-height: 1.4; }
+    em { font-style: normal; color: #8ba6c3; font-weight: 500; }
+  }
+}
 .s02-map-summary__detail {
-  margin-top: 10px;
   width: 100%;
-  padding: 6px 0;
-  font-size: 12px;
-  border: 1px solid rgba(47, 156, 255, 0.45);
-  border-radius: 5px;
-  background: rgba(47, 156, 255, 0.12);
-  color: #2f9cff;
+  margin-top: 10px;
+  height: 34px;
+  border: 1px solid rgba(166, 108, 255, 0.45);
+  background: rgba(166, 108, 255, 0.16);
+  color: #e6d9ff;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 13px;
 }
 </style>

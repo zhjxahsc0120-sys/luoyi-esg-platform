@@ -5,12 +5,29 @@ export interface E02SpatialLink {
   isPrimary: boolean
 }
 
+/** V1.0 业务分类：环境污染 / 水保问题 / 生态问题 / 其他 */
+export type E02BusinessCategory = 'POLLUTION' | 'WATER_CONS' | 'ECOLOGY' | 'OTHER'
+
+export type E02CategoryFilter = 'ALL' | E02BusinessCategory
+
+/** 重点对象 = 未闭环问题；全部对象 = 含已闭环 */
+export type E02ObjectScope = 'key' | 'all'
+
+export type E02PanelLayer = 'overview' | 'detail'
+
+/** 整改状态口径 */
+export type E02RectifyStatus = '待整改' | '整改中' | '待复查' | '已闭环'
+
 export interface E02IssueOverview {
   total: number
   rectifying: number
   pendingReview: number
   pendingClosure: number
   overdueAmong: number
+  /** V1.0 展示用 */
+  openCount?: number
+  closedCount?: number
+  byCategory?: Record<E02BusinessCategory, number>
 }
 
 export interface E02IssueItem {
@@ -26,6 +43,13 @@ export interface E02IssueItem {
   responsibleOrgName: string
   canLocate: boolean
   spatialLinks: E02SpatialLink[]
+  /** V1.0 display */
+  businessCategory?: E02BusinessCategory
+  businessCategoryLabel?: string
+  foundDate?: string | null
+  description?: string
+  /** 整改完成时间：仅使用客户端/接口回报字段，不前端推算 */
+  closedDate?: string | null
 }
 
 export interface E02HistoryItem {
@@ -88,6 +112,9 @@ export interface E02IssueDetail {
   closedDate: string | null
   isDemo: boolean
   dataNature: string
+  description?: string
+  businessCategory?: E02BusinessCategory
+  businessCategoryLabel?: string
   case: E02CaseInfo | null
   history: E02HistoryItem[]
   parties: E02PartyItem[]
@@ -104,16 +131,10 @@ export interface E02IssuesPayload {
   isDemo: boolean
 }
 
-/** @deprecated Phase B 主路径改为水保对象类型筛选 */
-export type E02IssueCategoryFilter = 'ALL' | 'RECTIFYING' | 'PENDING_REVIEW' | 'PENDING_CLOSURE'
-
-/** Phase B：水保对象类型 */
+/** @deprecated Phase B 水保对象域；V1.0 E03 接管水保对象展示 */
 export type E02ObjectType = 'SPOIL' | 'TEMP_LAND' | 'TOPSOIL' | 'SLOPE'
 
-export type E02CategoryFilter = 'ALL' | E02ObjectType
-
-export type E02PanelLayer = 'overview' | 'detail'
-
+/** @deprecated */
 export interface E02ObjectOverview {
   objectCount: number
   riskCount: number
@@ -122,6 +143,7 @@ export interface E02ObjectOverview {
   byType: Record<E02ObjectType, number>
 }
 
+/** @deprecated */
 export interface E02ObjectItem {
   id: number
   objectCode: string
@@ -141,12 +163,14 @@ export interface E02ObjectItem {
   updateTime: string | null
 }
 
+/** @deprecated */
 export interface E02ObjectDetail extends E02ObjectItem {
   measureRequirement: string
   rectificationStatus: string
   spaceDesc: string
 }
 
+/** @deprecated */
 export interface E02ObjectsPayload {
   overview: E02ObjectOverview
   objects: E02ObjectItem[]

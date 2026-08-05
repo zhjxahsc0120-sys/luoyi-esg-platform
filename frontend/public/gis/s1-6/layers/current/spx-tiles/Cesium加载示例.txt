@@ -1,0 +1,11 @@
+CesiumJS加载示例（请通过HTTP服务器访问）：
+
+const provider = new Cesium.UrlTemplateImageryProvider({
+  url: '/data/SPX_XYZ瓦片_原样未合并_20260805/{z}/{x}/{y}.png',
+  minimumLevel: 10,
+  maximumLevel: 18,
+  tilingScheme: new Cesium.WebMercatorTilingScheme(),
+  rectangle: Cesium.Rectangle.fromDegrees(108.73409259, 24.47120628, 108.84577845, 24.76033661),
+  hasAlphaChannel: true
+});
+viewer.imageryLayers.addImageryProvider(provider);

@@ -189,7 +189,8 @@ export class SpxPrimitiveLayer {
           translucent: color.alpha < 1,
           renderState: {
             depthTest: { enabled: true },
-            lineWidth: Math.max(1, batch.width),
+            // Windows/ANGLE 常见上限为 1；超出会让 Cesium 停止整个场景渲染。
+            lineWidth: 1,
           },
         }),
         // 自定义批量 Geometry 没有 Cesium 内置 workerName，需同步提交 GPU。

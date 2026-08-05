@@ -2,7 +2,14 @@ import type { KpiDetailConfig, KpiGroup } from '@/types/dashboard'
 import type { MonthlyReadiness, MonthlyReportOverview } from '@/types/monthly-report'
 import type { E01EventDetail, E01EventsPayload, E01PointTrendPayload } from '@/types/e01'
 import type { E02IssueDetail, E02IssuesPayload, E02ObjectDetail, E02ObjectsPayload } from '@/types/e02'
-import type { E03EcoObjectDetail, E03EcoObjectsPayload, E03IssueDetail, E03IssuesPayload } from '@/types/e03'
+import type {
+  E03EcoObjectDetail,
+  E03EcoObjectsPayload,
+  E03IssueDetail,
+  E03IssuesPayload,
+  E03WaterObjectDetail,
+  E03WaterObjectsPayload,
+} from '@/types/e03'
 import type { S02RiskDetail, S02RisksPayload } from '@/types/s02'
 import type { E04CulturalObjectDetail, E04CulturalObjectsPayload } from '@/types/e04-cultural'
 import type { AssistantAskResponse } from '@/types/assistant'
@@ -23,6 +30,21 @@ import {
   getE04CulturalObjectDetailMock,
   getE04CulturalObjectsMock,
 } from '@/data/e04-cultural.mock'
+import {
+  getE02IssueDetailMock,
+  getE02IssuesMock,
+  normalizeE02IssuesPayload,
+} from '@/data/e02-issues.mock'
+import {
+  getE03WaterObjectDetailMock,
+  getE03WaterObjectsMock,
+  mapE02ObjectsToE03Water,
+} from '@/data/e03-water.mock'
+import {
+  getS02RiskDetailMock,
+  getS02RisksMock,
+  normalizeS02RisksPayload,
+} from '@/data/s02-risks.mock'
 import { normalizeDashboardKpis, mapDemoRiskToWarningItems, mapDemoRiskToComplianceMetrics } from '@/utils/esg-demo'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8765'
@@ -280,11 +302,28 @@ export async function getE02Issues(scope?: 'formal' | 'demo'): Promise<{ code: n
   const params = new URLSearchParams()
   if (scope) params.set('scope', scope)
   const query = params.toString()
-  return apiGet(`/api/environment/e02/issues${query ? `?${query}` : ''}`)
+  const res = await apiGet<{ code: number; data: E02IssuesPayload; meta?: Record<string, unknown> }>(
+    `/api/environment/e02/issues${query ? `?${query}` : ''}`,
+  )
+  if (res && res.code === 0 && res.data && Array.isArray(res.data.issues) && res.data.issues.length > 0) {
+    return {
+      ...res,
+      data: normalizeE02IssuesPayload(res.data),
+      meta: { source: res.meta?.source || 'api' },
+    }
+  }
+  return { code: 0, data: getE02IssuesMock(), meta: { source: 'frontend_demo' } }
 }
 
 export async function getE02IssueDetail(issueId: number): Promise<{ code: number; data: E02IssueDetail; meta?: Record<string, unknown> } | null> {
-  return apiGet(`/api/environment/e02/issues/${issueId}`)
+  const res = await apiGet<{ code: number; data: E02IssueDetail; meta?: Record<string, unknown> }>(
+    `/api/environment/e02/issues/${issueId}`,
+  )
+  if (res && res.code === 0 && res.data) {
+    return { ...res, meta: { source: res.meta?.source || 'api' } }
+  }
+  const mock = getE02IssueDetailMock(issueId)
+  return mock ? { code: 0, data: mock, meta: { source: 'frontend_demo' } } : null
 }
 
 /**
@@ -354,6 +393,56 @@ export async function getE03EcoObjectDetail(
     return { ...res, meta: { source: res.meta?.source || 'esg_demo' } }
   }
   return null
+}
+
+/**
+ * V1.0 E03 水保与复绿对象域（展示用）。
+ * 优先复用 Phase B E02 objects Demo API 映射；失败回退前端 Demo。不新增正式 API 契约。
+ */
+export async function getE03WaterObjects(): Promise<{ code: number; data: E03WaterObjectsPayload; meta?: Record<string, unknown> } | null> {
+  const fromE02 = await getE02Objects()
+  if (fromE02 && fromE02.code === 0 && fromE02.data?.objects?.length) {
+    return {
+      code: 0,
+      data: mapE02ObjectsToE03Water(fromE02.data),
+      meta: { source: fromE02.meta?.source || 'e02_objects_mapped' },
+    }
+  }
+  return { code: 0, data: getE03WaterObjectsMock(), meta: { source: 'frontend_demo' } }
+}
+
+export async function getE03WaterObjectDetail(
+  objectId: number,
+): Promise<{ code: number; data: E03WaterObjectDetail; meta?: Record<string, unknown> } | null> {
+  const fromE02 = await getE02ObjectDetail(objectId)
+  if (fromE02 && fromE02.code === 0 && fromE02.data) {
+    const mapped = mapE02ObjectsToE03Water({
+      overview: {
+        objectCount: 1,
+        riskCount: 0,
+        completionRate: fromE02.data.completionRate,
+        restoreNormalCount: 0,
+        byType: { SPOIL: 0, TEMP_LAND: 0, TOPSOIL: 0, SLOPE: 0 },
+      },
+      objects: [fromE02.data],
+      scope: 'demo',
+      isDemo: true,
+    })
+    const item = mapped.objects[0]
+    if (item) {
+      return {
+        code: 0,
+        data: {
+          ...item,
+          spaceDesc: fromE02.data.spaceDesc || '',
+          measureRequirement: fromE02.data.measureRequirement || '',
+        },
+        meta: { source: 'e02_objects_mapped' },
+      }
+    }
+  }
+  const mock = getE03WaterObjectDetailMock(objectId)
+  return mock ? { code: 0, data: mock, meta: { source: 'frontend_demo' } } : null
 }
 
 export async function getE04CulturalObjects(): Promise<{ code: number; data: E04CulturalObjectsPayload; meta?: Record<string, unknown> } | null> {
@@ -435,11 +524,28 @@ function normalizeE04CulturalPayload(data: E04CulturalObjectsPayload): E04Cultur
 }
 
 export async function getS02Risks(): Promise<{ code: number; data: S02RisksPayload; meta?: Record<string, unknown> } | null> {
-  return apiGet('/api/social/s02/risks')
+  const res = await apiGet<{ code: number; data: S02RisksPayload; meta?: Record<string, unknown> }>(
+    '/api/social/s02/risks',
+  )
+  if (res && res.code === 0 && res.data && Array.isArray(res.data.risks) && res.data.risks.length > 0) {
+    return {
+      ...res,
+      data: normalizeS02RisksPayload(res.data),
+      meta: { source: res.meta?.source || 'api' },
+    }
+  }
+  return { code: 0, data: getS02RisksMock(), meta: { source: 'frontend_demo' } }
 }
 
 export async function getS02RiskDetail(riskId: number): Promise<{ code: number; data: S02RiskDetail; meta?: Record<string, unknown> } | null> {
-  return apiGet(`/api/social/s02/risks/${riskId}`)
+  const res = await apiGet<{ code: number; data: S02RiskDetail; meta?: Record<string, unknown> }>(
+    `/api/social/s02/risks/${riskId}`,
+  )
+  if (res && res.code === 0 && res.data) {
+    return { ...res, meta: { source: res.meta?.source || 'api' } }
+  }
+  const mock = getS02RiskDetailMock(riskId)
+  return mock ? { code: 0, data: mock, meta: { source: 'frontend_demo' } } : null
 }
 
 export async function getDashboardTopic(topic: 'carbon' | 'monthly-report'): Promise<KpiDetailConfig | null> {

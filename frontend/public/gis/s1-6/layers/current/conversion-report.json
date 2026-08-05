@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-08-05T01:43:23.592Z",
+  "sourceDir": "Y:\\2026年项目\\16北航\\2_ESG系统搭建\\20260804\\1原始数据\\3提供的部分数据\\红线位置\\红线",
+  "coordinateSystem": "WGS84 (EPSG:4326)",
+  "layers": [
+    {
+      "sourceFile": "道路中间线.kml",
+      "outputFile": "route-center.geojson",
+      "placemarkCount": 63,
+      "sourceLineStringCount": 15517,
+      "mergedFeatureCount": 275,
+      "skippedDegenerateCount": 0,
+      "bbox": [
+        108.7226485,
+        24.4620494,
+        108.85729869,
+        24.76509711
+      ]
+    },
+    {
+      "sourceFile": "道路边线.kml",
+      "outputFile": "road-edges.geojson",
+      "placemarkCount": 149,
+      "sourceLineStringCount": 119066,
+      "mergedFeatureCount": 312,
+      "skippedDegenerateCount": 1,
+      "bbox": [
+        108.73298382,
+        24.47134133,
+        108.8457779,
+        24.76057626
+      ]
+    },
+    {
+      "sourceFile": "边坡线.kml",
+      "outputFile": "slope-lines.geojson",
+      "placemarkCount": 149,
+      "sourceLineStringCount": 119066,
+      "mergedFeatureCount": 312,
+      "skippedDegenerateCount": 1,
+      "bbox": [
+        108.73298382,
+        24.47134133,
+        108.8457779,
+        24.76057626
+      ]
+    },
+    {
+      "sourceFile": "G7221罗城至宜州段弃渣场9处.kml",
+      "outputFile": "spoil-sites.geojson",
+      "placemarkCount": 9,
+      "mergedFeatureCount": 9,
+      "skippedDegenerateCount": 0,
+      "bbox": [
+        108.73552391,
+        24.5318436,
+        108.84134064,
+        24.74202629
+      ]
+    }
+  ]
+}

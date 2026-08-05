@@ -7,14 +7,12 @@ export class PickManager {
   bind(
     onClick: (f: TrafficMapFeature, e: Cesium.Entity) => void,
     onHover: (f: TrafficMapFeature | null) => void,
-    onEmptyClick?: () => void,
   ) {
     this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
     this.handler.setInputAction(
       (e: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         const result = this.pick(e.position);
         if (result) onClick(result.feature, result.entity);
-        else onEmptyClick?.();
       },
       Cesium.ScreenSpaceEventType.LEFT_CLICK,
     );

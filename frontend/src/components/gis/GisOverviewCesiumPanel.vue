@@ -3,16 +3,17 @@ import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue
 import { gisConfig } from '@/config/gis.config'
 import PanelCard from '@/components/layout/PanelCard.vue'
 import E01MapSummaryCard from '@/components/e01/E01MapSummaryCard.vue'
-import S02ClosureAnalysisPopover from '@/components/s02/S02ClosureAnalysisPopover.vue'
+import E02MapSummaryCard from '@/components/e02/E02MapSummaryCard.vue'
+import E03MapSummaryCard from '@/components/e03/E03MapSummaryCard.vue'
 import S02MapSummaryCard from '@/components/s02/S02MapSummaryCard.vue'
 import type { E01OpenPoint } from '@/types/e01'
-import type { E02SpatialLink } from '@/types/e02'
-import type { E03SpatialLink } from '@/types/e03'
+import type { E02IssueItem, E02SpatialLink } from '@/types/e02'
+import type { E03SpatialLink, E03WaterObjectItem } from '@/types/e03'
 import type { S02RiskItem } from '@/types/s02'
-import type { E01MapMarker, GisBusinessLinkOpenPayload } from '@/modules/traffic-gis-overview/types'
+import type { GisBusinessLinkOpenPayload } from '@/modules/traffic-gis-overview/types'
 
-/** Phase B: E02/E03 workspace may emit object-domain rows; GIS only needs id + spatialLinks. */
-type E02GisItem = {
+/** Class A GIS rows: id + spatialLinks (+ display fields for picker). */
+type E02GisItem = Partial<E02IssueItem> & {
   id: number
   spatialLinks?: E02SpatialLink[]
   canLocate?: boolean
@@ -21,7 +22,7 @@ type E02GisItem = {
   status?: string
   riskStatus?: string
 }
-type E03GisItem = {
+type E03GisItem = Partial<E03WaterObjectItem> & {
   id: number
   spatialLinks?: E03SpatialLink[]
   canLocate?: boolean
@@ -57,33 +58,29 @@ const emit = defineEmits<{
   e03ClearSelection: []
   s02RiskSelect: [riskId: number]
   s02ClearSelection: []
+  openSpecialPlan: [risk: S02RiskItem]
 }>()
 
 const TrafficGisOverview = defineAsyncComponent(() =>
   import('@/modules/traffic-gis-overview').then((module) => module.TrafficGisOverview),
 )
 
+/** 交接包 TrafficGisOverview 仅暴露 flyToFeature / flyToSection / refreshLayer / resetView */
 const mapRef = ref<{
-  captureMapState: () => unknown
-  restoreMapState: () => void
-  flyToLonLat: (lon: number, lat: number, height?: number) => void | Promise<void>
-  flyToPoints: (
-    points: Array<{ longitude?: number | null; latitude?: number | null }>,
-    options?: { singleRange?: number },
-  ) => void | Promise<void>
-  flyToFeature: (id: string, options?: { range?: number }) => void | Promise<void>
+  flyToFeature: (id: string) => void | Promise<void>
+  flyToSection: (sectionId: string) => void | Promise<void>
+  refreshLayer: (id: string) => void | Promise<void>
   resetView: () => void
-  applyE02SelectionVisual?: (selectedId: string | null, relatedIds?: string[]) => void
-  restoreE02SelectionVisual?: () => void
 } | null>(null)
+
+/** 首页工作台进出时的相机态（交接包暂无 capture/restore，本地占位避免打断 KPI 流程） */
+let savedMapState: unknown = null
 
 const panelRootRef = ref<HTMLElement | null>(null)
 const popoverAnchorRef = ref<HTMLElement | null>(null)
 const featurePicker = ref<{ featureId: string; issues: E02GisItem[] } | null>(null)
 const e03FeaturePicker = ref<{ featureId: string; issues: E03GisItem[] } | null>(null)
 const s02FeaturePicker = ref<{ featureId: string; risks: S02RiskItem[] } | null>(null)
-/** L2 可单独收起；摘要卡「查看管控详情」再打开，不取消地图选中 */
-const s02L2Dismissed = ref(false)
 
 const selectedPoint = computed(() => {
   const id = props.e01SelectedPointId
@@ -95,46 +92,23 @@ const selectedPoint = computed(() => {
   )
 })
 
+const selectedE02Issue = computed(() => {
+  const id = props.e02SelectedIssueId
+  if (id == null) return null
+  return (props.e02Issues || []).find((i) => i.id === id) || null
+})
+
+const selectedE03Object = computed(() => {
+  const id = props.e03SelectedIssueId
+  if (id == null) return null
+  return (props.e03Issues || []).find((i) => i.id === id) || null
+})
+
 const selectedS02Risk = computed(() => {
   const id = props.s02SelectedRiskId
   if (id == null) return null
   return (props.s02Risks || []).find((r) => r.id === id) || null
 })
-
-const s02L2RiskId = computed(() => {
-  if (!props.s02Active || s02L2Dismissed.value) return null
-  return props.s02SelectedRiskId ?? null
-})
-
-watch(
-  () => [props.s02SelectedRiskId, props.s02Active] as const,
-  ([riskId, active]) => {
-    if (!active || riskId == null) {
-      s02L2Dismissed.value = false
-      return
-    }
-    s02L2Dismissed.value = false
-  },
-)
-
-const markers = computed<E01MapMarker[]>(() =>
-  (props.e01VisiblePoints || [])
-    .filter((p) => p.longitude != null && p.latitude != null)
-    .map((p) => ({
-      eventId: p.primaryEventId,
-      pointId: p.pointId,
-      label: p.locationText || p.pointName,
-      shortLabel: p.monitorCategory === 'WATER' ? '水质' : p.monitorCategory === 'AIR' ? '扬尘' : p.monitorCategory === 'NOISE' ? '噪声' : '监测',
-      monitorCategory: p.monitorCategory,
-      longitude: Number(p.longitude),
-      latitude: Number(p.latitude),
-      status: p.status,
-      isOpen: true,
-      highlighted: props.e01SelectedPointId === p.pointId,
-      dimmed: props.e01SelectedPointId != null && props.e01SelectedPointId !== p.pointId,
-      gisFeatureId: p.gisFeatureId,
-    })),
-)
 
 const e02SelectedFeatureId = computed(() => {
   if (!props.e02Active || props.e02SelectedIssueId == null) return null
@@ -143,30 +117,12 @@ const e02SelectedFeatureId = computed(() => {
   return link?.featureId || null
 })
 
-const e02RelatedFeatureIds = computed(() => [
-  ...new Set(
-    (props.e02Issues || [])
-      .flatMap((i) => i.spatialLinks || [])
-      .map((sl) => sl.featureId)
-      .filter(Boolean),
-  ),
-])
-
 const e03SelectedFeatureId = computed(() => {
   if (!props.e03Active || props.e03SelectedIssueId == null) return null
   const issue = (props.e03Issues || []).find((i) => i.id === props.e03SelectedIssueId)
   const link = issue?.spatialLinks?.find((sl) => sl.isPrimary) || issue?.spatialLinks?.[0]
   return link?.featureId || null
 })
-
-const e03RelatedFeatureIds = computed(() => [
-  ...new Set(
-    (props.e03Issues || [])
-      .flatMap((i) => i.spatialLinks || [])
-      .map((sl) => sl.featureId)
-      .filter(Boolean),
-  ),
-])
 
 const s02SelectedFeatureId = computed(() => {
   if (!props.s02Active || props.s02SelectedRiskId == null) return null
@@ -175,17 +131,6 @@ const s02SelectedFeatureId = computed(() => {
   return link?.featureId || null
 })
 
-const s02RelatedFeatureIds = computed(() => [
-  ...new Set(
-    (props.s02Risks || [])
-      .flatMap((r) => r.spatialLinks || [])
-      .map((sl) => sl.featureId)
-      .filter(Boolean),
-  ),
-])
-
-const popoverFlipLeft = computed(() => Boolean(props.e02Active || props.e03Active || props.s02Active))
-
 function issuesForFeature(featureId: string): E02GisItem[] {
   return (props.e02Issues || []).filter((issue) =>
     (issue.spatialLinks || []).some((sl) => sl.featureId === featureId),
@@ -193,28 +138,7 @@ function issuesForFeature(featureId: string): E02GisItem[] {
 }
 
 function applySelectionVisual() {
-  if (props.s02Active) {
-    mapRef.value?.applyE02SelectionVisual?.(
-      s02SelectedFeatureId.value,
-      s02RelatedFeatureIds.value,
-    )
-    return
-  }
-  if (props.e03Active) {
-    mapRef.value?.applyE02SelectionVisual?.(
-      e03SelectedFeatureId.value,
-      e03RelatedFeatureIds.value,
-    )
-    return
-  }
-  if (!props.e02Active) {
-    mapRef.value?.restoreE02SelectionVisual?.()
-    return
-  }
-  mapRef.value?.applyE02SelectionVisual?.(
-    e02SelectedFeatureId.value,
-    e02RelatedFeatureIds.value,
-  )
+  // 交接包 designOnly 地图暂不支持业务要素高亮；保留函数供 watch / @ready 调用。
 }
 
 function handleE02FeatureSelect(featureId: string) {
@@ -318,31 +242,33 @@ function handleS02SummaryClose() {
   emit('s02ClearSelection')
 }
 
-function handleS02PopoverClose() {
-  s02L2Dismissed.value = true
-}
-
-function handleS02OpenDetail() {
-  s02L2Dismissed.value = false
+function handleS02OpenSpecialPlan() {
+  if (selectedS02Risk.value) {
+    emit('openSpecialPlan', selectedS02Risk.value)
+  }
 }
 
 function captureMapState() {
-  return mapRef.value?.captureMapState()
+  // 交接包地图暂无相机态快照；占位记录避免工作台开关流程中断
+  savedMapState = true
+  return savedMapState
 }
 
 function restoreMapState() {
-  mapRef.value?.restoreMapState()
+  if (!savedMapState) return
+  mapRef.value?.resetView()
+  savedMapState = null
 }
 
 function focusPoint(point: E01OpenPoint) {
-  if (point.longitude == null || point.latitude == null) return
-  void mapRef.value?.flyToLonLat(Number(point.longitude), Number(point.latitude), 9000)
+  // designOnly 底图无业务点；若有关联设计要素 id 则尝试飞入
+  const featureId = point.gisFeatureId
+  if (featureId) void mapRef.value?.flyToFeature(featureId)
 }
 
 function fitPoints(points: E01OpenPoint[]) {
-  const locatable = points.filter((p) => p.longitude != null && p.latitude != null)
-  if (!locatable.length) return
-  void mapRef.value?.flyToPoints(locatable, { singleRange: 10000 })
+  const featureId = points.map((p) => p.gisFeatureId).find(Boolean)
+  if (featureId) void mapRef.value?.flyToFeature(featureId)
 }
 
 function resetView() {
@@ -352,11 +278,7 @@ function resetView() {
 function focusE02Issue(issue: E02GisItem) {
   const primaryLink = issue.spatialLinks?.find((sl) => sl.isPrimary) || issue.spatialLinks?.[0]
   if (!primaryLink?.featureId) return
-  // 本体面/点再近一些；整条标段保留稍远上下文
-  const isCorridor = /^section-\d/.test(primaryLink.featureId)
-  void mapRef.value?.flyToFeature?.(primaryLink.featureId, {
-    range: isCorridor ? 8500 : 4800,
-  })
+  void mapRef.value?.flyToFeature(primaryLink.featureId)
 }
 
 function fitE02Issues(issues: E02GisItem[]) {
@@ -375,10 +297,7 @@ function fitE02Issues(issues: E02GisItem[]) {
 function focusE03Issue(issue: E03GisItem) {
   const primaryLink = issue.spatialLinks?.find((sl) => sl.isPrimary) || issue.spatialLinks?.[0]
   if (!primaryLink?.featureId) return
-  const isCorridor = /^section-\d/.test(primaryLink.featureId)
-  void mapRef.value?.flyToFeature?.(primaryLink.featureId, {
-    range: isCorridor ? 8500 : 4800,
-  })
+  void mapRef.value?.flyToFeature(primaryLink.featureId)
 }
 
 function fitE03Issues(issues: E03GisItem[]) {
@@ -397,10 +316,7 @@ function fitE03Issues(issues: E03GisItem[]) {
 function focusS02Risk(risk: S02RiskItem) {
   const primaryLink = risk.spatialLinks?.find((sl) => sl.isPrimary) || risk.spatialLinks?.[0]
   if (!primaryLink?.featureId) return
-  const isCorridor = /^section-\d/.test(primaryLink.featureId)
-  void mapRef.value?.flyToFeature?.(primaryLink.featureId, {
-    range: isCorridor ? 8500 : 4800,
-  })
+  void mapRef.value?.flyToFeature(primaryLink.featureId)
 }
 
 function fitS02Risks(risks: S02RiskItem[]) {
@@ -430,9 +346,6 @@ watch(
   () => {
     if (!props.e02Active) {
       featurePicker.value = null
-      if (!props.e03Active && !props.s02Active) {
-        mapRef.value?.restoreE02SelectionVisual?.()
-      }
       return
     }
     if (props.e02SelectedIssueId != null) {
@@ -458,9 +371,6 @@ watch(
   () => {
     if (!props.e03Active) {
       e03FeaturePicker.value = null
-      if (!props.e02Active && !props.s02Active) {
-        mapRef.value?.restoreE02SelectionVisual?.()
-      }
       return
     }
     if (props.e03SelectedIssueId != null) {
@@ -486,9 +396,6 @@ watch(
   () => {
     if (!props.s02Active) {
       s02FeaturePicker.value = null
-      if (!props.e02Active && !props.e03Active) {
-        mapRef.value?.restoreE02SelectionVisual?.()
-      }
       return
     }
     if (props.s02SelectedRiskId != null) {
@@ -510,7 +417,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  mapRef.value?.restoreE02SelectionVisual?.()
+  // designOnly 底图无业务高亮态需清理
 })
 
 defineExpose({
@@ -536,27 +443,12 @@ defineExpose({
         :project-id="gisConfig.projectId"
         :data-mode="gisConfig.dashboardDataMode"
         :show-legend="true"
-        :show-mode-switch="true"
-        :show-config-button="false"
+        :show-mode-switch="false"
+        :show-config-button="true"
         :interaction-enabled="true"
+        :design-only="true"
         presentation-mode="dashboard"
-        :e01-active="e01Active"
-        :e01-markers="markers"
-        :e01-selected-point-id="e01SelectedPointId"
-        :e02-active="e02Active"
-        :e02-selected-feature-id="e02SelectedFeatureId"
-        :e03-active="e03Active"
-        :e03-selected-feature-id="e03SelectedFeatureId"
-        :s02-active="s02Active"
-        :s02-selected-feature-id="s02SelectedFeatureId"
         @open-kpi-source="(payload) => emit('openKpiSource', payload)"
-        @e01-point-select="(id) => emit('e01PointSelect', id)"
-        @e02-feature-select="handleE02FeatureSelect"
-        @e02-map-blank-click="handleE02MapBlankClick"
-        @e03-feature-select="handleE03FeatureSelect"
-        @e03-map-blank-click="handleE03MapBlankClick"
-        @s02-feature-select="handleS02FeatureSelect"
-        @s02-map-blank-click="handleS02MapBlankClick"
         @ready="applySelectionVisual"
       />
 
@@ -583,21 +475,27 @@ defineExpose({
         @close="emit('e01ClearSelection')"
       />
 
+      <E02MapSummaryCard
+        :visible="Boolean(e02Active && selectedE02Issue)"
+        :issue="(selectedE02Issue as any)"
+        @close="emit('e02ClearSelection')"
+      />
+
+      <E03MapSummaryCard
+        :visible="Boolean(e03Active && selectedE03Object)"
+        :object="(selectedE03Object as any)"
+        @close="emit('e03ClearSelection')"
+      />
+
       <S02MapSummaryCard
         :visible="Boolean(s02Active && selectedS02Risk)"
         :risk="selectedS02Risk"
         @close="handleS02SummaryClose"
-        @open-detail="handleS02OpenDetail"
+        @open-special-plan="handleS02OpenSpecialPlan"
       />
 
       <div ref="popoverAnchorRef" class="e02-popover-anchor">
-        <!-- Phase B: E02/E03 对象详情在右侧工作台内展示；地图侧旧问题闭环弹窗暂不挂载，避免与对象 ID 冲突 -->
-        <S02ClosureAnalysisPopover
-          v-if="s02Active"
-          :risk-id="s02L2RiskId"
-          :flip-left="popoverFlipLeft"
-          @close="handleS02PopoverClose"
-        />
+        <!-- V1.0 Class A: details only via map summary cards; no duplicate L2 popover -->
       </div>
 
       <div v-if="featurePicker" class="e02-feature-picker">

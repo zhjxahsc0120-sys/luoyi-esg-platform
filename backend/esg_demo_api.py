@@ -192,6 +192,37 @@ def get_demo_dashboard_kpis(project_id: int = DEFAULT_PROJECT_ID, period_end: st
             }
         )
 
+    # V0.4 live overlays: replace V0.3 published G01/G02 (and verify S02) from fact tables
+    try:
+        from esg_v04_kpi_aggregate import (
+            aggregate_g01_compliance_and_permit,
+            aggregate_g02_special_plans,
+            aggregate_s02_risk_points,
+        )
+
+        live_by_key = {
+            "G01": aggregate_g01_compliance_and_permit(),
+            "G02": aggregate_g02_special_plans(project_id),
+            "S02": aggregate_s02_risk_points(),
+        }
+        for bucket in (items, *(group["items"] for group in groups.values())):
+            for item in bucket:
+                live = live_by_key.get(item["key"])
+                if not live:
+                    continue
+                item["value"] = live["value"]
+                item["unit"] = live.get("unit") or item.get("unit") or ""
+                item["hint"] = live.get("hint") or item.get("hint") or ""
+                item["riskLevel"] = live.get("riskLevel") or item.get("riskLevel") or "NORMAL"
+                if live.get("name"):
+                    item["name"] = live["name"]
+                    if "label" in item:
+                        item["label"] = live["name"]
+                    if "fullName" in item:
+                        item["fullName"] = live["name"]
+    except Exception as exc:
+        logger.warning("V0.4 G01/G02/S02 live aggregate failed: %s", exc)
+
     # Group status from risk levels
     for gkey, group in groups.items():
         levels = [it.get("riskLevel") for it in group["items"]]
@@ -308,25 +339,27 @@ def _summary_for_key(key: str, objects: list[dict], result_row: dict) -> dict:
             "abnormal": abnormal,
         }
     if key == "G02":
-        def _st(o: dict) -> str:
-            return str(o.get("status") or (o.get("fields") or {}).get("permitStatus") or "").upper()
-
-        expiring = sum(1 for o in objects if _st(o) in {"EXPIRING", "临期"} or "临期" in str(o.get("status") or ""))
-        overdue = sum(1 for o in objects if _st(o) in {"OVERDUE", "逾期"} or "逾期" in str(o.get("status") or ""))
-        pending = sum(
+        # V0.4 fallback when live aggregate unavailable: special-plan completion fields
+        drafted = sum(1 for o in objects if (o.get("fields") or {}).get("hasPlan"))
+        approved = sum(
             1
             for o in objects
-            if "PENDING" in _st(o)
-            or "待" in str(o.get("status") or "")
-            or "PENDING" in str((o.get("fields") or {}).get("approvalStatus") or "").upper()
+            if any(
+                tok in str(o.get("status") or "")
+                for tok in ("已审批", "已通过", "通过", "已完成", "APPROVED", "PASSED")
+            )
         )
-        valid = sum(1 for o in objects if _st(o) in {"VALID", "有效", "NORMAL", "APPROVED"})
+        with_file = sum(1 for o in objects if (o.get("fields") or {}).get("hasApprovalFile"))
+        completed = sum(1 for o in objects if (o.get("fields") or {}).get("isComplete"))
+        total = len(objects) or _jf(result_row.get("value_decimal")) or 0
         return {
-            "total": len(objects) or _jf(result_row.get("value_decimal")) or 0,
-            "valid": valid,
-            "expiring": expiring,
-            "overdue": overdue,
-            "pending": pending,
+            "total": total,
+            "completed": completed,
+            "pending": max(0, int(total) - completed),
+            "abnormal": max(0, int(total) - completed),
+            "drafted": drafted,
+            "approved": approved,
+            "withFile": with_file,
         }
     if key == "G03":
         pending = sum(1 for o in objects if "PENDING" in str(o.get("status") or "").upper() or "待审批" in str(o.get("status") or ""))
@@ -350,18 +383,18 @@ def _modal_summary_cards(key: str, summary: dict) -> list[dict]:
         ]
     if key == "G01":
         return [
-            {"label": "审批事项", "value": summary.get("total", 0), "unit": "项"},
+            {"label": "应完成事项", "value": summary.get("total", 0), "unit": "项"},
             {"label": "已完成", "value": summary.get("completed", 0), "unit": "项"},
-            {"label": "未完成", "value": summary.get("pending", 0), "unit": "项"},
-            {"label": "异常", "value": summary.get("abnormal", 0), "unit": "项"},
+            {"label": "审批完成", "value": f"{summary.get('procedureCompleted', 0)}/{summary.get('procedureDue', 0)}", "unit": ""},
+            {"label": "许可完成", "value": f"{summary.get('permitCompleted', 0)}/{summary.get('permitDue', 0)}", "unit": ""},
         ]
     if key == "G02":
         return [
-            {"label": "许可/夜施事项", "value": summary.get("total", 0), "unit": "项"},
-            {"label": "有效许可", "value": summary.get("valid", 0), "unit": "项"},
-            {"label": "临期许可", "value": summary.get("expiring", 0), "unit": "项"},
-            {"label": "逾期许可", "value": summary.get("overdue", 0), "unit": "项"},
-            {"label": "待审批", "value": summary.get("pending", 0), "unit": "项"},
+            {"label": "应编制专项方案", "value": summary.get("total", 0), "unit": "项"},
+            {"label": "已完成闭环", "value": summary.get("completed", 0), "unit": "项"},
+            {"label": "已编制", "value": summary.get("drafted", 0), "unit": "项"},
+            {"label": "已审批", "value": summary.get("approved", 0), "unit": "项"},
+            {"label": "有审批文件", "value": summary.get("withFile", 0), "unit": "项"},
         ]
     if key == "G03":
         return [
@@ -417,11 +450,16 @@ def _detail_rows_for_modal(key: str, objects: list[dict]) -> list[dict]:
             rows.append(
                 {
                     "name": obj.get("objectName"),
-                    "type": fields.get("approvalType") or fields.get("catalogName") or "报批报建",
+                    "type": fields.get("bucket")
+                    or fields.get("procedureType")
+                    or fields.get("permitType")
+                    or "报批报建",
                     "status": _status_cn(obj.get("status")),
-                    "deadline": fields.get("deadline") or "—",
-                    "department": fields.get("responsibleUnit") or "—",
-                    "progress": _status_cn(fields.get("progress") or obj.get("status")),
+                    "deadline": _jf(fields.get("deadline") or fields.get("expireDate")) or "—",
+                    "department": fields.get("department") or "—",
+                    "progress": fields.get("progressPercent")
+                    if fields.get("progressPercent") is not None
+                    else _status_cn(obj.get("status")),
                     "objectId": obj.get("objectId"),
                     "objectType": obj.get("objectType"),
                     "riskLevel": obj.get("riskLevel"),
@@ -431,15 +469,18 @@ def _detail_rows_for_modal(key: str, objects: list[dict]) -> list[dict]:
             rows.append(
                 {
                     "name": obj.get("objectName"),
-                    "number": fields.get("permitId") or fields.get("recordCode") or obj.get("objectId"),
-                    "type": "夜间施工许可" if obj.get("objectType") == "biz_night_construction_record" else "许可证",
-                    "deadline": fields.get("endTime") or fields.get("deadline") or "—",
-                    "department": fields.get("responsibleUnit") or "—",
-                    "status": _status_cn(obj.get("status") or fields.get("permitStatus") or ""),
-                    "approvalStatus": _status_cn(fields.get("approvalStatus") or ""),
+                    "number": fields.get("planCode") or fields.get("riskPointId") or obj.get("objectId"),
+                    "type": fields.get("riskLevel") or "专项方案",
+                    "deadline": _jf(fields.get("approvalDate")) or "—",
+                    "department": fields.get("location") or "—",
+                    "status": _status_cn(obj.get("status")),
+                    "approvalStatus": _status_cn(fields.get("approvalStatus") or obj.get("status") or ""),
                     "objectId": obj.get("objectId"),
                     "objectType": obj.get("objectType"),
                     "riskLevel": obj.get("riskLevel"),
+                    "hasPlan": fields.get("hasPlan"),
+                    "hasApprovalFile": fields.get("hasApprovalFile"),
+                    "isComplete": fields.get("isComplete"),
                 }
             )
         elif key == "G03":
@@ -551,36 +592,22 @@ def _load_objects_for_kpi(key: str, project_id: int) -> list[dict]:
             logger.warning("G03 biz_design_change read failed: %s", exc)
     elif key == "G02":
         try:
-            biz = m.query_all(
-                """
-                SELECT id, record_code, construction_date, permit_id, permit_status,
-                       approval_status, risk_status, end_time
-                FROM biz_night_construction_record
-                WHERE project_id = %s AND COALESCE(is_deleted, 0) = 0
-                ORDER BY id
-                """,
-                (project_id,),
-            )
-            if biz:
-                objects = [
-                    {
-                        "objectType": "biz_night_construction_record",
-                        "objectId": int(r["id"]),
-                        "objectName": f"{r.get('construction_date') or ''} 夜间施工记录".strip(),
-                        "status": r.get("permit_status"),
-                        "riskLevel": r.get("risk_status") or "NORMAL",
-                        "fields": {
-                            "permitId": r.get("permit_id"),
-                            "permitStatus": r.get("permit_status"),
-                            "approvalStatus": r.get("approval_status"),
-                            "endTime": _jf(r.get("end_time")),
-                            "recordCode": r.get("record_code"),
-                        },
-                    }
-                    for r in biz
-                ]
+            from esg_v04_kpi_aggregate import aggregate_g02_special_plans
+
+            live = aggregate_g02_special_plans(project_id)
+            if live.get("objects"):
+                objects = live["objects"]
         except Exception as exc:
-            logger.warning("G02 night construction read failed: %s", exc)
+            logger.warning("G02 special_plan_approval read failed: %s", exc)
+    elif key == "G01":
+        try:
+            from esg_v04_kpi_aggregate import aggregate_g01_compliance_and_permit
+
+            live = aggregate_g01_compliance_and_permit()
+            if live.get("objects"):
+                objects = live["objects"]
+        except Exception as exc:
+            logger.warning("G01 compliance+permit read failed: %s", exc)
     elif key == "G04":
         try:
             biz = m.query_all(
@@ -766,6 +793,52 @@ def get_demo_kpi_detail(key: str, project_id: int = DEFAULT_PROJECT_ID, period_e
             value = aggregate_e04(project_id)["homeValue"]
         except Exception:
             pass
+    elif key == "G01":
+        try:
+            from esg_v04_kpi_aggregate import aggregate_g01_compliance_and_permit
+
+            live = aggregate_g01_compliance_and_permit()
+            value = live["value"]
+            summary = live["summary"]
+            objects = live.get("objects") or objects
+            result = dict(result)
+            result["unit"] = live.get("unit") or ""
+            result["hint"] = live.get("hint") or ""
+            result["risk_level"] = live.get("riskLevel") or "NORMAL"
+            result["source_summary"] = live.get("dataSource")
+            result["kpi_name"] = live.get("name") or "合规审批与许可"
+        except Exception as exc:
+            logger.warning("G01 live detail aggregate failed: %s", exc)
+    elif key == "G02":
+        try:
+            from esg_v04_kpi_aggregate import aggregate_g02_special_plans
+
+            live = aggregate_g02_special_plans(project_id)
+            value = live["value"]
+            summary = live["summary"]
+            objects = live.get("objects") or objects
+            result = dict(result)
+            result["unit"] = live.get("unit") or ""
+            result["hint"] = live.get("hint") or ""
+            result["risk_level"] = live.get("riskLevel") or "NORMAL"
+            result["source_summary"] = live.get("dataSource")
+            result["kpi_name"] = live.get("name") or "重大风险专项方案"
+        except Exception as exc:
+            logger.warning("G02 live detail aggregate failed: %s", exc)
+    elif key == "S02":
+        try:
+            from esg_v04_kpi_aggregate import aggregate_s02_risk_points
+
+            live = aggregate_s02_risk_points()
+            value = live["value"]
+            result = dict(result)
+            result["unit"] = live.get("unit") or "项"
+            result["hint"] = live.get("hint") or ""
+            result["risk_level"] = live.get("riskLevel") or "NORMAL"
+            result["source_summary"] = live.get("dataSource")
+            result["kpi_name"] = live.get("name") or "重大风险源"
+        except Exception as exc:
+            logger.warning("S02 live detail aggregate failed: %s", exc)
 
     trend = [{"periodEnd": pe, "value": value}]
     theme = GROUP_THEME.get(key[0], "purple")
@@ -829,10 +902,10 @@ def get_demo_kpi_detail(key: str, project_id: int = DEFAULT_PROJECT_ID, period_e
 
     # G-group display names (Phase A / contract) — override Demo seed short names
     g_names = {
-        "G01": "合规审批事项",
-        "G02": "许可及施工管控",
+        "G01": "合规审批与许可",
+        "G02": "重大风险专项方案",
         "G03": "设计变更管理",
-        "G04": "内控与廉洁",
+        "G04": "合规管理天数",
     }
     if key in g_names:
         payload["name"] = g_names[key]

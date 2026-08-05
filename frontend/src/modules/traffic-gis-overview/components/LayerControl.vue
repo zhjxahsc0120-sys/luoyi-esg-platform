@@ -4,12 +4,13 @@ import { basemapDefinitions, type BasemapId } from '../config/basemaps.config'
 import type { TrafficLayerDefinition, TrafficLayerStyle } from '../types'
 import type { VectorLayerRecord } from '../vector/VectorLayerStore'
 import type { SpatialAssetRecord, SpatialAssetType } from '../assets/SpatialAssetStore'
+import type { DesignLayerManifest, DesignLayerStateMap } from '../types/design-layers'
 
-const props = defineProps<{ open: boolean; activeBasemap: BasemapId; layers: TrafficLayerDefinition[]; visibleIds: string[]; vectorLayers: VectorLayerRecord[]; assets: SpatialAssetRecord[]; loading: boolean }>()
-const emit = defineEmits<{ close: []; basemapChange: [BasemapId]; layerToggle: [string, boolean]; layerStyle: [string, Partial<TrafficLayerStyle>]; vectorUpload: [File]; vectorToggle: [string, boolean]; vectorRemove: [string]; vectorLocate: [string]; vectorStyle: [string, Partial<TrafficLayerStyle>]; assetAdd: [{ name: string; type: SpatialAssetType; url: string }]; assetToggle: [string, boolean]; assetRemove: [string]; assetLocate: [string]; refresh: [] }>()
+const props = defineProps<{ open: boolean; activeBasemap: BasemapId; layers: TrafficLayerDefinition[]; visibleIds: string[]; vectorLayers: VectorLayerRecord[]; assets: SpatialAssetRecord[]; designManifest: DesignLayerManifest | null; designStates: DesignLayerStateMap; loading: boolean }>()
+const emit = defineEmits<{ close: []; basemapChange: [BasemapId]; layerToggle: [string, boolean]; layerStyle: [string, Partial<TrafficLayerStyle>]; vectorUpload: [File]; vectorToggle: [string, boolean]; vectorRemove: [string]; vectorLocate: [string]; vectorStyle: [string, Partial<TrafficLayerStyle>]; assetAdd: [{ name: string; type: SpatialAssetType; url: string }]; assetToggle: [string, boolean]; assetRemove: [string]; assetLocate: [string]; designLayerToggle: [string, boolean]; designLayerLocate: [string]; designLayerOpacity: [string, number]; refresh: [] }>()
 
 type Tab = 'basemap' | 'base' | 'assets' | 'business'
-const tab = ref<Tab>('business')
+const tab = ref<Tab>('base')
 const assetName = ref('')
 const assetUrl = ref('')
 const assetType = ref<SpatialAssetType>('imagery')
@@ -18,9 +19,19 @@ const businessLayers = computed(() => props.layers.filter(layer => layer.source.
 const businessFeatureCount = computed(() => businessLayers.value.reduce((sum, layer) => sum + (layer.featureCount || 0), 0))
 const titles: Record<Tab, [string, string]> = {
   basemap: ['基础地图', '选择卫星、街道等默认背景地图'],
-  base: ['基础空间数据', '配置路线、断面、标段范围和重要面文件，这类数据不参与日常业务导入'],
+  base: ['显示图层', '管理道路、红线、生态约束、边坡及本地空间文件'],
   assets: ['三维与影像资源', '配置影像、地形、倾斜摄影与点云服务'],
   business: ['ESG业务数据', '自动读取数据库中的异常、超标、逾期、风险和整改数据；此处只控制显示效果'],
+}
+function designState(id: string) {
+  return props.designStates[id] || { visible: false, loaded: false, loading: false, opacity: 1 }
+}
+function designColor(id: string) {
+  if (id === 'project_redline') return '#ff4050'
+  if (id === 'route_core') return '#22d7ff'
+  if (id === 'ecology_constraints') return '#39e27d'
+  if (id.includes('slope')) return '#f5c542'
+  return '#c8edf4'
 }
 
 function upload(event: Event) {
@@ -42,7 +53,7 @@ function addAsset() {
     <header><div><b>地图数据与资源设置</b><small>基础空间数据与ESG业务数据分开管理</small></div><button @click="$emit('close')">← 返回地图</button></header>
     <div class="workspace">
       <nav>
-        <button v-for="item in ([['basemap','01','基础地图','背景底图'],['base','02','基础空间数据','断面、路线、重要面'],['assets','03','三维与影像','影像、地形、三维'],['business','04','ESG业务数据','数据库自动读取']] as const)" :key="item[0]" :class="{active:tab===item[0]}" @click="tab=item[0]"><i>{{item[1]}}</i><span>{{item[2]}}<small>{{item[3]}}</small></span></button>
+        <button v-for="item in ([['basemap','01','基础地图','背景底图'],['base','02','显示图层','道路、红线、边坡'],['assets','03','三维与影像','影像、地形、三维'],['business','04','ESG业务数据','数据库自动读取']] as const)" :key="item[0]" :class="{active:tab===item[0]}" @click="tab=item[0]"><i>{{item[1]}}</i><span>{{item[2]}}<small>{{item[3]}}</small></span></button>
       </nav>
       <main>
         <div class="page-title"><div><h2>{{titles[tab][0]}}</h2><p>{{titles[tab][1]}}</p></div><label v-if="tab==='base'" class="primary">上传 GeoJSON<input type="file" accept=".geojson,.json" @change="upload"></label><button v-if="tab==='business'" class="primary" :disabled="loading" @click="$emit('refresh')">刷新数据库数据</button></div>
@@ -52,7 +63,45 @@ function addAsset() {
         </section>
 
         <section v-else-if="tab==='base'">
-          <div class="notice"><b>基础数据入口</b><span>适合项目路线、断面图、标段边界、施工区和其他重要面。上传后可控制显隐、定位和样式。</span></div>
+          <div class="notice"><b>地图显示控制</b><span>道路中间线、道路边线、弃渣场和项目红线进入地图后立即加载；重复的边坡矢量线按需开启。</span></div>
+          <template v-for="group in designManifest?.groups || []" :key="group.id">
+            <h3>{{group.name}}（{{group.layers.length}}）</h3>
+            <article v-for="layer in group.layers" :key="layer.id" class="config-card design-card">
+              <div class="card-head">
+                <label class="switch-row">
+                  <input
+                    type="checkbox"
+                    :checked="designState(layer.id).visible"
+                    :disabled="designState(layer.id).loading || layer.available === false"
+                    @change="$emit('designLayerToggle',layer.id,($event.target as HTMLInputElement).checked)"
+                  >
+                  <i :style="{background:designColor(layer.id)}"></i>
+                  <span>
+                    <b>{{layer.name}}</b>
+                    <small v-if="designState(layer.id).loading">正在异步加载…</small>
+                    <small v-else-if="designState(layer.id).error">{{designState(layer.id).error}}</small>
+                    <small v-else>{{layer.featureCount.toLocaleString()}}个要素 · {{layer.loadMode === 'manual' ? '按需加载' : '首屏/后台加载'}}</small>
+                  </span>
+                </label>
+                <button
+                  :disabled="!designState(layer.id).loaded"
+                  @click="$emit('designLayerLocate',layer.id)"
+                >定位</button>
+              </div>
+              <div v-if="designState(layer.id).visible" class="design-opacity">
+                <span>透明度</span>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="1"
+                  step="0.05"
+                  :value="designState(layer.id).opacity"
+                  @input="$emit('designLayerOpacity',layer.id,Number(($event.target as HTMLInputElement).value))"
+                >
+                <em>{{Math.round(designState(layer.id).opacity*100)}}%</em>
+              </div>
+            </article>
+          </template>
           <h3>系统基础图层（{{configuredBaseLayers.length}}）</h3>
           <article v-for="layer in configuredBaseLayers" :key="layer.id" class="config-card"><div class="card-head"><label class="switch-row"><input type="checkbox" :checked="visibleIds.includes(layer.id)" @change="$emit('layerToggle',layer.id,($event.target as HTMLInputElement).checked)"><i :style="{background:layer.style.color}"></i><span><b>{{layer.name}}</b><small>{{layer.featureCount||0}}个要素 · {{layer.geometryType}}</small></span></label></div><LayerStyle :layer="layer" @style="value=>$emit('layerStyle',layer.id,value)" /></article>
           <h3>本地上传文件（{{vectorLayers.length}}）</h3>
@@ -92,4 +141,5 @@ const LayerStyle = defineComponent({
 
 <style scoped>
 .admin{position:absolute;inset:0;z-index:30;display:grid;grid-template-rows:68px 1fr 38px;background:#f3f6f8;color:#263d4c;font-family:"Microsoft YaHei",sans-serif}.admin>header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:#fff;border-bottom:1px solid #dce5eb}.admin>header b,.admin>header small,.card-body b,.card-body small,.switch-row b,.switch-row small{display:block}.admin>header small,.card-body small,.switch-row small{margin-top:4px;color:#8294a1;font-size:11px}.admin button,.primary{cursor:pointer;border:1px solid #c8d6df;background:#fff;color:#42647a;padding:7px 13px}.workspace{min-height:0;display:grid;grid-template-columns:220px 1fr}.workspace>nav{padding:18px 12px;background:#102a3a}.workspace>nav button{width:100%;display:flex;align-items:center;gap:10px;margin-bottom:7px;padding:12px;border:0;background:transparent;color:#bad0dc;text-align:left}.workspace>nav button.active{background:#1c4558;color:#fff;border-left:3px solid #23c7e8}.workspace>nav i{font-style:normal;font-size:10px;color:#42cde9}.workspace>nav span{flex:1}.workspace>nav small{display:block;margin-top:3px;color:#789bad;font-size:9px}.workspace>main{min-width:0;overflow:auto;padding:24px 30px}.page-title,.card-head{display:flex;align-items:center;justify-content:space-between}.page-title{margin-bottom:20px}.page-title h2{margin:0;font-size:19px}.page-title p{margin:5px 0 0;color:#7d909c;font-size:11px}.primary{background:#0b9fbe!important;border-color:#0b9fbe!important;color:#fff!important}.primary input{display:none}.basemap-grid{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px}.basemap-card,.config-card,.form-card,.notice,.summary{display:block;margin-bottom:12px;padding:16px 18px;background:#fff;border:1px solid #dce5ea}.basemap-card{padding:0;cursor:pointer}.basemap-card.selected{border-color:#12b4d4;box-shadow:0 0 0 2px rgba(18,180,212,.12)}.basemap-card>input{display:none}.preview{height:130px;display:flex;align-items:flex-end;padding:10px;background:linear-gradient(135deg,#a7c5d5,#eef4f7)}.preview--satellite{background:linear-gradient(135deg,#2d543e,#9c8e65)}.preview--dark{background:linear-gradient(135deg,#102b3b,#305264)}.preview span{font-size:10px;color:#fff;background:rgba(0,0,0,.45);padding:4px 7px}.card-body{padding:14px}.switch-row{display:flex;align-items:center;gap:10px}.switch-row>input{display:none}.switch-row>i{width:10px;height:10px;background:#18b8d4;box-shadow:0 0 0 4px #e3f7fa}.switch-row:has(input:not(:checked)){opacity:.55}.form-grid,.asset-form{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid #edf1f3}.form-grid label,.asset-form label{font-size:11px;color:#607887}.form-grid input:not([type=checkbox]),.asset-form input,.asset-form select{box-sizing:border-box;width:100%;height:32px;margin-top:6px;border:1px solid #cbd8df}.checkbox{display:flex;align-items:center;gap:8px}.asset-form .wide{grid-column:1/-1}.notice{display:flex;align-items:center;gap:12px;border-left:4px solid #17abc8}.notice span{font-size:11px;color:#667e8d}.business-note{flex-wrap:wrap}.legend{margin-left:auto;font-size:11px}.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 4px 0 12px}.normal{background:#35dc91}.attention{background:#42a5f5}.warning{background:#ffb338}.critical{background:#ff4d5e}.summary{display:flex;gap:40px}.summary b{font-size:20px;color:#0a9dbd;margin-right:5px}.empty{padding:50px;text-align:center;background:#fff;border:1px dashed #c9d9e1;color:#7e929e}.danger{color:#d65b5b!important}h3{font-size:13px}.admin>footer{padding:11px 28px;background:#fff;border-top:1px solid #dce5eb;color:#788d99;font-size:10px}.admin>footer span{display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;background:#28c885}@media(max-width:900px){.workspace{grid-template-columns:170px 1fr}.basemap-grid,.form-grid{grid-template-columns:1fr}.workspace>main{padding:18px}}
+.admin button:disabled{cursor:not-allowed;opacity:.4}.design-card{border-left:3px solid #20b7d2}.design-opacity{display:grid;grid-template-columns:48px 1fr 42px;align-items:center;gap:10px;margin-top:13px;padding-top:12px;border-top:1px solid #edf1f3;color:#607887;font-size:11px}.design-opacity input{width:100%;accent-color:#13abc8}.design-opacity em{color:#0b91aa;font-style:normal;text-align:right}
 </style>

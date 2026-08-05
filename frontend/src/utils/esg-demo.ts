@@ -6,7 +6,23 @@ import type {
   DemoRiskWarning,
   DemoRiskWarningsResponse,
 } from '@/types/esg-demo'
-import { KPI_HOME_CATALOG } from '@/data/kpi-catalog'
+import {
+  computeG04HomeDemoDays,
+  G04_HOME_DEMO_DISPLAY,
+  KPI_HOME_CATALOG,
+  KPI_HOME_HIDDEN_KEYS,
+} from '@/data/kpi-catalog'
+
+function withG04HomeDemoDisplay(item: KpiItem): KpiItem {
+  if (item.key !== 'G04') return item
+  return {
+    ...item,
+    value: computeG04HomeDemoDays(),
+    unit: '天',
+    displayText: undefined,
+    hint: G04_HOME_DEMO_DISPLAY.hint,
+  }
+}
 
 const GROUP_META: Record<'E' | 'S' | 'G', { title: string; theme: 'green' | 'blue' | 'purple' }> = {
   E: { title: '环境环保组', theme: 'green' },
@@ -59,15 +75,16 @@ export function demoItemsToKpiGroups(items: DemoKpiItem[]): KpiGroup[] {
   for (const item of items) {
     const g = item.key?.[0] as 'E' | 'S' | 'G'
     if (!groups[g]) continue
+    if (KPI_HOME_HIDDEN_KEYS.has(item.key as keyof typeof KPI_HOME_CATALOG)) continue
     const cat = KPI_HOME_CATALOG[item.key as keyof typeof KPI_HOME_CATALOG]
-    const mapped: KpiItem = {
+    const mapped: KpiItem = withG04HomeDemoDisplay({
       key: item.key as KpiKey,
       label: cat?.label || item.name,
       fullName: cat?.fullName || item.name,
       value: item.value,
-      unit: item.unit || cat?.unit,
+      unit: cat?.unit ? cat.unit : item.unit,
       hint: item.hint,
-    }
+    })
     groups[g].items.push(mapped)
   }
 
@@ -78,16 +95,40 @@ export function demoItemsToKpiGroups(items: DemoKpiItem[]): KpiGroup[] {
   return [groups.E, groups.S, groups.G]
 }
 
+/** Force homepage card labels from KPI_HOME_CATALOG (ignore API/DB display names). */
+function applyCatalogToGroups(groups: KpiGroup[]): KpiGroup[] {
+  return groups.map((group) => ({
+    ...group,
+    items: group.items
+      .filter((item) => !KPI_HOME_HIDDEN_KEYS.has(item.key as keyof typeof KPI_HOME_CATALOG))
+      .map((item) => {
+        const cat = KPI_HOME_CATALOG[item.key as keyof typeof KPI_HOME_CATALOG]
+        if (!cat) return withG04HomeDemoDisplay(item)
+        return withG04HomeDemoDisplay({
+          ...item,
+          label: cat.label,
+          fullName: cat.fullName,
+          unit: cat.unit ? cat.unit : item.unit,
+        })
+      }),
+  }))
+}
+
 export function normalizeDashboardKpis(
   data: DemoKpisResponse | { groups: KpiGroup[] } | null,
 ): { groups: KpiGroup[]; items?: DemoKpiItem[]; source?: string } | null {
   if (!data) return null
   if (isDemoKpisPayload(data)) {
-    const groups = data.groups?.length ? data.groups : demoItemsToKpiGroups(data.items || [])
+    // Prefer remapping from items[] so catalog short names always win over API groups[].label
+    const groups = data.items?.length
+      ? demoItemsToKpiGroups(data.items)
+      : data.groups?.length
+        ? applyCatalogToGroups(data.groups)
+        : []
     return { groups, items: data.items, source: data.source || 'esg_demo' }
   }
   if ('groups' in data && Array.isArray(data.groups) && data.groups.length) {
-    return { groups: data.groups, source: 'legacy' }
+    return { groups: applyCatalogToGroups(data.groups), source: 'legacy' }
   }
   return null
 }

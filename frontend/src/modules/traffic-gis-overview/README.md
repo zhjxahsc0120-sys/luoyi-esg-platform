@@ -1,34 +1,40 @@
 # 交通 ESG 项目一张图
 
-该模块嵌入 ESG 综合看板，使用 Cesium 加载 S1-6 高速公路正式 KML。
+该模块嵌入 ESG 综合看板，使用 Cesium 加载本批红线、道路与边坡矢量数据。
 
 ## 数据入口与生命周期
 
-- 唯一图层配置：`public/gis/s1-6/layer-config.json`
-- 默认基础层：道路、生态和关键保护要素，页面初始化时加载
-- SPX 层：首页默认异步加载，不生成海量 Entity
-- SPX 在 Web Worker 中解析，并按 4 种原始样式批量生成 Cesium Primitive
-- SPX 成功加载后缓存 Primitive；关闭只设置 `show = false`
-- 设计 KML 不在前台图层面板中开关；地图设置面板用于数据库业务异常图层
+- 当前图层配置：`public/gis/s1-6/current-layer-config.json`
+- 默认图层：SPX 边坡 XYZ 瓦片、项目红线、道路中间线、道路边线、弃渣场
+- 边坡线保留在设置面板中手动开启；当前源数据与道路边线空间重复。
+- 首页与预览页启用 `designOnly`，不再叠加旧生态、SPX、数据库业务点、本地缓存矢量和空间资源
+- 高度碎片化的 KML 通过 `scripts/prepare-current-map-lines.mjs` 归并为 GeoJSON 后加载
 - 加载失败写入单图层错误状态，可再次点击重试
 
-`DesignKmlLayerManager` 负责配置读取、请求去重、图层缓存、显隐、定位和
-透明度；`SpxPrimitiveLayer` 负责高密度边坡的轻量批量渲染。KML 路径不得写入页面组件，新增或替换文件统一修改
-`layer-config.json`。
+`DesignKmlLayerManager` 负责配置读取、请求去重、图层缓存、显隐、定位和样式。
+源目录变更后重新运行转换脚本，并同步更新 `current-layer-config.json`。
 
 ## 样式规则
 
-基础 KML 使用 `Cesium.KmlDataSource` 原样加载。SPX 保留全部原始坐标和折线
-连接关系，按原始颜色、透明度和线宽批量绘制，不生成九万多个 Entity。透明度
-调整以源 KML 颜色的 alpha 为基准，不统一改色。
+- 红线：红色边界和透明填充。
+- 道路中间线：普通细线，不使用高亮光晕。
+- 道路边线：青蓝外发光和亮色核心线。
+- 边坡线：橙色虚线。
+- 弃渣场：橙色半透明填充、黄色高亮边界和近距离标签。
+- SPX 边坡：本地透明 XYZ 瓦片，显示级别 10–18。
+
+红线最后加载，面和边界使用本批矢量中的最高 `zIndex`，始终压在道路、
+弃渣场等地面矢量之上。
+
+当前提供的 `边坡线.kml` 除文档时间戳外与 `道路边线.kml` 完全相同，两层会
+100% 空间重合；代码按原文件分别接入，待收到正确边坡数据后重新转换替换。
 
 ## 主要文件
 
 - `components/TrafficGisOverview.vue`：Cesium 生命周期和运行状态
 - `components/DesignLayerTree.vue`：图层开关、加载状态、定位和透明度
 - `cesium/layers/DesignKmlLayerManager.ts`：按需加载、去重和缓存
-- `cesium/layers/SpxPrimitiveLayer.ts`：SPX 批量 Primitive 渲染
-- `cesium/layers/spx-kml.worker.ts`：SPX 后台解析
+- `scripts/prepare-current-map-lines.mjs`：本批线数据转换
 - `config/design-map.config.ts`：配置入口、缓存策略和地形地址
 - `cesium/interaction/PickManager.ts`：点击要素拾取
 - `components/FeatureCard.vue`：工程对象及后续 ESG 业务详情
@@ -36,9 +42,10 @@
 ## 验证
 
 ```bash
-npm run check
-npm run build
+npm.cmd run check
+npm.cmd run build
 ```
 
-浏览器验收要点：首次进入请求基础 KML 和 SPX KML；视角按新中心线范围定位；
-不出现旧标段演示线和取弃土场；地图设置默认进入业务异常图层；全屏和业务点击正常。
+浏览器验收入口：`http://127.0.0.1:5174/#/gis-preview`。确认出现红线、
+道路中间线、道路边线、弃渣场和 SPX 边坡瓦片；边坡矢量线默认关闭，不再出现
+旧生态、业务点及本地缓存图层。

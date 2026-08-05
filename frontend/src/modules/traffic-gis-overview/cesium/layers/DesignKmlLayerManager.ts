@@ -10,8 +10,11 @@ import { SpxPrimitiveLayer } from "./SpxPrimitiveLayer";
 type LayerEntry = {
   definition: DesignKmlLayerDefinition;
   group: DesignLayerGroup;
-  dataSource: Cesium.KmlDataSource;
+  dataSource: DesignDataSource;
 };
+
+type DesignDataSource = Cesium.KmlDataSource | Cesium.GeoJsonDataSource;
+type PresentationLod = "near" | "middle" | "overview";
 
 type EntityColorSnapshot = {
   billboard?: Cesium.Color;
@@ -54,18 +57,31 @@ export class DesignKmlLayerManager {
   private readonly entries = new Map<string, LayerEntry>();
   private readonly pendingLoads = new Map<
     string,
-    Promise<Cesium.KmlDataSource>
+    Promise<DesignDataSource>
   >();
   private readonly loadTokens = new Map<string, number>();
   private readonly originalColors = new WeakMap<Cesium.Entity, EntityColorSnapshot>();
-  private spxLayer?: SpxPrimitiveLayer;
+  private readonly primitiveLayers = new Map<string, SpxPrimitiveLayer>();
+  private readonly lodBindings: Array<{
+    property: Cesium.ConstantProperty;
+    near: unknown;
+    middle: unknown;
+    overview: unknown;
+  }> = [];
+  private presentationLod: PresentationLod;
+  private readonly removeCameraMoveEnd: () => void;
   private manifest?: DesignLayerManifest;
 
   constructor(
     private readonly viewer: Cesium.Viewer,
     private readonly manifestUrl: string,
     private readonly releaseOnHide = true,
-  ) {}
+  ) {
+    this.presentationLod = this.cameraLod();
+    this.removeCameraMoveEnd = this.viewer.camera.moveEnd.addEventListener(() =>
+      this.updatePresentationLod(),
+    );
+  }
 
   async init(): Promise<DesignLayerManifest> {
     const response = await fetch(this.manifestUrl);
@@ -171,19 +187,21 @@ export class DesignKmlLayerManager {
   }
 
   async setVisible(layerId: string, visible: boolean, opacity = 1) {
-    if (layerId === "slope_spx") {
-      const { definition } = this.definitionOf(layerId);
-      if (!this.spxLayer) {
+    const configured = this.definitionOf(layerId);
+    if (configured.definition.format === "compact-json") {
+      let primitiveLayer = this.primitiveLayers.get(layerId);
+      if (!primitiveLayer) {
         const baseUrl = new URL(
           ".",
           new URL(this.manifestUrl, window.location.href),
         );
-        this.spxLayer = new SpxPrimitiveLayer(
+        primitiveLayer = new SpxPrimitiveLayer(
           this.viewer,
-          new URL(definition.file, baseUrl).href,
+          new URL(configured.definition.file, baseUrl).href,
         );
+        this.primitiveLayers.set(layerId, primitiveLayer);
       }
-      await this.spxLayer.setVisible(visible, opacity);
+      await primitiveLayer.setVisible(visible, opacity);
       return;
     }
     const current = this.entries.get(layerId);
@@ -207,23 +225,29 @@ export class DesignKmlLayerManager {
       return;
     }
 
-    const { group, definition } = this.definitionOf(layerId);
+    const { group, definition } = configured;
     const token = this.nextToken(layerId);
     const baseUrl = new URL(".", new URL(this.manifestUrl, window.location.href));
     let pending = this.pendingLoads.get(layerId);
     if (!pending) {
-      pending = Cesium.KmlDataSource.load(
-        new URL(definition.file, baseUrl).href,
-        {
-          camera: this.viewer.scene.camera,
-          canvas: this.viewer.scene.canvas,
-          clampToGround: definition.clampToGround !== false,
-        },
-      );
+      const url = new URL(definition.file, baseUrl).href;
+      pending =
+        definition.format === "geojson"
+          ? Cesium.GeoJsonDataSource.load(url, {
+              clampToGround: definition.clampToGround !== false,
+              stroke: Cesium.Color.RED,
+              strokeWidth: 4,
+              fill: Cesium.Color.TRANSPARENT,
+            })
+          : Cesium.KmlDataSource.load(url, {
+              camera: this.viewer.scene.camera,
+              canvas: this.viewer.scene.canvas,
+              clampToGround: definition.clampToGround !== false,
+            });
       this.pendingLoads.set(layerId, pending);
     }
 
-    let dataSource: Cesium.KmlDataSource;
+    let dataSource: DesignDataSource;
     try {
       dataSource = await pending;
     } finally {
@@ -245,8 +269,9 @@ export class DesignKmlLayerManager {
   }
 
   async locate(layerId: string) {
-    if (layerId === "slope_spx") {
-      await this.spxLayer?.locate();
+    const primitiveLayer = this.primitiveLayers.get(layerId);
+    if (primitiveLayer) {
+      await primitiveLayer.locate();
       return;
     }
     const entry = this.entries.get(layerId);
@@ -268,6 +293,7 @@ export class DesignKmlLayerManager {
   async locateOverview(preferredLayerId = "route_center") {
     const preferred =
       this.entries.get(preferredLayerId) ||
+      this.entries.get("route_core") ||
       this.entries.get("road_ecology_base") ||
       this.entries.get("road");
     if (preferred) {
@@ -306,8 +332,9 @@ export class DesignKmlLayerManager {
   }
 
   setOpacity(layerId: string, opacity: number) {
-    if (layerId === "slope_spx") {
-      this.spxLayer?.setOpacity(opacity);
+    const primitiveLayer = this.primitiveLayers.get(layerId);
+    if (primitiveLayer) {
+      primitiveLayer.setOpacity(opacity);
       return;
     }
     const entry = this.entries.get(layerId);
@@ -333,17 +360,43 @@ export class DesignKmlLayerManager {
   }
 
   destroy() {
+    this.removeCameraMoveEnd();
     this.loadTokens.forEach((_, id) => this.nextToken(id));
     for (const entry of this.entries.values()) {
       this.viewer.dataSources.remove(entry.dataSource, true);
     }
     this.entries.clear();
-    this.spxLayer?.destroy();
-    this.spxLayer = undefined;
+    this.primitiveLayers.forEach((layer) => layer.destroy());
+    this.primitiveLayers.clear();
+    this.lodBindings.length = 0;
+  }
+
+  private cameraLod(): PresentationLod {
+    const height = this.viewer.camera.positionCartographic.height;
+    if (height > 25000) return "overview";
+    if (height > 10000) return "middle";
+    return "near";
+  }
+
+  private lodProperty<T>(near: T, middle: T, overview: T) {
+    const values = { near, middle, overview };
+    const property = new Cesium.ConstantProperty(values[this.cameraLod()]);
+    this.lodBindings.push({ property, near, middle, overview });
+    return property;
+  }
+
+  private updatePresentationLod() {
+    const next = this.cameraLod();
+    if (next === this.presentationLod) return;
+    this.presentationLod = next;
+    for (const binding of this.lodBindings) {
+      binding.property.setValue(binding[next]);
+    }
+    this.viewer.scene.requestRender();
   }
 
   private applyDistanceLimit(
-    dataSource: Cesium.KmlDataSource,
+    dataSource: DesignDataSource,
     maxDistance?: number,
   ) {
     if (!maxDistance) return;
@@ -359,14 +412,22 @@ export class DesignKmlLayerManager {
   }
 
   private decorateEntities(
-    dataSource: Cesium.KmlDataSource,
+    dataSource: DesignDataSource,
     group: DesignLayerGroup,
     layer: DesignKmlLayerDefinition,
   ) {
     const pileAreaLabels = new Map<Cesium.Entity, string>();
-    if (layer.id === "road_ecology_base") {
-      const pileAreas = dataSource.entities.values
+    if (layer.id === "ecology_constraints") {
+      const pileAreasByName = new Map<string, Cesium.Entity>();
+      dataSource.entities.values
         .filter((entity) => /^堆渣线_\d+$/.test(entity.name?.trim() ?? ""))
+        .forEach((entity) => {
+          const name = entity.name?.trim();
+          if (name && !pileAreasByName.has(name)) {
+            pileAreasByName.set(name, entity);
+          }
+        });
+      const pileAreas = [...pileAreasByName.values()]
         .sort((left, right) => {
           const leftId = Number(left.name?.split("_").at(-1) ?? 0);
           const rightId = Number(right.name?.split("_").at(-1) ?? 0);
@@ -398,10 +459,208 @@ export class DesignKmlLayerManager {
       entity.properties.trafficFeature = new Cesium.ConstantProperty(feature);
       entity.name ||= `${layer.name} ${index + 1}`;
     });
-    if (layer.id === "road_ecology_base") {
-      this.hideSpoilSiteFeatures(dataSource);
+    this.applyPresentationStyle(dataSource, layer);
+    if (layer.id === "ecology_constraints") {
       this.addPileAreaLabels(dataSource, pileAreaLabels);
       this.addKeyFeatureLabels(dataSource);
+    }
+  }
+
+  private applyPresentationStyle(
+    dataSource: DesignDataSource,
+    layer: DesignKmlLayerDefinition,
+  ) {
+    const time = Cesium.JulianDate.now();
+    const originalEntities = [...dataSource.entities.values];
+    // Use constant properties and only swap them when the camera crosses an
+    // LOD boundary. CallbackProperty made every ground polyline dynamic and
+    // forced Cesium to reevaluate hundreds of styles on every render frame.
+    const dynamicLod = <T>(near: T, middle: T, overview: T) =>
+      this.lodProperty(near, middle, overview);
+    if (layer.id === "route_core" || layer.id === "route_center") {
+      for (const entity of originalEntities) {
+        if (!entity.polyline) continue;
+        const sourceStroke = String(
+          entity.properties?.stroke?.getValue(time) ?? "#65e7ff",
+        );
+        const sourceColor = Cesium.Color.fromCssColorString(sourceStroke);
+        entity.polyline.material = new Cesium.ColorMaterialProperty(
+          dynamicLod(
+            sourceColor.withAlpha(0.7),
+            sourceColor.withAlpha(0.64),
+            sourceColor.withAlpha(0.58),
+          ),
+        );
+        entity.polyline.width = dynamicLod(1.8, 1.6, 1.4);
+        entity.polyline.zIndex = new Cesium.ConstantProperty(40);
+      }
+    }
+    if (layer.id === "road_edges") {
+      for (const entity of originalEntities) {
+        if (!entity.polyline) continue;
+        const positions = entity.polyline.positions;
+        entity.polyline.material = new Cesium.ColorMaterialProperty(
+          dynamicLod(
+              Cesium.Color.fromCssColorString("#7cecff"),
+              Cesium.Color.fromCssColorString("#7cecff").withAlpha(0.82),
+              Cesium.Color.fromCssColorString("#7cecff").withAlpha(0.68),
+            ),
+          );
+        entity.polyline.width = dynamicLod(2.8, 1.8, 1.4);
+        entity.polyline.show = dynamicLod(true, true, true);
+        entity.polyline.zIndex = new Cesium.ConstantProperty(50);
+        dataSource.entities.add({
+          name: `${entity.name || "道路边线"}光晕`,
+          polyline: {
+            positions,
+              show: dynamicLod(true, true, true),
+              width: dynamicLod(8, 5, 3),
+            material: new Cesium.ColorMaterialProperty(
+              dynamicLod(
+                  Cesium.Color.fromCssColorString("#12cfff").withAlpha(0.28),
+                  Cesium.Color.fromCssColorString("#12cfff").withAlpha(0.16),
+                  Cesium.Color.fromCssColorString("#12cfff").withAlpha(0.1),
+              ),
+            ),
+            clampToGround: true,
+            zIndex: 49,
+          },
+          show: entity.show,
+        });
+      }
+    }
+    if (layer.id === "slope_lines") {
+      for (const entity of originalEntities) {
+        if (!entity.polyline) continue;
+        entity.polyline.material = new Cesium.PolylineDashMaterialProperty({
+          color: Cesium.Color.fromCssColorString("#ffb347").withAlpha(0.95),
+          gapColor: Cesium.Color.TRANSPARENT,
+          dashLength: 12,
+        });
+        entity.polyline.width = new Cesium.ConstantProperty(2.4);
+        entity.polyline.zIndex = new Cesium.ConstantProperty(30);
+      }
+    }
+    if (layer.id === "spoil_sites") {
+      for (const entity of originalEntities) {
+        const positions =
+          entity.polygon?.hierarchy?.getValue(time)?.positions || [];
+        if (positions.length < 3 || !entity.polygon) continue;
+        const closed = [...positions, positions[0]];
+        entity.polygon.outline = new Cesium.ConstantProperty(false);
+        entity.polygon.material = new Cesium.ColorMaterialProperty(
+          dynamicLod(
+              Cesium.Color.fromCssColorString("#ff9f2f").withAlpha(0.2),
+              Cesium.Color.fromCssColorString("#ff9f2f").withAlpha(0.08),
+              Cesium.Color.fromCssColorString("#ff9f2f").withAlpha(0.04),
+            ),
+          );
+        entity.polygon.show = dynamicLod(true, true, true);
+        entity.polygon.zIndex = new Cesium.ConstantProperty(60);
+        dataSource.entities.add({
+          name: `${entity.name || "弃渣场"}高亮光晕`,
+          polyline: {
+            positions: closed,
+            show: dynamicLod(true, true, true),
+            width: dynamicLod(10, 6, 4),
+            material: new Cesium.ColorMaterialProperty(
+              dynamicLod(
+                Cesium.Color.fromCssColorString("#ff9f2f").withAlpha(0.32),
+                Cesium.Color.fromCssColorString("#ff9f2f").withAlpha(0.18),
+                Cesium.Color.fromCssColorString("#ff9f2f").withAlpha(0.1),
+              ),
+            ),
+            clampToGround: true,
+            zIndex: 61,
+          },
+        });
+        dataSource.entities.add({
+          name: entity.name || "弃渣场",
+          polyline: {
+            positions: closed,
+            show: dynamicLod(true, true, true),
+            width: dynamicLod(4.5, 2.2, 2),
+            material: new Cesium.ColorMaterialProperty(
+              dynamicLod(
+                Cesium.Color.fromCssColorString("#ffe36b"),
+                Cesium.Color.fromCssColorString("#ffd15a").withAlpha(0.72),
+                Cesium.Color.fromCssColorString("#ffd15a").withAlpha(0.62),
+              ),
+            ),
+            clampToGround: true,
+            zIndex: 62,
+          },
+        });
+        const labelPosition = Cesium.BoundingSphere.fromPoints(positions).center;
+        entity.position = new Cesium.ConstantPositionProperty(labelPosition);
+        entity.label = new Cesium.LabelGraphics({
+          text: entity.name || "弃渣场",
+          font: "700 16px Microsoft YaHei",
+          fillColor: Cesium.Color.fromCssColorString("#fff7cc"),
+          outlineColor: Cesium.Color.fromCssColorString("#5a2c00"),
+          outlineWidth: 4,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          showBackground: true,
+          backgroundColor: Cesium.Color.fromCssColorString("#4b2500").withAlpha(
+            0.9,
+          ),
+          backgroundPadding: new Cesium.Cartesian2(10, 6),
+          pixelOffset: new Cesium.Cartesian2(0, -24),
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          show: dynamicLod(true, false, false),
+        });
+      }
+    }
+    if (layer.id === "project_redline") {
+      for (const entity of originalEntities) {
+        const positions =
+          entity.polygon?.hierarchy?.getValue(time)?.positions || [];
+        if (positions.length < 2) continue;
+        const closed = [...positions, positions[0]];
+        if (entity.polygon) {
+          entity.polygon.outline = new Cesium.ConstantProperty(false);
+          entity.polygon.material = new Cesium.ColorMaterialProperty(
+            dynamicLod(
+              Cesium.Color.fromCssColorString("#ff3348").withAlpha(0.08),
+              Cesium.Color.fromCssColorString("#ff3348").withAlpha(0.03),
+              Cesium.Color.TRANSPARENT,
+            ),
+          );
+          entity.polygon.zIndex = new Cesium.ConstantProperty(100);
+        }
+        dataSource.entities.add({
+          name: `${entity.name || "项目红线"}光晕`,
+          polyline: {
+            positions: closed,
+            width: dynamicLod(11, 7, 4.5),
+            material: new Cesium.ColorMaterialProperty(
+              dynamicLod(
+                Cesium.Color.RED.withAlpha(0.32),
+                Cesium.Color.RED.withAlpha(0.2),
+                Cesium.Color.RED.withAlpha(0.12),
+              ),
+            ),
+            clampToGround: true,
+            zIndex: 101,
+          },
+        });
+        dataSource.entities.add({
+          name: entity.name || "项目红线",
+          polyline: {
+            positions: closed,
+            width: dynamicLod(5, 3.4, 2.4),
+            material: new Cesium.ColorMaterialProperty(
+              dynamicLod(
+                Cesium.Color.fromCssColorString("#ff3048"),
+                Cesium.Color.fromCssColorString("#ff3048").withAlpha(0.9),
+                Cesium.Color.fromCssColorString("#ff4050").withAlpha(0.78),
+              ),
+            ),
+            clampToGround: true,
+            zIndex: 102,
+          },
+        });
+      }
     }
   }
 
@@ -438,7 +697,7 @@ export class DesignKmlLayerManager {
     return name;
   }
 
-  private hideSpoilSiteFeatures(dataSource: Cesium.KmlDataSource) {
+  private hideSpoilSiteFeatures(dataSource: DesignDataSource) {
     for (const entity of dataSource.entities.values) {
       const isSpoilSite = this.entityContextNames(entity).some(
         (name) =>
@@ -480,7 +739,7 @@ export class DesignKmlLayerManager {
   }
 
   private addPileAreaLabels(
-    dataSource: Cesium.KmlDataSource,
+    dataSource: DesignDataSource,
     labels: Map<Cesium.Entity, string>,
   ) {
     for (const [entity, text] of labels) {
@@ -506,7 +765,7 @@ export class DesignKmlLayerManager {
     }
   }
 
-  private addKeyFeatureLabels(dataSource: Cesium.KmlDataSource) {
+  private addKeyFeatureLabels(dataSource: DesignDataSource) {
     for (const entity of dataSource.entities.values) {
       if (!this.isKeyLabelEntity(entity)) continue;
       const position = this.labelPosition(entity);
@@ -590,6 +849,7 @@ export class DesignKmlLayerManager {
     if (layerId === "tunnel") return "tunnel";
     if (layerId.includes("culvert")) return "culvert";
     if (layerId.includes("slope")) return "slope";
+    if (layerId === "road_edges") return "road-section";
     if (layerId.startsWith("spoil_")) return "spoil-site";
     if (layerId.includes("drain") || layerId.includes("ditch"))
       return "drainage";
@@ -618,7 +878,7 @@ export class DesignKmlLayerManager {
     ];
   }
 
-  private captureOriginalColors(dataSource: Cesium.KmlDataSource) {
+  private captureOriginalColors(dataSource: DesignDataSource) {
     const time = Cesium.JulianDate.now();
     for (const entity of dataSource.entities.values) {
       const snapshot: EntityColorSnapshot = {
@@ -652,7 +912,7 @@ export class DesignKmlLayerManager {
     return color.withAlpha(color.alpha * Math.max(0, Math.min(1, opacity)));
   }
 
-  private applyOpacity(dataSource: Cesium.KmlDataSource, opacity: number) {
+  private applyOpacity(dataSource: DesignDataSource, opacity: number) {
     for (const entity of dataSource.entities.values) {
       const original = this.originalColors.get(entity);
       if (!original) continue;

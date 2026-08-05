@@ -174,21 +174,6 @@ export interface InitialView {
 }
 export type PresentationMode = "preview" | "dashboard";
 
-export interface E01MapMarker {
-  eventId: number;
-  pointId: number;
-  label: string;
-  shortLabel?: string;
-  monitorCategory?: string;
-  longitude: number;
-  latitude: number;
-  status: string;
-  isOpen: boolean;
-  highlighted?: boolean;
-  dimmed?: boolean;
-  gisFeatureId?: string | null;
-}
-
 export interface TrafficGisOverviewProps {
   projectId: string;
   sectionId?: string;
@@ -207,18 +192,4 @@ export interface TrafficGisOverviewProps {
    * 用于 S1-6“项目一张图”作为首页唯一空间底图的场景。
    */
   designOnly?: boolean;
-  e01Active?: boolean;
-  e01Markers?: E01MapMarker[];
-  e01SelectedEventId?: number | null;
-  e01SelectedPointId?: number | null;
-  e01ShowInfoCard?: boolean;
-  /** E02 工作台激活时：空白点击清除选中；要素点击上报 featureId */
-  e02Active?: boolean;
-  e02SelectedFeatureId?: string | null;
-  /** E03 工作台激活时：空白点击清除选中；要素点击上报 featureId */
-  e03Active?: boolean;
-  e03SelectedFeatureId?: string | null;
-  /** S02 安全风险点工作台 */
-  s02Active?: boolean;
-  s02SelectedFeatureId?: string | null;
 }

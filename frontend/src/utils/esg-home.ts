@@ -1,22 +1,43 @@
 import type { KpiGroup, KpiItem, KpiKey } from '@/types/dashboard'
 import type { EsgHomeStatus, EsgIndicatorHomeStatus } from '@/types/esg-home'
-import { KPI_HOME_CATALOG, type KpiHomeCode } from '@/data/kpi-catalog'
+import {
+  computeG04HomeDemoDays,
+  G04_HOME_DEMO_DISPLAY,
+  KPI_HOME_CATALOG,
+  KPI_HOME_HIDDEN_KEYS,
+  type KpiHomeCode,
+} from '@/data/kpi-catalog'
 
-/** Overlay frozen homepage labels so API/mock old semantics never surface to leaders. */
+/** Homepage-only G04 display overlay: days + 天（does not call S01 / API). */
+function applyG04HomeDemoDisplay(item: KpiItem): KpiItem {
+  if (item.key !== 'G04') return item
+  return {
+    ...item,
+    value: computeG04HomeDemoDays(),
+    unit: '天',
+    displayText: undefined,
+    hint: G04_HOME_DEMO_DISPLAY.hint,
+  }
+}
+
+/** Overlay homepage display labels so API/mock old titles never surface on cards. */
 export function applyKpiHomeCatalogLabels(groups: KpiGroup[]): KpiGroup[] {
   return groups.map((group) => ({
     ...group,
-    items: group.items.map((item) => {
-      const code = item.key as KpiHomeCode
-      const cat = KPI_HOME_CATALOG[code]
-      if (!cat) return item
-      return {
-        ...item,
-        label: cat.label,
-        fullName: cat.fullName,
-        unit: cat.unit ? cat.unit : item.unit,
-      }
-    }),
+    items: group.items
+      .filter((item) => !KPI_HOME_HIDDEN_KEYS.has(item.key as KpiHomeCode))
+      .map((item) => {
+        const code = item.key as KpiHomeCode
+        const cat = KPI_HOME_CATALOG[code]
+        if (!cat) return applyG04HomeDemoDisplay(item)
+        return applyG04HomeDemoDisplay({
+          ...item,
+          label: cat.label,
+          fullName: cat.fullName,
+          // falsy catalog unit → keep API/mock unit (e.g. G01 Demo「100%」)
+          unit: cat.unit ? cat.unit : item.unit,
+        })
+      }),
   }))
 }
 

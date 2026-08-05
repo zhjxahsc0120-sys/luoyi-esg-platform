@@ -1,107 +1,119 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getE02ObjectDetail, getE02Objects } from '@/services/api'
+import { getE02Issues } from '@/services/api'
+import { isE02OpenIssue } from '@/data/e02-issues.mock'
 import type {
+  E02BusinessCategory,
   E02CategoryFilter,
-  E02ObjectDetail,
-  E02ObjectItem,
-  E02ObjectsPayload,
+  E02IssueItem,
+  E02IssuesPayload,
+  E02ObjectScope,
   E02PanelLayer,
 } from '@/types/e02'
-import { typeWithSection } from '@/utils/section-label'
 
 const props = defineProps<{
   selectedIssueId: number | null
   layer: E02PanelLayer
   categoryFilter: E02CategoryFilter
+  objectScope: E02ObjectScope
 }>()
 
 const emit = defineEmits<{
   close: []
   changeCategory: [category: E02CategoryFilter]
-  selectIssue: [issue: E02ObjectItem]
+  changeScope: [scope: E02ObjectScope]
+  selectIssue: [issue: E02IssueItem]
   clearSelection: []
-  overviewReady: [issues: E02ObjectItem[]]
+  overviewReady: [issues: E02IssueItem[]]
 }>()
 
 const PAGE_SIZE = 3
 const loading = ref(false)
 const error = ref('')
-const payload = ref<E02ObjectsPayload | null>(null)
-const detail = ref<E02ObjectDetail | null>(null)
-const detailLoading = ref(false)
+const payload = ref<E02IssuesPayload | null>(null)
 const page = ref(1)
 
 const overview = computed(() => payload.value?.overview || {
-  objectCount: 0,
-  riskCount: 0,
-  completionRate: 100,
-  restoreNormalCount: 0,
-  byType: { SPOIL: 0, TEMP_LAND: 0, TOPSOIL: 0, SLOPE: 0 },
+  total: 0,
+  rectifying: 0,
+  pendingReview: 0,
+  pendingClosure: 0,
+  overdueAmong: 0,
+  openCount: 0,
+  closedCount: 0,
+  byCategory: { POLLUTION: 0, WATER_CONS: 0, ECOLOGY: 0, OTHER: 0 },
 })
 
-const objects = computed(() => payload.value?.objects || [])
+const issues = computed(() => payload.value?.issues || [])
 
-const filteredObjects = computed(() => {
-  if (props.categoryFilter === 'ALL') return objects.value
-  return objects.value.filter((o) => o.objectType === props.categoryFilter)
+const scopedIssues = computed(() => {
+  if (props.objectScope === 'all') return issues.value
+  return issues.value.filter(isE02OpenIssue)
 })
 
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredObjects.value.length / PAGE_SIZE)))
+const filteredIssues = computed(() => {
+  if (props.categoryFilter === 'ALL') return scopedIssues.value
+  return scopedIssues.value.filter((i) => i.businessCategory === props.categoryFilter)
+})
 
-const pagedObjects = computed(() => {
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredIssues.value.length / PAGE_SIZE)))
+
+const pagedIssues = computed(() => {
   const start = (page.value - 1) * PAGE_SIZE
-  return filteredObjects.value.slice(start, start + PAGE_SIZE)
+  return filteredIssues.value.slice(start, start + PAGE_SIZE)
 })
 
 const pagerSummary = computed(
-  () => `共 ${filteredObjects.value.length} 处 · 第 ${page.value}/${totalPages.value} 页`,
+  () => `共 ${filteredIssues.value.length} 项 · 第 ${page.value}/${totalPages.value} 页`,
 )
 
-const showPageControls = computed(() => filteredObjects.value.length > PAGE_SIZE)
+const showPageControls = computed(() => filteredIssues.value.length > PAGE_SIZE)
 
-const selected = computed(() => {
-  if (props.selectedIssueId == null) return null
-  return objects.value.find((o) => o.id === props.selectedIssueId) || null
-})
-
-const categoryTabs = computed(() => [
-  { key: 'ALL' as const, label: '对象合计', value: overview.value.objectCount },
-  { key: 'SPOIL' as const, label: '弃土场', value: overview.value.byType.SPOIL },
-  { key: 'TEMP_LAND' as const, label: '临时用地', value: overview.value.byType.TEMP_LAND },
-  { key: 'TOPSOIL' as const, label: '表土剥离', value: overview.value.byType.TOPSOIL },
-  { key: 'SLOPE' as const, label: '边坡复绿', value: overview.value.byType.SLOPE },
+const summaryTabs = computed(() => [
+  { label: '未闭环', value: overview.value.openCount ?? overview.value.total, isText: false },
+  { label: '整改中', value: overview.value.rectifying, isText: false },
+  { label: '待复查', value: overview.value.pendingReview, isText: false },
+  { label: '逾期', value: overview.value.overdueAmong, isText: false },
 ])
 
-const summaryHint = computed(
-  () =>
-    `风险 ${overview.value.riskCount} · 完成率 ${overview.value.completionRate}% · 恢复正常 ${overview.value.restoreNormalCount}`,
-)
+function categoryCount(key: E02BusinessCategory) {
+  const base = issues.value.filter((i) => i.businessCategory === key)
+  return props.objectScope === 'all' ? base.length : base.filter(isE02OpenIssue).length
+}
+
+const categoryTabs = computed(() => [
+  { key: 'POLLUTION' as const, label: '环境污染', value: categoryCount('POLLUTION') },
+  { key: 'WATER_CONS' as const, label: '水保问题', value: categoryCount('WATER_CONS') },
+  { key: 'ECOLOGY' as const, label: '生态问题', value: categoryCount('ECOLOGY') },
+  { key: 'OTHER' as const, label: '其他', value: categoryCount('OTHER') },
+])
 
 function display(value: unknown) {
   if (value === null || value === undefined || value === '') return '—'
   return String(value)
 }
 
-function typeLine(item: E02ObjectItem) {
-  return typeWithSection(item.objectTypeLabel || '水保对象', item.sectionCode || '')
+function dateOnly(value?: string | null) {
+  const text = display(value)
+  if (text === '—') return text
+  return text.slice(0, 10)
 }
 
 async function loadOverview() {
   loading.value = true
   error.value = ''
   try {
-    const res = await getE02Objects()
+    const res = await getE02Issues('demo')
     if (!res || res.code !== 0 || !res.data) {
-      error.value = 'E02 Demo 水保对象暂不可用，请检查服务后重试'
+      error.value = 'E02 Demo 数据暂不可用'
       payload.value = null
       emit('overviewReady', [])
       return
     }
     payload.value = res.data
-    emit('overviewReady', res.data.objects || [])
+    emit('overviewReady', res.data.issues || [])
   } catch {
-    error.value = 'E02 数据加载失败，请稍后重试'
+    error.value = 'E02 数据加载失败'
     payload.value = null
     emit('overviewReady', [])
   } finally {
@@ -109,175 +121,152 @@ async function loadOverview() {
   }
 }
 
-async function loadDetail(id: number) {
-  detailLoading.value = true
-  detail.value = null
-  try {
-    const res = await getE02ObjectDetail(id)
-    if (res && res.code === 0 && res.data) detail.value = res.data
-  } finally {
-    detailLoading.value = false
-  }
+function handleScopeClick(scope: E02ObjectScope) {
+  if (props.objectScope === scope) return
+  page.value = 1
+  emit('clearSelection')
+  emit('changeScope', scope)
 }
 
-function handleCategoryClick(key: E02CategoryFilter) {
-  if (props.categoryFilter === key) {
-    emit('clearSelection')
-    emit('changeCategory', key)
-    return
-  }
+function handleCategoryClick(key: E02BusinessCategory) {
   page.value = 1
   emit('clearSelection')
   emit('changeCategory', key)
 }
 
-function handleSelectIssue(issue: E02ObjectItem) {
+function handleSelectIssue(issue: E02IssueItem) {
   emit('selectIssue', issue)
 }
 
 function goPage(next: number) {
   if (next < 1 || next > totalPages.value) return
   page.value = next
+  emit('clearSelection')
 }
 
 watch(
-  () => props.categoryFilter,
+  () => [props.categoryFilter, props.objectScope] as const,
   () => {
     page.value = 1
   },
 )
 
-watch(filteredObjects, (list) => {
-  if (page.value > Math.max(1, Math.ceil(list.length / PAGE_SIZE))) {
-    page.value = 1
-  }
+watch(filteredIssues, (list) => {
+  if (page.value > Math.max(1, Math.ceil(list.length / PAGE_SIZE))) page.value = 1
 })
-
-watch(
-  () => props.selectedIssueId,
-  (id) => {
-    if (id == null) {
-      detail.value = null
-      return
-    }
-    void loadDetail(id)
-  },
-)
 
 onMounted(() => {
   void loadOverview()
 })
 
-defineExpose({ reload: loadOverview, payload, objects })
+defineExpose({ reload: loadOverview, payload, issues })
 </script>
 
 <template>
   <aside class="e02-panel">
     <header class="e02-head">
-      <h2>水保风险预警</h2>
+      <h2>环保问题整改</h2>
       <button type="button" class="e02-close" aria-label="关闭E02" @click="emit('close')">×</button>
     </header>
 
     <div v-if="loading" class="e02-state">正在加载…</div>
     <div v-else-if="error" class="e02-state is-error">
       {{ error }}
-      <button class="e02-retry" @click="loadOverview">重试</button>
+      <button type="button" class="e02-retry" @click="loadOverview">重试</button>
     </div>
     <template v-else>
-      <section class="e02-stats e02-stats--five" aria-label="水保对象分类">
+      <section class="e02-stats" aria-label="环保问题摘要">
+        <div v-for="tab in summaryTabs" :key="tab.label" class="e02-stats__cell is-static">
+          <span>{{ tab.label }}</span>
+          <strong>{{ tab.value }}</strong>
+        </div>
+      </section>
+
+      <div class="e02-scope-row" role="tablist" aria-label="对象范围">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="objectScope === 'key'"
+          class="e02-scope"
+          :class="{ active: objectScope === 'key' }"
+          @click="handleScopeClick('key')"
+        >
+          重点对象
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="objectScope === 'all'"
+          class="e02-scope"
+          :class="{ active: objectScope === 'all' }"
+          @click="handleScopeClick('all')"
+        >
+          全部对象
+        </button>
+      </div>
+
+      <div class="e02-cat-row" aria-label="问题业务分类">
         <button
           v-for="tab in categoryTabs"
           :key="tab.key"
           type="button"
-          class="e02-stats__cell"
+          class="e02-cat"
           :class="{ active: categoryFilter === tab.key }"
           @click="handleCategoryClick(tab.key)"
         >
-          <span>{{ tab.label }}</span>
-          <strong>{{ tab.value }}</strong>
+          <span class="e02-cat__label">{{ tab.label }}</span>
+          <em>{{ tab.value }}</em>
         </button>
-      </section>
-
-      <div class="e02-overdue-hint">{{ summaryHint }}</div>
+      </div>
 
       <div class="e02-body">
-        <div class="e02-col e02-col--list">
-          <div class="e02-list-title">水保管控对象</div>
-          <div class="e02-list">
-            <button
-              v-for="item in pagedObjects"
-              :key="item.id"
-              type="button"
-              class="e02-row"
-              :class="{ active: selectedIssueId === item.id }"
-              @click="handleSelectIssue(item)"
-            >
-              <div class="e02-row__top">
-                <span class="e02-row__type">{{ typeLine(item) }}</span>
-                <em class="e02-row__status">{{ item.riskStatus }}</em>
-              </div>
-              <div class="e02-row__title">{{ item.objectName }}</div>
-              <div class="e02-row__loc">{{ item.locationText || '—' }}</div>
-              <div class="e02-row__meta">
-                <span>风险 {{ item.riskLevel }} · 完成率 {{ item.completionRate }}%</span>
-                <span>{{ item.restoreStatus }}</span>
-              </div>
-            </button>
-
-            <p v-if="!pagedObjects.length" class="e02-empty">当前分类暂无水保管控对象</p>
-          </div>
-
-          <nav class="e02-pager" aria-label="对象分页">
-            <span class="e02-pager__summary">{{ pagerSummary }}</span>
-            <div v-if="showPageControls" class="e02-pager__controls">
-              <button type="button" :disabled="page <= 1" @click="goPage(page - 1)">‹</button>
-              <button
-                v-for="n in totalPages"
-                :key="n"
-                type="button"
-                :class="{ active: page === n }"
-                @click="goPage(n)"
-              >
-                {{ n }}
-              </button>
-              <button type="button" :disabled="page >= totalPages" @click="goPage(page + 1)">›</button>
+        <div class="e02-list-title">
+          {{ objectScope === 'key' ? '未闭环问题列表' : '全部问题列表' }}
+        </div>
+        <div class="e02-list">
+          <button
+            v-for="issue in pagedIssues"
+            :key="issue.id"
+            type="button"
+            class="e02-row"
+            :class="{ active: selectedIssueId === issue.id, 'no-locate': !issue.canLocate }"
+            @click="handleSelectIssue(issue)"
+          >
+            <div class="e02-row__top">
+              <span class="e02-row__type">{{ issue.businessCode }}</span>
+              <em class="e02-row__status">{{ issue.status }}</em>
             </div>
-          </nav>
+            <div class="e02-row__loc">
+              <b>{{ issue.businessCategoryLabel || issue.issueType }}</b>
+              {{ issue.locationText }}
+            </div>
+            <div class="e02-row__factor">
+              <span>发现 {{ dateOnly(issue.foundDate) }}</span>
+              <span v-if="issue.overdue" class="warn">逾期</span>
+              <span v-if="!issue.canLocate" class="warn">无法定位</span>
+            </div>
+          </button>
+          <p v-if="!pagedIssues.length" class="e02-empty">
+            {{ objectScope === 'key' ? '当前分类暂无未闭环问题' : '当前分类暂无问题' }}
+          </p>
         </div>
 
-        <div class="e02-col e02-col--detail">
-          <div class="e02-list-title">对象详情</div>
-          <div v-if="!selected" class="e02-empty e02-empty--detail">请选择左侧对象查看详情</div>
-          <div v-else-if="detailLoading" class="e02-state">正在加载详情…</div>
-          <div v-else class="e02-detail">
-            <section class="e02-section">
-              <h3>对象信息</h3>
-              <dl>
-                <div><dt>名称</dt><dd>{{ display(detail?.objectName || selected.objectName) }}</dd></div>
-                <div><dt>编码</dt><dd>{{ display(detail?.objectCode || selected.objectCode) }}</dd></div>
-                <div><dt>类型</dt><dd>{{ display(detail?.objectTypeLabel || selected.objectTypeLabel) }}</dd></div>
-                <div><dt>责任单位</dt><dd>{{ display(detail?.responsibleUnit || selected.responsibleUnit) }}</dd></div>
-              </dl>
-            </section>
-            <section class="e02-section">
-              <h3>空间位置</h3>
-              <p>{{ display(detail?.locationText || selected.locationText) }}</p>
-              <p class="muted">{{ display(detail?.spaceDesc) }}</p>
-            </section>
-            <section class="e02-section">
-              <h3>措施要求</h3>
-              <p>{{ display(detail?.measureRequirement || selected.measureStatus) }}</p>
-            </section>
-            <section class="e02-section">
-              <h3>整改 / 恢复状态</h3>
-              <p>{{ display(detail?.rectificationStatus || selected.riskStatus) }}</p>
-              <p class="muted">
-                恢复：{{ display(detail?.restoreStatus || selected.restoreStatus) }}
-                · 完成率 {{ display(detail?.completionRate ?? selected.completionRate) }}%
-              </p>
-            </section>
+        <nav class="e02-pager" aria-label="问题分页">
+          <span class="e02-pager__summary">{{ pagerSummary }}</span>
+          <div v-if="showPageControls" class="e02-pager__controls">
+            <button type="button" :disabled="page <= 1" @click="goPage(page - 1)">上一页</button>
+            <button
+              v-for="n in totalPages"
+              :key="n"
+              type="button"
+              :class="{ active: page === n }"
+              @click="goPage(n)"
+            >
+              {{ n }}
+            </button>
+            <button type="button" :disabled="page >= totalPages" @click="goPage(page + 1)">下一页</button>
           </div>
-        </div>
+        </nav>
       </div>
     </template>
   </aside>
@@ -296,48 +285,30 @@ defineExpose({ reload: loadOverview, payload, objects })
   color: #d7e6f5;
   overflow: hidden;
 }
-
 .e02-head {
   flex-shrink: 0;
-  height: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
-
   h2 {
     margin: 0;
-    font-size: 19px;
+    font-size: 22px;
     font-weight: 700;
     color: #f3f8ff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    &::before {
-      content: '';
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #69e36f;
-      box-shadow: 0 0 0 3px rgba(105, 227, 111, 0.18);
-    }
   }
 }
-
 .e02-close {
   width: 30px;
   height: 30px;
   font-size: 18px;
-  line-height: 1;
   border: 1px solid rgba(105, 227, 111, 0.35);
   background: rgba(8, 40, 69, 0.72);
   color: #f3f8ff;
   border-radius: 6px;
   cursor: pointer;
 }
-
 .e02-state {
   padding: 24px 8px;
   text-align: center;
@@ -345,305 +316,170 @@ defineExpose({ reload: loadOverview, payload, objects })
   font-size: 13px;
   &.is-error { color: #ff9f2f; }
 }
-
 .e02-retry {
   display: block;
   margin: 10px auto 0;
   padding: 4px 14px;
-  font-size: 13px;
   border: 1px solid rgba(105, 227, 111, 0.35);
   background: rgba(8, 40, 69, 0.72);
   color: #69e36f;
   border-radius: 4px;
   cursor: pointer;
 }
-
 .e02-stats {
   flex-shrink: 0;
-  height: 58px;
+  height: 64px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid rgba(105, 227, 111, 0.22);
   border-radius: 6px;
   background: rgba(8, 40, 69, 0.4);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   overflow: hidden;
-
-  &--five {
-    grid-template-columns: repeat(5, 1fr);
+}
+.e02-stats__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-right: 1px solid rgba(105, 227, 111, 0.12);
+  &:last-child { border-right: 0; }
+  span { font-size: 12px; color: #8ba6c3; }
+  strong { font-size: 20px; color: #69e36f; font-weight: 700; }
+}
+.e02-scope-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.e02-scope {
+  height: 34px;
+  border: 1px solid rgba(105, 227, 111, 0.25);
+  background: rgba(8, 40, 69, 0.45);
+  color: #9fb6cd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  &.active {
+    color: #f3f8ff;
+    border-color: rgba(105, 227, 111, 0.55);
+    background: rgba(105, 227, 111, 0.16);
   }
 }
-
-.e02-stats__cell {
-  border: 0;
-  border-right: 1px solid rgba(105, 227, 111, 0.16);
-  background: transparent;
-  color: #8ba6c3;
-  cursor: pointer;
+.e02-cat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.e02-cat {
+  height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  position: relative;
-  padding: 0 2px;
-  min-width: 0;
-
-  &:last-child { border-right: 0; }
-
-  span {
-    font-size: 11px;
-    line-height: 1.2;
-  }
-
-  strong {
-    font-size: 18px;
-    line-height: 1.1;
-    font-family: Bahnschrift, "DIN Alternate", Arial, sans-serif;
-    color: #d7e6f5;
-    font-weight: 700;
-  }
-
+  border: 1px solid rgba(105, 227, 111, 0.2);
+  background: rgba(8, 40, 69, 0.4);
+  border-radius: 6px;
+  color: #9fb6cd;
+  cursor: pointer;
   &.active {
-    color: #c8f5cb;
-    strong { color: #69e36f; }
-    &::after {
-      content: '';
-      position: absolute;
-      left: 18%;
-      right: 18%;
-      bottom: 0;
-      height: 2px;
-      background: #69e36f;
-    }
+    color: #f3f8ff;
+    border-color: rgba(105, 227, 111, 0.5);
+    background: rgba(105, 227, 111, 0.14);
   }
+  .e02-cat__label { font-size: 11px; }
+  em { font-style: normal; font-size: 16px; font-weight: 700; color: #69e36f; }
 }
-
-.e02-overdue-hint {
-  flex-shrink: 0;
-  margin-bottom: 8px;
-  font-size: 12px;
-  color: #8ba6c3;
-}
-
 .e02-body {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
-
-.e02-col {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  &--list {
-    flex: 0 1 48%;
-  }
-
-  &--detail {
-    flex: 1 1 52%;
-  }
-}
-
 .e02-list-title {
-  flex-shrink: 0;
-  margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 13px;
   color: #8ba6c3;
+  margin-bottom: 8px;
 }
-
-.e02-list,
-.e02-detail {
+.e02-list {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .e02-row {
-  flex-shrink: 0;
-  width: 100%;
   text-align: left;
-  border: 1px solid rgba(105, 227, 111, 0.2);
+  padding: 10px 12px;
+  border: 1px solid rgba(105, 227, 111, 0.18);
   border-radius: 6px;
-  background: rgba(8, 40, 69, 0.45);
+  background: rgba(8, 40, 69, 0.5);
   color: inherit;
   cursor: pointer;
-  padding: 10px 10px 10px 12px;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 2px;
-    border-radius: 2px;
-    background: transparent;
-  }
-
-  &:hover {
-    border-color: rgba(105, 227, 111, 0.45);
-    background: rgba(12, 52, 42, 0.35);
-  }
-
   &.active {
-    border-color: rgba(105, 227, 111, 0.7);
-    background: rgba(24, 70, 48, 0.35);
-    &::before { background: #69e36f; }
+    border-color: rgba(105, 227, 111, 0.65);
+    background: rgba(105, 227, 111, 0.12);
   }
+  &.no-locate { opacity: 0.85; }
 }
-
 .e02-row__top {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  align-items: center;
+  margin-bottom: 4px;
 }
-
-.e02-row__type {
-  font-size: 13px;
-  color: #c3d4e8;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.e02-row__status {
-  flex-shrink: 0;
-  font-style: normal;
+.e02-row__type { font-size: 14px; font-weight: 700; color: #f3f8ff; }
+.e02-row__status { font-style: normal; font-size: 12px; color: #ffb347; }
+.e02-row__loc {
   font-size: 12px;
-  color: #69e36f;
-  border: 1px solid rgba(105, 227, 111, 0.45);
-  border-radius: 3px;
-  padding: 1px 6px;
-  background: rgba(105, 227, 111, 0.08);
+  color: #9fb6cd;
+  margin-bottom: 4px;
+  b { color: #69e36f; margin-right: 6px; }
 }
-
-.e02-row__title {
-  margin-top: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #e8f3ff;
-  line-height: 1.4;
-}
-
-.e02-row__loc,
-.e02-row__meta {
-  margin-top: 3px;
-  font-size: 12px;
-  color: #8ba6c3;
-}
-
-.e02-row__meta {
+.e02-row__factor {
   display: flex;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.e02-empty {
-  margin: 16px 0 0;
-  text-align: center;
-  font-size: 13px;
+  gap: 10px;
+  font-size: 12px;
   color: #8ba6c3;
-
-  &--detail {
-    margin-top: 24px;
-  }
+  .warn { color: #ff9f2f; }
 }
-
+.e02-empty {
+  margin: 24px 0;
+  text-align: center;
+  color: #8ba6c3;
+  font-size: 13px;
+}
 .e02-pager {
   flex-shrink: 0;
   margin-top: 8px;
-  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
-
-.e02-pager__summary {
-  font-size: 12px;
-  color: #8ba6c3;
-  white-space: nowrap;
-}
-
+.e02-pager__summary { font-size: 12px; color: #8ba6c3; }
 .e02-pager__controls {
   display: flex;
-  gap: 6px;
-
+  gap: 4px;
   button {
-    min-width: 26px;
+    min-width: 28px;
     height: 26px;
-    border: 1px solid rgba(105, 227, 111, 0.28);
-    border-radius: 4px;
+    border: 1px solid rgba(105, 227, 111, 0.25);
     background: rgba(8, 40, 69, 0.5);
-    color: #8ba6c3;
+    color: #9fb6cd;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
-
     &.active {
-      color: #69e36f;
-      border-color: rgba(105, 227, 111, 0.7);
-      background: rgba(105, 227, 111, 0.12);
+      color: #f3f8ff;
+      border-color: rgba(105, 227, 111, 0.55);
     }
-
-    &:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-  }
-}
-
-.e02-section {
-  border: 1px solid rgba(105, 227, 111, 0.18);
-  border-radius: 6px;
-  background: rgba(8, 40, 69, 0.4);
-  padding: 10px;
-
-  h3 {
-    margin: 0 0 8px;
-    font-size: 13px;
-    color: #69e36f;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    font-size: 13px;
-    color: #d7e6f5;
-    line-height: 1.5;
-  }
-
-  .muted {
-    margin-top: 6px;
-    color: #8ba6c3;
-    font-size: 12px;
-  }
-
-  dl {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    div {
-      display: grid;
-      grid-template-columns: 64px 1fr;
-      gap: 6px;
-      font-size: 12px;
-    }
-
-    dt { color: #8ba6c3; }
-    dd { margin: 0; color: #e8f3ff; }
+    &:disabled { opacity: 0.4; cursor: default; }
   }
 }
 </style>

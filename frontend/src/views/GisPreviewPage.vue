@@ -23,12 +23,10 @@ function handleOpenKpiSource(payload: GisBusinessLinkOpenPayload) {
     <TrafficGisOverview
       project-id="LUOYI-ESG"
       data-mode="api"
-      :design-only="true"
-      presentation-mode="preview"
       :show-legend="true"
       :show-mode-switch="false"
-      :show-config-button="true"
-      :interaction-enabled="true"
+      :show-config-button="false"
+      :design-only="true"
       @open-kpi-source="handleOpenKpiSource"
     />
     <Transition name="preview-tip">

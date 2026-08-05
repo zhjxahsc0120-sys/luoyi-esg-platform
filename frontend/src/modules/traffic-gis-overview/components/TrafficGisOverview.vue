@@ -20,6 +20,7 @@ import { BasemapManager } from "../cesium/layers/BasemapManager";
 import { SpatialAssetManager } from "../cesium/layers/SpatialAssetManager";
 import { HistoricalCompareManager } from "../cesium/layers/HistoricalCompareManager";
 import { DesignKmlLayerManager } from "../cesium/layers/DesignKmlLayerManager";
+import { SpxTileLayerManager } from "../cesium/layers/SpxTileLayerManager";
 import { defaultBasemapId, type BasemapId } from "../config/basemaps.config";
 import { designMapConfig } from "../config/design-map.config";
 import { historicalImagerySnapshots } from "../config/historical-imagery.config";
@@ -53,19 +54,12 @@ import type {
   TrafficLayerStyle,
   TrafficMapContext,
   TrafficMapFeature,
-  E01MapMarker,
 } from "../types";
 import { trafficGisConfig } from "../config/traffic-gis.config";
-import {
-  LABEL_ATLAS_SCALE,
-  crispLabelFont,
-  sectionColors,
-  tokens,
-  wholePx,
-} from "../config/style-tokens";
-import { CoordinateAdapter } from "../cesium/core/CoordinateAdapter";
-import { featureColor } from "../cesium/renderers/render-utils";
-import type { DesignLayerStateMap } from "../types/design-layers";
+import type {
+  DesignLayerManifest,
+  DesignLayerStateMap,
+} from "../types/design-layers";
 
 const props = withDefaults(defineProps<TrafficGisOverviewProps>(), {
   showLegend: true,
@@ -75,17 +69,6 @@ const props = withDefaults(defineProps<TrafficGisOverviewProps>(), {
   dataMode: "mock",
   presentationMode: "preview" as PresentationMode,
   designOnly: false,
-  e01Active: false,
-  e01Markers: () => [],
-  e01SelectedEventId: null,
-  e01SelectedPointId: null,
-  e01ShowInfoCard: false,
-  e02Active: false,
-  e02SelectedFeatureId: null,
-  e03Active: false,
-  e03SelectedFeatureId: null,
-  s02Active: false,
-  s02SelectedFeatureId: null,
 });
 
 const emit = defineEmits<{
@@ -97,15 +80,6 @@ const emit = defineEmits<{
   ];
   error: [{ layerId?: string; message: string; recoverable: boolean }];
   openKpiSource: [payload: GisBusinessLinkOpenPayload];
-  e01EventSelect: [eventId: number];
-  e01PointSelect: [pointId: number];
-  e02FeatureSelect: [featureId: string];
-  e02MapBlankClick: [];
-  e03FeatureSelect: [featureId: string];
-  e03MapBlankClick: [];
-  s02FeatureSelect: [featureId: string];
-  s02MapBlankClick: [];
-  cameraMove: [];
 }>();
 
 const root = ref<HTMLElement>();
@@ -132,6 +106,7 @@ const leftSnapshotId = ref("baseline");
 const rightSnapshotId = ref("latest");
 const splitPosition = ref(50);
 const isMapFullscreen = ref(false);
+const designManifest = ref<DesignLayerManifest | null>(null);
 const designLayerStates = ref<DesignLayerStateMap>({});
 
 const vectorStore = new VectorLayerStore();
@@ -145,6 +120,7 @@ let basemaps: BasemapManager | undefined;
 let spatialAssets: SpatialAssetManager | undefined;
 let historicalCompare: HistoricalCompareManager | undefined;
 let designLayers: DesignKmlLayerManager | undefined;
+let spxTiles: SpxTileLayerManager | undefined;
 let camera: CameraManager | undefined;
 let picker: PickManager | undefined;
 let resizeObserver: ResizeObserver | undefined;
@@ -154,14 +130,6 @@ let removeSecondaryCompareSync: (() => void) | undefined;
 let secondaryBasemaps: BasemapManager | undefined;
 let syncingCompareCamera = false;
 let loadVersion = 0;
-let e01DataSource: Cesium.CustomDataSource | undefined;
-let savedCameraView: ReturnType<CameraManager["captureView"]> | null = null;
-const e02VisualBackup = new Map<string, {
-  width?: number;
-  material?: Cesium.MaterialProperty | Cesium.Color;
-  billboardScale?: number;
-  polygonMaterial?: Cesium.MaterialProperty | Cesium.Color;
-}>();
 
 const pointRenderer = new PointRenderer();
 const lineRenderer = new PolylineRenderer();
@@ -328,6 +296,7 @@ async function syncAssets() {
 async function switchBasemap(id: BasemapId) {
   try {
     basemaps?.switchTo(id);
+    spxTiles?.show();
     activeBasemap.value = id;
     await syncAssets();
     selected.value = null;
@@ -459,44 +428,9 @@ function findEntity(id: string) {
   return registry.all().find((e) => featureOf(e)?.id === id);
 }
 
-async function flyToFeature(id: string, options?: { range?: number }) {
-  try {
-    const entity = findEntity(id);
-    if (entity) {
-      const now = Cesium.JulianDate.now();
-      let cartesian: Cesium.Cartesian3 | undefined;
-      if (entity.position) {
-        cartesian = entity.position.getValue(now) as Cesium.Cartesian3 | undefined;
-      }
-      if (!cartesian && entity.polyline) {
-        const positions = entity.polyline.positions?.getValue(now) as
-          | Cesium.Cartesian3[]
-          | undefined;
-        if (positions?.length) {
-          cartesian = positions[Math.floor(positions.length / 2)];
-        }
-      }
-      if (cartesian) {
-        const carto = Cesium.Cartographic.fromCartesian(cartesian);
-        const feature = featureOf(entity);
-        const defaultRange =
-          feature?.objectType === "road-section"
-            ? 8500
-            : feature?.objectType === "slope-monitor"
-              ? 4200
-              : 4800;
-        camera?.flyToLonLat(
-          Cesium.Math.toDegrees(carto.longitude),
-          Cesium.Math.toDegrees(carto.latitude),
-          options?.range ?? defaultRange,
-        );
-        return;
-      }
-      await camera?.flyTo([entity]);
-    }
-  } catch {
-    // Entity may not be ready.
-  }
+async function flyToFeature(id: string) {
+  const e = findEntity(id);
+  if (e) await camera?.flyTo([e]);
 }
 
 async function flyToSection(sectionId: string) {
@@ -629,10 +563,28 @@ async function toggleDesignLayer(id: string, visible: boolean) {
   }
 }
 
+async function locateDesignLayer(id: string) {
+  try {
+    await designLayers?.locate(id);
+  } catch (error) {
+    emit("error", {
+      layerId: id,
+      message: error instanceof Error ? error.message : "图层定位失败",
+      recoverable: true,
+    });
+  }
+}
+
+function setDesignLayerOpacity(id: string, opacity: number) {
+  updateDesignState(id, { opacity });
+  designLayers?.setOpacity(id, opacity);
+}
+
 async function initializeDesignLayers() {
   try {
     const manifest = await designLayers?.init();
     if (!manifest) return;
+    designManifest.value = manifest;
     const states: DesignLayerStateMap = {};
     for (const group of manifest.groups) {
       for (const layer of group.layers) {
@@ -645,12 +597,27 @@ async function initializeDesignLayers() {
       }
     }
     designLayerStates.value = states;
-    for (const layer of manifest.groups.flatMap((group) => group.layers)) {
-      if (layer.available !== false && layer.defaultVisible) {
-        await toggleDesignLayer(layer.id, true);
-      }
-    }
+    const defaultLayers = manifest.groups
+      .flatMap((group) => group.layers)
+      .filter(
+        (layer) =>
+          layer.available !== false &&
+          layer.defaultVisible &&
+          layer.loadMode === "eager",
+      )
+      .sort(
+        (left, right) =>
+          Number(right.format === "geojson") - Number(left.format === "geojson"),
+      );
+    const routeLayer = defaultLayers.find((layer) => layer.id === "route_center");
+    if (routeLayer) await toggleDesignLayer(routeLayer.id, true);
+    const remainingLoads = defaultLayers
+      .filter((layer) => layer.id !== routeLayer?.id)
+      .map((layer) => toggleDesignLayer(layer.id, true));
     await designLayers?.locateOverview();
+    void (async () => {
+      await Promise.allSettled(remainingLoads);
+    })();
   } catch (error) {
     emit("error", {
       message:
@@ -672,6 +639,7 @@ async function applyHistoricalCompare() {
   }
   disableDualCompare();
   historicalCompare.show(snapshot(leftSnapshotId.value).basemapId, snapshot(rightSnapshotId.value).basemapId, splitPosition.value / 100);
+  spxTiles?.show();
 }
 
 function copyCamera(source: Cesium.Viewer, target: Cesium.Viewer) {
@@ -731,6 +699,7 @@ function toggleCompare() {
   else {
     disableDualCompare();
     basemaps?.switchTo(activeBasemap.value);
+    spxTiles?.show();
   }
 }
 
@@ -776,268 +745,7 @@ function handleFullscreenChange() {
   });
 }
 
-
-function getFeatureScreenPoint(id: string): { x: number; y: number } | null {
-  try {
-    const viewer = manager.get();
-    const entity = findEntity(id);
-    if (!entity) return null;
-    const now = Cesium.JulianDate.now();
-    let cartesian: Cesium.Cartesian3 | undefined;
-    if (entity.position) {
-      cartesian = entity.position.getValue(now) as Cesium.Cartesian3 | undefined;
-    }
-    if (!cartesian && entity.polyline) {
-      const positions = entity.polyline.positions?.getValue(now) as
-        | Cesium.Cartesian3[]
-        | undefined;
-      if (positions?.length) {
-        cartesian = positions[Math.floor(positions.length / 2)];
-      }
-    }
-    if (!cartesian) return null;
-    const windowPos = Cesium.SceneTransforms.worldToWindowCoordinates(
-      viewer.scene,
-      cartesian,
-    );
-    if (!windowPos) return null;
-    const canvasEl = viewer.scene.canvas;
-    const canvasRect = canvasEl.getBoundingClientRect();
-    const rootRect = root.value?.getBoundingClientRect();
-    if (!rootRect) return { x: windowPos.x, y: windowPos.y };
-    const scaleX = canvasRect.width / canvasEl.clientWidth;
-    const scaleY = canvasRect.height / canvasEl.clientHeight;
-    return {
-      x: canvasRect.left - rootRect.left + windowPos.x * scaleX,
-      y: canvasRect.top - rootRect.top + windowPos.y * scaleY,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function restoreE02SelectionVisual() {
-  for (const entity of registry.all()) {
-    const key = String(entity.id);
-    const backup = e02VisualBackup.get(key);
-    if (!backup) continue;
-    if (backup.width != null && entity.polyline) {
-      entity.polyline.width = new Cesium.ConstantProperty(backup.width);
-    }
-    if (backup.material != null && entity.polyline) {
-      entity.polyline.material = backup.material as Cesium.MaterialProperty;
-    }
-    if (backup.billboardScale != null && entity.billboard) {
-      entity.billboard.scale = new Cesium.ConstantProperty(backup.billboardScale);
-    }
-    if (backup.polygonMaterial != null && entity.polygon) {
-      entity.polygon.material = backup.polygonMaterial as Cesium.MaterialProperty;
-    }
-  }
-  e02VisualBackup.clear();
-}
-
-function applyE02SelectionVisual(
-  selectedId: string | null,
-  relatedIds: string[] = [],
-) {
-  restoreE02SelectionVisual();
-  if (!selectedId && !relatedIds.length) return;
-  const related = new Set(relatedIds.length ? relatedIds : selectedId ? [selectedId] : []);
-  for (const entity of registry.all()) {
-    const feature = featureOf(entity);
-    if (!feature) continue;
-    if (String(entity.id).endsWith("-glow")) continue;
-    const key = String(entity.id);
-    const backup: {
-      width?: number;
-      material?: Cesium.MaterialProperty | Cesium.Color;
-      billboardScale?: number;
-      polygonMaterial?: Cesium.MaterialProperty | Cesium.Color;
-    } = {};
-    if (entity.polyline) {
-      const widthProp = entity.polyline.width;
-      backup.width =
-        typeof widthProp?.getValue === "function"
-          ? Number(widthProp.getValue(Cesium.JulianDate.now()))
-          : Number(widthProp) || 4;
-      backup.material = entity.polyline.material as Cesium.MaterialProperty;
-    }
-    if (entity.billboard) {
-      const scaleProp = entity.billboard.scale;
-      backup.billboardScale =
-        typeof scaleProp?.getValue === "function"
-          ? Number(scaleProp.getValue(Cesium.JulianDate.now()) ?? 1)
-          : Number(scaleProp) || 1;
-    }
-    if (entity.polygon) {
-      backup.polygonMaterial = entity.polygon.material as Cesium.MaterialProperty;
-    }
-    e02VisualBackup.set(key, backup);
-    const isSelected = feature.id === selectedId;
-    const isRelated = related.has(feature.id);
-    const sectionKey = feature.id.replace(/-\d+$/, "") as keyof typeof sectionColors;
-    const fallback =
-      sectionColors[sectionKey]
-      || sectionColors[feature.id as keyof typeof sectionColors]
-      || tokens.cyan;
-    const base = featureColor(feature, fallback);
-    if (isSelected) {
-      if (entity.polyline) {
-        const bump = feature.objectType === "road-section" ? 1.5 : 2.5;
-        entity.polyline.width = new Cesium.ConstantProperty(
-          Math.max((backup.width || 3) + bump, 5),
-        );
-        entity.polyline.material = new Cesium.ColorMaterialProperty(base.withAlpha(1));
-      }
-      if (entity.billboard) {
-        entity.billboard.scale = new Cesium.ConstantProperty(1.35);
-      }
-      if (entity.polygon) {
-        entity.polygon.material = new Cesium.ColorMaterialProperty(base.withAlpha(0.55));
-      }
-    } else if (isRelated) {
-      if (entity.polyline) {
-        entity.polyline.width = new Cesium.ConstantProperty(backup.width || 3);
-        entity.polyline.material = new Cesium.ColorMaterialProperty(base.withAlpha(0.55));
-      }
-      if (entity.billboard) {
-        entity.billboard.scale = new Cesium.ConstantProperty(1);
-      }
-    } else {
-      if (entity.polyline) {
-        entity.polyline.width = new Cesium.ConstantProperty(
-          Math.max((backup.width || 3) - 0.5, 2),
-        );
-        entity.polyline.material = new Cesium.ColorMaterialProperty(base.withAlpha(0.2));
-      }
-      if (entity.billboard) {
-        entity.billboard.scale = new Cesium.ConstantProperty(0.85);
-      }
-      if (entity.polygon) {
-        entity.polygon.material = new Cesium.ColorMaterialProperty(base.withAlpha(0.12));
-      }
-    }
-  }
-}
-
-async function flyToLonLat(longitude: number, latitude: number, range = 12000) {
-  camera?.flyToLonLat(longitude, latitude, range);
-}
-
-async function flyToPoints(
-  points: Array<{ longitude?: number | null; latitude?: number | null }>,
-  options?: { singleRange?: number },
-) {
-  camera?.flyToPoints(points, options);
-}
-
-function captureMapState() {
-  savedCameraView = camera?.captureView() ?? null;
-  return { camera: savedCameraView };
-}
-
-function restoreMapState() {
-  if (savedCameraView) camera?.restoreView(savedCameraView);
-  else void resetView();
-  clearE01Markers();
-}
-
-function clearE01Markers() {
-  if (e01DataSource) e01DataSource.entities.removeAll();
-}
-
-function syncE01Markers(markers: E01MapMarker[], selectedPointId: number | null | undefined) {
-  try {
-    const viewer = manager.get();
-    if (!e01DataSource) {
-      e01DataSource = new Cesium.CustomDataSource("e01-exceed-markers");
-      viewer.dataSources.add(e01DataSource);
-    }
-    e01DataSource.entities.removeAll();
-    const accent = Cesium.Color.fromCssColorString(tokens.e01Exceed);
-    const selectedAccent = Cesium.Color.fromCssColorString(tokens.e01Selected);
-    for (const marker of markers) {
-      if (marker.longitude == null || marker.latitude == null) continue;
-      const [lon, lat] = CoordinateAdapter.displayLngLat(marker.longitude, marker.latitude);
-      const selected =
-        selectedPointId != null
-          ? marker.pointId === selectedPointId
-          : Boolean(marker.highlighted);
-      const dimmed =
-        marker.dimmed === true ||
-        (selectedPointId != null && marker.pointId !== selectedPointId);
-      const shortLabel = marker.shortLabel || "点";
-      const feature: TrafficMapFeature = {
-        id: `e01-point-${marker.pointId}`,
-        layerId: "e01-exceed",
-        objectType: "e01-exceed-point",
-        name: marker.label,
-        geometry: { type: "Point", coordinates: [marker.longitude, marker.latitude] },
-        properties: {
-          e01EventId: marker.eventId,
-          pointId: marker.pointId,
-          status: marker.status,
-          gisFeatureId: marker.gisFeatureId,
-        },
-        status: "warning",
-        statusLabel: marker.status,
-      };
-      e01DataSource.entities.add({
-        id: `e01-point-${marker.pointId}`,
-        position: Cesium.Cartesian3.fromDegrees(lon, lat, 40),
-        point: {
-          pixelSize: selected ? 18 : dimmed ? 8 : 12,
-          color: dimmed ? accent.withAlpha(0.28) : selected ? selectedAccent : accent,
-          outlineColor: selected
-            ? Cesium.Color.WHITE
-            : Cesium.Color.WHITE.withAlpha(dimmed ? 0.25 : 0.9),
-          outlineWidth: selected ? 4 : 2,
-          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-        label: {
-          text: selected ? `${shortLabel} · ${marker.label}` : shortLabel,
-          font: crispLabelFont(selected ? 12 : 11),
-          scale: LABEL_ATLAS_SCALE,
-          fillColor: Cesium.Color.WHITE,
-          outlineColor: Cesium.Color.BLACK,
-          outlineWidth: 4,
-          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-          verticalOrigin: Cesium.VerticalOrigin.TOP,
-          pixelOffset: new Cesium.Cartesian2(0, wholePx(selected ? 16 : 12)),
-          showBackground: true,
-          backgroundColor: Cesium.Color.fromCssColorString("#1a1208").withAlpha(
-            selected ? 0.78 : 0.62,
-          ),
-          backgroundPadding: new Cesium.Cartesian2(6, 3),
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
-          scaleByDistance: new Cesium.NearFarScalar(2000, 1.0, 52000, 0.75),
-          show: !dimmed || selected,
-        },
-        properties: { trafficFeature: feature },
-      });
-    }
-  } catch {
-    // Viewer may not be ready yet.
-  }
-}
-
-defineExpose({
-  flyToFeature,
-  flyToSection,
-  flyToLonLat,
-  flyToPoints,
-  refreshLayer,
-  resetView,
-  captureMapState,
-  restoreMapState,
-  syncE01Markers,
-  clearE01Markers,
-  getFeatureScreenPoint,
-  applyE02SelectionVisual,
-  restoreE02SelectionVisual,
-});
+defineExpose({ flyToFeature, flyToSection, refreshLayer, resetView });
 
 onMounted(async () => {
   await nextTick();
@@ -1051,22 +759,19 @@ onMounted(async () => {
     designMapConfig.releaseOnHide,
   );
   basemaps.switchTo(activeBasemap.value);
+  if (designMapConfig.spxTiles.enabled) {
+    spxTiles = new SpxTileLayerManager(viewer, designMapConfig.spxTiles);
+    spxTiles.show();
+  }
+  // 先呈现 Cesium 与底图；各设计图层用自己的加载状态反馈。
+  loading.value = false;
   if (!props.designOnly) {
     vectorLayers.value = await vectorStore.load();
     assets.value = await assetStore.load();
   }
   camera = new CameraManager(viewer);
-  if (trafficGisConfig.corridorLock?.enabled) {
-    camera.enableCorridorLock({
-      rectangle: trafficGisConfig.corridorLock.rectangle,
-      minHeight: trafficGisConfig.corridorLock.minHeight,
-      maxHeight: trafficGisConfig.corridorLock.maxHeight,
-    });
-  }
-  const updateHeading = () => {
+  const updateHeading = () =>
     compassHeading.value = -Cesium.Math.toDegrees(viewer.camera.heading);
-    emit("cameraMove");
-  };
   updateHeading();
   removeCameraChanged = viewer.camera.changed.addEventListener(updateHeading);
   camera.reset(props.initialView);
@@ -1080,50 +785,9 @@ onMounted(async () => {
         businessLinksData.value = null;
         businessLinksOpen.value = false;
         emit("featureClick", f);
-        if (f.objectType === "e01-exceed-point") {
-          const eventId = Number(f.properties?.e01EventId);
-          const pointId = Number(f.properties?.pointId);
-          if (Number.isFinite(pointId)) emit("e01PointSelect", pointId);
-          if (Number.isFinite(eventId)) emit("e01EventSelect", eventId);
-          return;
-        }
-        if (props.e03Active) {
-          emit("e03FeatureSelect", f.id);
-          void flyToFeature(f.id);
-          return;
-        }
-        if (props.s02Active) {
-          emit("s02FeatureSelect", f.id);
-          void flyToFeature(f.id);
-          return;
-        }
-        if (props.e02Active) {
-          emit("e02FeatureSelect", f.id);
-          void flyToFeature(f.id);
-          return;
-        }
         if (f.objectType === "road-section") void flyToFeature(f.id);
       },
       (f) => emit("featureHover", f || null),
-      () => {
-        if (props.e03Active) {
-          highlighter.restore();
-          selected.value = null;
-          emit("e03MapBlankClick");
-          return;
-        }
-        if (props.s02Active) {
-          highlighter.restore();
-          selected.value = null;
-          emit("s02MapBlankClick");
-          return;
-        }
-        if (props.e02Active) {
-          highlighter.restore();
-          selected.value = null;
-          emit("e02MapBlankClick");
-        }
-      },
     );
   }
   resizeObserver = new ResizeObserver(() => manager.resize());
@@ -1152,13 +816,11 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   document.removeEventListener("fullscreenchange", handleFullscreenChange);
   removeCameraChanged?.();
-  camera?.disableCorridorLock();
   disableDualCompare();
   picker?.destroy();
   highlighter.restore();
-  restoreE02SelectionVisual();
-  clearE01Markers();
   spatialAssets?.destroy();
+  spxTiles?.destroy();
   designLayers?.destroy();
   registry.clear(manager.get());
   manager.destroy();
@@ -1199,18 +861,6 @@ watch(
   (id) => {
     if (id) flyToFeature(id);
   },
-);
-
-watch(
-  () => [props.e01Active, props.e01Markers, props.e01SelectedPointId] as const,
-  ([active, markers, selectedId]) => {
-    if (!active) {
-      clearE01Markers();
-      return;
-    }
-    syncE01Markers(markers || [], selectedId ?? null);
-  },
-  { deep: true },
 );
 
 watch(mode, load);
@@ -1264,13 +914,14 @@ function handleOpenKpiSource(payload: GisBusinessLinkOpenPayload) {
       @config="panelOpen = !panelOpen"
     />
     <LayerControl
-      v-if="!designOnly"
       :open="panelOpen"
       :active-basemap="activeBasemap"
       :layers="availableLayers"
       :visible-ids="visibleIds"
       :vector-layers="vectorLayers"
       :assets="assets"
+      :design-manifest="designManifest"
+      :design-states="designLayerStates"
       :loading="loading"
       @close="panelOpen = false"
       @basemap-change="switchBasemap"
@@ -1285,6 +936,9 @@ function handleOpenKpiSource(payload: GisBusinessLinkOpenPayload) {
       @asset-toggle="toggleAsset"
       @asset-remove="removeAsset"
       @asset-locate="locateAsset"
+      @design-layer-toggle="toggleDesignLayer"
+      @design-layer-locate="locateDesignLayer"
+      @design-layer-opacity="setDesignLayerOpacity"
       @refresh="refreshData"
     />
     <FeatureCard
@@ -1311,7 +965,7 @@ function handleOpenKpiSource(payload: GisBusinessLinkOpenPayload) {
     <div v-if="loading" class="traffic-gis-overview__loading">
       业务图层加载中…
     </div>
-    <div class="traffic-gis-overview__mock">
+    <div v-if="!designOnly" class="traffic-gis-overview__mock">
       {{
         designOnly
           ? "S1-6 设计图层"

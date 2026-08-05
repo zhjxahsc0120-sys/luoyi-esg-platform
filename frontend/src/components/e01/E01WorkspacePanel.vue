@@ -1,36 +1,39 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getE01EventDetail, getE01Events } from '@/services/api'
+import { getE01Events } from '@/services/api'
 import type {
+  E01BusinessCategory,
   E01CategoryFilter,
-  E01EventDetail,
   E01EventsPayload,
   E01OpenPoint,
   E01PanelLayer,
+  E01PointScope,
 } from '@/types/e01'
+import { isE01RiskPoint } from '@/utils/e01-points'
 import { formatSectionLabel, typeWithSection } from '@/utils/section-label'
 
 const props = defineProps<{
   selectedPointId: number | null
   layer: E01PanelLayer
   categoryFilter: E01CategoryFilter
+  pointScope: E01PointScope
 }>()
 
 const emit = defineEmits<{
   close: []
   changeCategory: [category: E01CategoryFilter]
+  changeScope: [scope: E01PointScope]
   selectPoint: [point: E01OpenPoint]
   clearSelection: []
   overviewReady: [points: E01OpenPoint[]]
 }>()
 
+/** Fit enlarged type without internal scrollbar on 1080p workbench right rail. */
 const PAGE_SIZE = 3
 const loading = ref(false)
 const error = ref('')
 const payload = ref<E01EventsPayload | null>(null)
 const page = ref(1)
-const detail = ref<E01EventDetail | null>(null)
-const detailLoading = ref(false)
 
 const overview = computed(() => payload.value?.overview || {
   totalOpenPoints: 0,
@@ -45,9 +48,15 @@ const overview = computed(() => payload.value?.overview || {
 
 const openPoints = computed(() => payload.value?.openPoints || [])
 
+const scopedPoints = computed(() => {
+  if (props.pointScope === 'all') return openPoints.value
+  return openPoints.value.filter(isE01RiskPoint)
+})
+
 const filteredPoints = computed(() => {
-  if (props.categoryFilter === 'ALL') return openPoints.value
-  return openPoints.value.filter((p) => p.monitorCategory === props.categoryFilter)
+  const cat = props.categoryFilter
+  if (cat === 'ALL') return scopedPoints.value
+  return scopedPoints.value.filter((p) => p.monitorCategory === cat)
 })
 
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredPoints.value.length / PAGE_SIZE)))
@@ -63,52 +72,46 @@ const pagerSummary = computed(
 
 const showPageControls = computed(() => filteredPoints.value.length > PAGE_SIZE)
 
-const selectedPoint = computed(() => {
-  if (props.selectedPointId == null) return null
-  return openPoints.value.find((p) => p.pointId === props.selectedPointId) || null
-})
-
-/** Phase B 顶部：监测点 / 异常 / 未闭环 / 风险等级；分类筛选保留在列表标题旁 */
 const summaryTabs = computed(() => [
   {
-    key: 'ALL' as const,
     label: '监测点',
     value: overview.value.monitorPointCount ?? overview.value.totalOpenPoints,
-    filterable: true,
+    isText: false,
   },
   {
-    key: 'ALL' as const,
     label: '异常',
     value: overview.value.anomalyCount ?? overview.value.totalOpenPoints,
-    filterable: false,
+    isText: false,
   },
   {
-    key: 'ALL' as const,
     label: '未闭环',
     value: overview.value.openCount ?? overview.value.totalOpenPoints,
-    filterable: false,
+    isText: false,
   },
   {
-    key: null,
     label: '风险等级',
     value: overview.value.riskLevel || '正常',
-    filterable: false,
     isText: true,
   },
 ])
 
+function categoryCount(key: E01BusinessCategory) {
+  const base = openPoints.value.filter((p) => p.monitorCategory === key)
+  const list = props.pointScope === 'all' ? base : base.filter(isE01RiskPoint)
+  return list.length
+}
+
 const categoryTabs = computed(() => [
-  { key: 'ALL' as const, label: '全部', value: overview.value.totalOpenPoints },
-  { key: 'WATER' as const, label: '水质', value: overview.value.waterCount },
-  { key: 'AIR' as const, label: '空气', value: overview.value.airCount },
-  { key: 'NOISE' as const, label: '噪声', value: overview.value.noiseCount },
+  { key: 'AIR' as const, label: '空气监测', value: categoryCount('AIR') },
+  { key: 'WATER' as const, label: '水质监测', value: categoryCount('WATER') },
+  { key: 'NOISE' as const, label: '噪声监测', value: categoryCount('NOISE') },
 ])
 
 function riskLabel(point: E01OpenPoint) {
   const multi = primaryFactor(point)?.exceedMultiple
   if (multi != null && Number(multi) >= 1.5) return '红'
   if (multi != null && Number(multi) >= 1.2) return '黄'
-  if (point.status) return '蓝'
+  if (point.status && point.status !== '正常') return '蓝'
   return '正常'
 }
 
@@ -154,6 +157,15 @@ function valueText(value: unknown, unit?: string | null) {
   return unit ? `${text} ${unit}` : text
 }
 
+function riskBrief(point: E01OpenPoint) {
+  const factor = primaryFactor(point)
+  if (factor?.exceedMultiple != null && Number(factor.exceedMultiple) > 1) {
+    return `${factor.factorName || '指标'}超标`
+  }
+  if (point.status && point.status !== '正常') return point.status
+  return '异常'
+}
+
 async function loadOverview() {
   loading.value = true
   error.value = ''
@@ -176,12 +188,14 @@ async function loadOverview() {
   }
 }
 
-function handleCategoryClick(key: E01CategoryFilter) {
-  if (props.categoryFilter === key) {
-    emit('clearSelection')
-    emit('changeCategory', key)
-    return
-  }
+function handleScopeClick(scope: E01PointScope) {
+  if (props.pointScope === scope) return
+  page.value = 1
+  emit('clearSelection')
+  emit('changeScope', scope)
+}
+
+function handleCategoryClick(key: E01BusinessCategory) {
   page.value = 1
   emit('clearSelection')
   emit('changeCategory', key)
@@ -194,23 +208,11 @@ function handleSelectPoint(point: E01OpenPoint) {
 function goPage(next: number) {
   if (next < 1 || next > totalPages.value) return
   page.value = next
-}
-
-async function loadDetailForPoint(point: E01OpenPoint) {
-  detailLoading.value = true
-  detail.value = null
-  try {
-    const eventId = point.primaryEventId || point.eventIds[0]
-    if (!eventId) return
-    const res = await getE01EventDetail(eventId)
-    if (res && res.code === 0 && res.data) detail.value = res.data
-  } finally {
-    detailLoading.value = false
-  }
+  emit('clearSelection')
 }
 
 watch(
-  () => props.categoryFilter,
+  () => [props.categoryFilter, props.pointScope] as const,
   () => {
     page.value = 1
   },
@@ -222,18 +224,6 @@ watch(filteredPoints, (list) => {
   }
 })
 
-watch(
-  () => props.selectedPointId,
-  (id) => {
-    if (id == null) {
-      detail.value = null
-      return
-    }
-    const point = openPoints.value.find((p) => p.pointId === id)
-    if (point) void loadDetailForPoint(point)
-  },
-)
-
 onMounted(() => {
   void loadOverview()
 })
@@ -244,7 +234,7 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 <template>
   <aside class="e01-panel e01-panel--green">
     <header class="e01-head">
-      <h2>环保风险预警</h2>
+      <h2>环境风险预警</h2>
       <button type="button" class="e01-close" aria-label="关闭E01" @click="emit('close')">×</button>
     </header>
 
@@ -265,7 +255,30 @@ defineExpose({ reload: loadOverview, payload, openPoints })
         </div>
       </section>
 
-      <div class="e01-cat-row" aria-label="监测类型筛选">
+      <div class="e01-scope-row" role="tablist" aria-label="监测点范围">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="pointScope === 'risk'"
+          class="e01-scope"
+          :class="{ active: pointScope === 'risk' }"
+          @click="handleScopeClick('risk')"
+        >
+          风险监测点
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="pointScope === 'all'"
+          class="e01-scope"
+          :class="{ active: pointScope === 'all' }"
+          @click="handleScopeClick('all')"
+        >
+          全部监测点
+        </button>
+      </div>
+
+      <div class="e01-cat-row" aria-label="环境监测业务分类">
         <button
           v-for="tab in categoryTabs"
           :key="tab.key"
@@ -274,102 +287,76 @@ defineExpose({ reload: loadOverview, payload, openPoints })
           :class="{ active: categoryFilter === tab.key }"
           @click="handleCategoryClick(tab.key)"
         >
-          {{ tab.label }} {{ tab.value }}
+          <span class="e01-cat__label">{{ tab.label }}</span>
+          <em>{{ tab.value }}</em>
         </button>
       </div>
 
       <div class="e01-body">
-        <div class="e01-col e01-col--list">
-          <div class="e01-list-title">监测点列表</div>
-          <div class="e01-list">
-            <button
-              v-for="point in pagedPoints"
-              :key="point.pointId"
-              type="button"
-              class="e01-row"
-              :class="{ active: selectedPointId === point.pointId, 'no-locate': !point.canLocate }"
-              @click="handleSelectPoint(point)"
-            >
-              <div class="e01-row__top">
-                <span class="e01-row__type">{{ typeLine(point) }}</span>
-                <em class="e01-row__status">{{ point.status }} · {{ riskLabel(point) }}</em>
-              </div>
-              <div class="e01-row__loc">{{ point.locationText || point.pointName }}</div>
-              <div class="e01-row__factor">
-                <b>{{ factorNames(point) }}</b>
-                <span>
-                  检测值
-                  <i>{{ valueText(primaryFactor(point)?.detectedValue, primaryFactor(point)?.unit) }}</i>
-                </span>
-                <span class="muted">
-                  标准 {{ valueText(primaryFactor(point)?.limitValue, primaryFactor(point)?.unit) }}
-                </span>
-              </div>
-              <div class="e01-row__foot">
-                <span>{{ dateOnly(point.discoveredAt) }}</span>
-                <span v-if="!point.canLocate" class="warn">无法定位</span>
-              </div>
-            </button>
-
-            <p v-if="!pagedPoints.length" class="e01-empty">当前分类暂无异常监测点</p>
-          </div>
-
-          <nav class="e01-pager" aria-label="点位分页">
-            <span class="e01-pager__summary">{{ pagerSummary }}</span>
-            <div v-if="showPageControls" class="e01-pager__controls">
-              <button type="button" :disabled="page <= 1" @click="goPage(page - 1)">‹</button>
-              <button
-                v-for="n in totalPages"
-                :key="n"
-                type="button"
-                :class="{ active: page === n }"
-                @click="goPage(n)"
-              >
-                {{ n }}
-              </button>
-              <button type="button" :disabled="page >= totalPages" @click="goPage(page + 1)">›</button>
+        <div class="e01-list-title">
+          {{ pointScope === 'risk' ? '风险监测点列表' : '全部监测点列表' }}
+        </div>
+        <div class="e01-list">
+          <button
+            v-for="point in pagedPoints"
+            :key="point.pointId"
+            type="button"
+            class="e01-row"
+            :class="{ active: selectedPointId === point.pointId, 'no-locate': !point.canLocate }"
+            @click="handleSelectPoint(point)"
+          >
+            <div class="e01-row__top">
+              <span class="e01-row__type">{{ typeLine(point) }}</span>
+              <em class="e01-row__status">{{ point.status }} · {{ riskLabel(point) }}</em>
             </div>
-          </nav>
+            <div class="e01-row__loc">
+              <b v-if="point.pointCode">{{ point.pointCode }}</b>
+              {{ point.locationText || point.pointName }}
+            </div>
+            <div class="e01-row__factor">
+              <b>{{ factorNames(point) }}</b>
+              <span>
+                检测值
+                <i>{{ valueText(primaryFactor(point)?.detectedValue, primaryFactor(point)?.unit) }}</i>
+              </span>
+              <span class="muted">
+                标准 {{ valueText(primaryFactor(point)?.limitValue, primaryFactor(point)?.unit) }}
+              </span>
+              <span v-if="pointScope === 'risk'" class="e01-row__multi">{{ riskBrief(point) }}</span>
+            </div>
+            <div class="e01-row__foot">
+              <span>{{ dateOnly(point.discoveredAt) }}</span>
+              <span v-if="!point.canLocate" class="warn">无法定位</span>
+            </div>
+          </button>
+
+          <p v-if="!pagedPoints.length" class="e01-empty">
+            {{
+              pointScope === 'risk'
+                ? '当前分类暂无风险'
+                : categoryFilter === 'ALL'
+                  ? '暂无监测点'
+                  : '当前分类暂无监测点'
+            }}
+          </p>
         </div>
 
-        <div class="e01-col e01-col--detail">
-          <div class="e01-list-title">监测点详情</div>
-          <div v-if="!selectedPoint" class="e01-empty e01-empty--detail">请选择左侧监测点查看详情（地图可看趋势）</div>
-          <div v-else-if="detailLoading" class="e01-state">正在加载详情…</div>
-          <div v-else class="e01-detail">
-            <section class="e01-section">
-              <h3>基础信息</h3>
-              <dl>
-                <div><dt>监测点</dt><dd>{{ selectedPoint.pointName }}</dd></div>
-                <div><dt>类型</dt><dd>{{ typeLabel(selectedPoint) }}</dd></div>
-                <div><dt>位置</dt><dd>{{ selectedPoint.locationText || '—' }}</dd></div>
-                <div><dt>状态</dt><dd>{{ selectedPoint.status }}</dd></div>
-                <div><dt>风险</dt><dd>{{ riskLabel(selectedPoint) }}</dd></div>
-              </dl>
-            </section>
-            <section class="e01-section">
-              <h3>检测值</h3>
-              <p>
-                {{ factorNames(selectedPoint) }}：
-                {{ valueText(primaryFactor(selectedPoint)?.detectedValue, primaryFactor(selectedPoint)?.unit) }}
-                （标准 {{ valueText(primaryFactor(selectedPoint)?.limitValue, primaryFactor(selectedPoint)?.unit) }}）
-              </p>
-              <p class="muted">历史趋势请在地图侧摘要卡查看</p>
-            </section>
-            <section class="e01-section">
-              <h3>整改记录</h3>
-              <template v-if="detail?.rectificationRounds?.length">
-                <p
-                  v-for="round in detail.rectificationRounds"
-                  :key="round.id"
-                >
-                  第{{ round.roundNo }}轮 · {{ round.summary || round.reviewStatus || '—' }}
-                </p>
-              </template>
-              <p v-else>{{ detail?.closure?.statusLabel || selectedPoint.status || '整改推进中' }}</p>
-            </section>
+        <nav class="e01-pager" aria-label="点位分页">
+          <span class="e01-pager__summary">{{ pagerSummary }}</span>
+          <div v-if="showPageControls" class="e01-pager__controls">
+            <button type="button" :disabled="page <= 1" @click="goPage(page - 1)">上一页</button>
+            <button
+              v-for="n in totalPages"
+              :key="n"
+              type="button"
+              :class="{ active: page === n }"
+              @click="goPage(n)"
+            >
+              {{ n }}
+            </button>
+            <button type="button" :disabled="page >= totalPages" @click="goPage(page + 1)">下一页</button>
           </div>
-        </div>
+        </nav>
       </div>
     </template>
   </aside>
@@ -391,7 +378,7 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 
 .e01-head {
   flex-shrink: 0;
-  height: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -399,14 +386,15 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 
   h2 {
     margin: 0;
-    font-size: 19px;
+    font-size: 22px;
     font-weight: 700;
     color: #f3f8ff;
+    letter-spacing: 0.02em;
     &::after {
       content: '';
       display: inline-block;
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
       margin-left: 8px;
       border-radius: 50%;
       background: #69e36f;
@@ -450,13 +438,13 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 
 .e01-stats {
   flex-shrink: 0;
-  height: 58px;
+  height: 64px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid rgba(105, 227, 111, 0.22);
   border-radius: 6px;
   background: rgba(8, 40, 69, 0.4);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   overflow: hidden;
 }
 
@@ -470,25 +458,25 @@ defineExpose({ reload: loadOverview, payload, openPoints })
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   position: relative;
 
   &:last-child { border-right: 0; }
 
   span {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.2;
   }
 
   strong {
-    font-size: 21px;
-    line-height: 1.1;
+    font-size: 26px;
+    line-height: 1.05;
     font-family: Bahnschrift, "DIN Alternate", Arial, sans-serif;
     color: #69e36f;
     font-weight: 700;
 
     &.is-text {
-      font-size: 16px;
+      font-size: 18px;
       font-family: inherit;
     }
   }
@@ -498,28 +486,74 @@ defineExpose({ reload: loadOverview, payload, openPoints })
   }
 }
 
-.e01-cat-row {
+.e01-scope-row {
   flex-shrink: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 6px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.e01-cat {
+.e01-scope {
+  height: 36px;
   border: 1px solid rgba(105, 227, 111, 0.28);
   border-radius: 4px;
   background: rgba(8, 40, 69, 0.45);
   color: #8ba6c3;
-  font-size: 12px;
-  padding: 3px 8px;
+  font-size: 15px;
   cursor: pointer;
+
+  &.active {
+    color: #69e36f;
+    border-color: rgba(105, 227, 111, 0.75);
+    background: rgba(105, 227, 111, 0.14);
+    font-weight: 700;
+  }
+}
+
+.e01-cat-row {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.e01-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 54px;
+  border: 1px solid rgba(105, 227, 111, 0.28);
+  border-radius: 4px;
+  background: rgba(8, 40, 69, 0.45);
+  color: #8ba6c3;
+  font-size: 14px;
+  padding: 7px 4px;
+  cursor: pointer;
+
+  em {
+    font-style: normal;
+    font-size: 20px;
+    font-family: Bahnschrift, "DIN Alternate", Arial, sans-serif;
+    font-weight: 700;
+    color: #c3d4e8;
+  }
 
   &.active {
     color: #69e36f;
     border-color: rgba(105, 227, 111, 0.7);
     background: rgba(105, 227, 111, 0.12);
+    font-weight: 600;
+
+    em { color: #69e36f; }
   }
+}
+
+.e01-cat__label {
+  line-height: 1.2;
 }
 
 .e01-body {
@@ -527,37 +561,28 @@ defineExpose({ reload: loadOverview, payload, openPoints })
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.e01-col {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
-
-  &--list { flex: 0 1 48%; }
-  &--detail { flex: 1 1 52%; }
 }
 
 .e01-list-title {
   flex-shrink: 0;
   margin-bottom: 8px;
-  font-size: 14px;
-  color: #8ba6c3;
+  font-size: 15px;
+  font-weight: 600;
+  color: #a8bfd6;
 }
 
 .e01-list {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .e01-row {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   width: 100%;
   text-align: left;
   border: 1px solid rgba(105, 227, 111, 0.2);
@@ -565,7 +590,7 @@ defineExpose({ reload: loadOverview, payload, openPoints })
   background: rgba(8, 40, 69, 0.45);
   color: inherit;
   cursor: pointer;
-  padding: 10px 10px 10px 12px;
+  padding: 11px 10px 11px 12px;
   position: relative;
 
   &::before {
@@ -599,7 +624,7 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 }
 
 .e01-row__type {
-  font-size: 14px;
+  font-size: 15px;
   color: #c3d4e8;
   min-width: 0;
   overflow: hidden;
@@ -610,19 +635,25 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 .e01-row__status {
   flex-shrink: 0;
   font-style: normal;
-  font-size: 12px;
+  font-size: 13px;
   color: #69e36f;
   border: 1px solid rgba(105, 227, 111, 0.45);
   border-radius: 3px;
-  padding: 1px 6px;
+  padding: 2px 7px;
   background: rgba(105, 227, 111, 0.08);
 }
 
 .e01-row__loc {
   margin-top: 5px;
-  font-size: 15px;
+  font-size: 17px;
   color: #e8f3ff;
-  line-height: 1.4;
+  line-height: 1.35;
+
+  b {
+    margin-right: 6px;
+    font-weight: 700;
+    color: #69e36f;
+  }
 }
 
 .e01-row__factor {
@@ -631,11 +662,11 @@ defineExpose({ reload: loadOverview, payload, openPoints })
   flex-wrap: wrap;
   gap: 6px 10px;
   align-items: baseline;
-  font-size: 13px;
+  font-size: 14px;
   color: #8ba6c3;
 
   b {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: #f3f8ff;
   }
@@ -644,20 +675,20 @@ defineExpose({ reload: loadOverview, payload, openPoints })
     font-style: normal;
     color: #ff8f5a;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 17px;
   }
 
-  .muted { color: #7f95ad; font-size: 13px; }
+  .muted { color: #7f95ad; font-size: 14px; }
 }
 
 .e01-row__multi {
   color: #ff8f5a;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   border: 1px solid rgba(255, 143, 90, 0.35);
   border-radius: 3px;
-  padding: 0 5px;
-  line-height: 18px;
+  padding: 0 6px;
+  line-height: 20px;
 }
 
 .e01-row__foot {
@@ -671,73 +702,16 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 }
 
 .e01-empty {
-  margin: 16px 0 0;
+  margin: 24px 0 0;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: #8ba6c3;
-
-  &--detail {
-    margin-top: 24px;
-  }
-}
-
-.e01-detail {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.e01-section {
-  border: 1px solid rgba(105, 227, 111, 0.18);
-  border-radius: 6px;
-  background: rgba(8, 40, 69, 0.4);
-  padding: 10px;
-
-  h3 {
-    margin: 0 0 8px;
-    font-size: 13px;
-    color: #69e36f;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    font-size: 13px;
-    color: #d7e6f5;
-    line-height: 1.5;
-  }
-
-  .muted {
-    margin-top: 6px;
-    color: #8ba6c3;
-    font-size: 12px;
-  }
-
-  dl {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    div {
-      display: grid;
-      grid-template-columns: 52px 1fr;
-      gap: 6px;
-      font-size: 12px;
-    }
-
-    dt { color: #8ba6c3; }
-    dd { margin: 0; color: #e8f3ff; }
-  }
 }
 
 .e01-pager {
   flex-shrink: 0;
   margin-top: 10px;
-  min-height: 32px;
+  min-height: 34px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -745,7 +719,7 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 }
 
 .e01-pager__summary {
-  font-size: 13px;
+  font-size: 14px;
   color: #8ba6c3;
   white-space: nowrap;
 }
@@ -753,16 +727,19 @@ defineExpose({ reload: loadOverview, payload, openPoints })
 .e01-pager__controls {
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 
   button {
-    min-width: 28px;
-    height: 28px;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
     border: 1px solid rgba(105, 227, 111, 0.28);
     border-radius: 4px;
     background: rgba(8, 40, 69, 0.5);
     color: #8ba6c3;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 14px;
 
     &.active {
       color: #69e36f;

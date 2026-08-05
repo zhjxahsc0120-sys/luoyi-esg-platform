@@ -1,11 +1,5 @@
 import * as Cesium from "cesium";
 import { trafficGisConfig } from "../../config/traffic-gis.config";
-import {
-  LABEL_ATLAS_SCALE,
-  crispLabelFont,
-  labelSizes,
-  wholePx,
-} from "../../config/style-tokens";
 import type {
   PresentationMode,
   TrafficLayerDefinition,
@@ -23,23 +17,21 @@ export class PointRenderer {
   ) {
     const isDashboard = presentationMode === "dashboard";
     const iconScale = isDashboard ? 0.82 : 1.0;
-    const nearScale = isDashboard ? 1.0 : 1.0;
-    const farScale = isDashboard ? 0.5 : 0.75;
-    const labelBgAlpha = isDashboard ? 0.62 : 0.74;
-    const defaultPointLabel = isDashboard
-      ? labelSizes.pointDashboard
-      : labelSizes.pointPreview;
-    const defaultSlopeLabel = isDashboard
-      ? labelSizes.slopeDashboard
-      : labelSizes.slopePreview;
-    const labelSize = layer.style.labelSize || defaultPointLabel;
+    const nearScale = isDashboard ? 0.95 : 1.15;
+    const farScale = isDashboard ? 0.58 : 0.72;
+    const labelBgAlpha = isDashboard ? 0.72 : 0.88;
+    const labelSize = isDashboard
+      ? (layer.style.labelSize || 11)
+      : (layer.style.labelSize || 12);
 
     return features.map((f) => {
       if (f.geometry.type !== "Point")
         throw new Error("PointRenderer收到非点要素");
       const color = featureColor(f, layer.style.color);
-      const isSlope = f.objectType === "slope-monitor";
-      const isRisk = f.objectType === "risk-point";
+      const risk = f.objectType === "risk";
+      const isEnvironmentMonitor = f.objectType === "environment-monitor";
+      const isAlert = ["超标", "异常", "warning", "critical"].includes(f.status || "");
+      const alertText = f.statusLabel || (f.status === "critical" ? "超标" : "预警");
 
       if (f.objectType === "chainage")
         return viewer.entities.add({
@@ -54,46 +46,31 @@ export class PointRenderer {
           },
           label: {
             text: f.name,
-            font: crispLabelFont(
-              isDashboard
-                ? labelSizes.chainageDashboard
-                : labelSizes.chainagePreview,
-            ),
-            scale: LABEL_ATLAS_SCALE,
+            font: `600 ${isDashboard ? 9 : 10}px Microsoft YaHei`,
             fillColor: Cesium.Color.fromCssColorString("#eafaff"),
             outlineColor: Cesium.Color.fromCssColorString("#031522"),
             outlineWidth: 4,
             style: Cesium.LabelStyle.FILL_AND_OUTLINE,
             showBackground: true,
             backgroundColor: Cesium.Color.fromCssColorString("#061827").withAlpha(
-              isDashboard ? 0.62 : 0.74,
+              isDashboard ? 0.58 : 0.72,
             ),
-            backgroundPadding: new Cesium.Cartesian2(6, 4),
-            pixelOffset: new Cesium.Cartesian2(0, wholePx(-17)),
+            backgroundPadding: new Cesium.Cartesian2(5, 3),
+            pixelOffset: new Cesium.Cartesian2(0, -15),
             distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
               0,
-              isDashboard ? 36000 : 42000,
+              isDashboard ? 30000 : 38000,
             ),
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            scaleByDistance: new Cesium.NearFarScalar(2000, 1.0, 40000, 0.75),
           },
         });
 
-      const displayName = isSlope
-        ? f.name.replace(/^边坡监测点/, "边坡")
-        : f.name;
-
-      const pointLabelPx = isSlope
-        ? Math.max(layer.style.labelSize || defaultSlopeLabel, 11)
-        : labelSize;
-
       const label =
-        layer.style.showLabel === false
+        layer.style.showLabel === false || (isEnvironmentMonitor && !isAlert)
           ? undefined
           : {
-              text: displayName,
-              font: crispLabelFont(pointLabelPx),
-              scale: LABEL_ATLAS_SCALE,
+              text: isEnvironmentMonitor && isAlert ? `⚠ ${f.name} · ${alertText}` : f.name,
+              font: `${isAlert ? 600 : 400} ${isAlert ? labelSize + 1 : labelSize}px Microsoft YaHei`,
               fillColor: Cesium.Color.fromCssColorString(
                 layer.style.labelColor || "#ffffff",
               ),
@@ -101,31 +78,22 @@ export class PointRenderer {
               outlineWidth: 4,
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               showBackground: true,
-              backgroundPadding: new Cesium.Cartesian2(7, 4),
+              backgroundPadding: new Cesium.Cartesian2(8, 5),
               backgroundColor: Cesium.Color.fromCssColorString(
-                isSlope ? "#2a1210" : isRisk ? "#2a1608" : "#06182a",
-              ).withAlpha(labelBgAlpha),
-              // 边坡/风险标签偏一侧，减少压住走廊
-              pixelOffset: new Cesium.Cartesian2(
-                wholePx(isSlope || isRisk ? 16 : 0),
-                wholePx(isSlope || isRisk ? 10 : -46),
-              ),
-              verticalOrigin:
-                isSlope || isRisk
-                  ? Cesium.VerticalOrigin.TOP
-                  : Cesium.VerticalOrigin.BOTTOM,
+                isAlert ? "#9f1024" : "#06182a",
+              ).withAlpha(isAlert ? 0.94 : labelBgAlpha),
+              pixelOffset: new Cesium.Cartesian2(0, -45),
               distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
                 0,
-                isSlope
-                  ? 36000
+                f.objectType === "slope-monitor"
+                  ? 16000
                   : trafficGisConfig.lod.labelMaxHeight,
               ),
               disableDepthTestDistance: Number.POSITIVE_INFINITY,
-              scaleByDistance: new Cesium.NearFarScalar(2000, 1.0, 52000, 0.75),
             };
 
-      const iconW = Math.round((isSlope ? 32 : 36) * iconScale);
-      const iconH = Math.round((isSlope ? 38 : 44) * iconScale);
+      const iconW = Math.round((isAlert ? 56 : 34) * iconScale);
+      const iconH = Math.round((isAlert ? 68 : 40) * iconScale);
 
       return viewer.entities.add({
         ...entityMeta(f),

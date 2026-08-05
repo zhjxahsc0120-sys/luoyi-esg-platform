@@ -2,10 +2,14 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import type { KpiKey, KpiDetailConfig, KpiModalFocusContext } from '@/types/dashboard'
-import type { E01CategoryFilter, E01OpenPoint, E01PanelLayer } from '@/types/e01'
-import type { E02CategoryFilter, E02ObjectItem, E02PanelLayer } from '@/types/e02'
-import type { E03CategoryFilter, E03EcoObjectItem, E03PanelLayer } from '@/types/e03'
-import type { S02CategoryFilter, S02PanelLayer, S02RiskItem } from '@/types/s02'
+import type { E01CategoryFilter, E01OpenPoint, E01PanelLayer, E01PointScope } from '@/types/e01'
+import { isE01RiskPoint } from '@/utils/e01-points'
+import type { E02CategoryFilter, E02IssueItem, E02ObjectScope, E02PanelLayer } from '@/types/e02'
+import { isE02OpenIssue } from '@/data/e02-issues.mock'
+import type { E03CategoryFilter, E03ObjectScope, E03PanelLayer, E03WaterObjectItem } from '@/types/e03'
+import { isE03KeyObject } from '@/data/e03-water.mock'
+import type { S02CategoryFilter, S02ObjectScope, S02PanelLayer, S02RiskItem } from '@/types/s02'
+import { isS02KeyRisk } from '@/data/s02-risks.mock'
 import type { E04CulturalObjectItem, E04CulturalPanelLayer } from '@/types/e04-cultural'
 import { kpiDetails, carbonTopicDetail, monthlyTopicDetail } from '@/data/dashboard.mock'
 import { getDashboardKpiDetail, getDashboardTopic } from '@/services/api'
@@ -61,25 +65,29 @@ const kpiFocusContext = ref<KpiModalFocusContext | null>(null)
 
 const e01Active = ref(false)
 const e01Layer = ref<E01PanelLayer>('overview')
-const e01CategoryFilter = ref<E01CategoryFilter>('ALL')
+const e01CategoryFilter = ref<E01CategoryFilter>('AIR')
+const e01PointScope = ref<E01PointScope>('risk')
 const e01SelectedPointId = ref<number | null>(null)
 const e01OpenPoints = ref<E01OpenPoint[]>([])
 
 const e02Active = ref(false)
 const e02Layer = ref<E02PanelLayer>('overview')
-const e02CategoryFilter = ref<E02CategoryFilter>('ALL')
+const e02CategoryFilter = ref<E02CategoryFilter>('POLLUTION')
+const e02ObjectScope = ref<E02ObjectScope>('key')
 const e02SelectedIssueId = ref<number | null>(null)
-const e02Issues = ref<E02ObjectItem[]>([])
+const e02Issues = ref<E02IssueItem[]>([])
 
 const e03Active = ref(false)
 const e03Layer = ref<E03PanelLayer>('overview')
-const e03CategoryFilter = ref<E03CategoryFilter>('ALL')
+const e03CategoryFilter = ref<E03CategoryFilter>('SPOIL')
+const e03ObjectScope = ref<E03ObjectScope>('key')
 const e03SelectedIssueId = ref<number | null>(null)
-const e03Issues = ref<E03EcoObjectItem[]>([])
+const e03Issues = ref<E03WaterObjectItem[]>([])
 
 const s02Active = ref(false)
 const s02Layer = ref<S02PanelLayer>('overview')
-const s02CategoryFilter = ref<S02CategoryFilter>('ALL')
+const s02CategoryFilter = ref<S02CategoryFilter>('MAJOR_SOURCE')
+const s02ObjectScope = ref<S02ObjectScope>('key')
 const s02SelectedRiskId = ref<number | null>(null)
 const s02Risks = ref<S02RiskItem[]>([])
 const s02PendingSelectCode = ref<string | null>(null)
@@ -95,10 +103,10 @@ const gisPanelRef = ref<{
   focusPoint: (point: E01OpenPoint) => void
   fitPoints: (points: E01OpenPoint[]) => void
   resetView: () => void
-  focusE02Issue: (issue: { spatialLinks?: E02ObjectItem['spatialLinks'] }) => void
-  fitE02Issues: (issues: Array<{ spatialLinks?: E02ObjectItem['spatialLinks'] }>) => void
-  focusE03Issue: (issue: { spatialLinks?: E03EcoObjectItem['spatialLinks'] }) => void
-  fitE03Issues: (issues: Array<{ spatialLinks?: E03EcoObjectItem['spatialLinks'] }>) => void
+  focusE02Issue: (issue: { spatialLinks?: E02IssueItem['spatialLinks'] }) => void
+  fitE02Issues: (issues: Array<{ spatialLinks?: E02IssueItem['spatialLinks'] }>) => void
+  focusE03Issue: (issue: { spatialLinks?: E03WaterObjectItem['spatialLinks'] }) => void
+  fitE03Issues: (issues: Array<{ spatialLinks?: E03WaterObjectItem['spatialLinks'] }>) => void
   focusS02Risk: (risk: S02RiskItem) => void
   fitS02Risks: (risks: S02RiskItem[]) => void
 } | null>(null)
@@ -114,26 +122,41 @@ const activeDetail = computed(() => {
 })
 
 const e01VisiblePoints = computed(() => {
-  if (e01CategoryFilter.value === 'ALL') return e01OpenPoints.value
-  return e01OpenPoints.value.filter((p) => p.monitorCategory === e01CategoryFilter.value)
+  let list = e01OpenPoints.value
+  if (e01PointScope.value === 'risk') {
+    list = list.filter(isE01RiskPoint)
+  }
+  if (e01CategoryFilter.value !== 'ALL') {
+    list = list.filter((p) => p.monitorCategory === e01CategoryFilter.value)
+  }
+  return list
 })
 
 const e02VisibleIssues = computed(() => {
-  if (e02CategoryFilter.value === 'ALL') return e02Issues.value
-  return e02Issues.value.filter((i) => i.objectType === e02CategoryFilter.value)
+  let list = e02Issues.value
+  if (e02ObjectScope.value === 'key') list = list.filter(isE02OpenIssue)
+  if (e02CategoryFilter.value !== 'ALL') {
+    list = list.filter((i) => i.businessCategory === e02CategoryFilter.value)
+  }
+  return list
 })
 
 const e03VisibleIssues = computed(() => {
-  if (e03CategoryFilter.value === 'ALL') return e03Issues.value
-  return e03Issues.value.filter((i) => i.objectKind === e03CategoryFilter.value)
+  let list = e03Issues.value
+  if (e03ObjectScope.value === 'key') list = list.filter(isE03KeyObject)
+  if (e03CategoryFilter.value !== 'ALL') {
+    list = list.filter((i) => i.objectType === e03CategoryFilter.value)
+  }
+  return list
 })
 
 const s02VisibleRisks = computed(() => {
-  if (s02CategoryFilter.value === 'ALL') return s02Risks.value
-  if (s02CategoryFilter.value === 'MAJOR') {
-    return s02Risks.value.filter((r) => r.riskLevel === '重大')
+  let list = s02Risks.value
+  if (s02ObjectScope.value === 'key') list = list.filter(isS02KeyRisk)
+  if (s02CategoryFilter.value !== 'ALL') {
+    list = list.filter((r) => r.businessCategory === s02CategoryFilter.value)
   }
-  return s02Risks.value.filter((r) => r.riskLevel === '较大')
+  return list
 })
 
 let bodyOverflow = ''
@@ -172,7 +195,8 @@ async function openE01Workspace() {
   }
   e01Active.value = true
   e01Layer.value = 'overview'
-  e01CategoryFilter.value = 'ALL'
+  e01CategoryFilter.value = 'AIR'
+  e01PointScope.value = 'risk'
   e01SelectedPointId.value = null
   activeKpiKey.value = null
   activeTopicDetail.value = null
@@ -182,7 +206,8 @@ async function openE01Workspace() {
 function closeE01Workspace() {
   e01Active.value = false
   e01Layer.value = 'overview'
-  e01CategoryFilter.value = 'ALL'
+  e01CategoryFilter.value = 'AIR'
+  e01PointScope.value = 'risk'
   e01SelectedPointId.value = null
   e01OpenPoints.value = []
   gisPanelRef.value?.restoreMapState()
@@ -198,7 +223,8 @@ async function openE02Workspace() {
   }
   e02Active.value = true
   e02Layer.value = 'overview'
-  e02CategoryFilter.value = 'ALL'
+  e02CategoryFilter.value = 'POLLUTION'
+  e02ObjectScope.value = 'key'
   e02SelectedIssueId.value = null
   activeKpiKey.value = null
   activeTopicDetail.value = null
@@ -208,7 +234,8 @@ async function openE02Workspace() {
 function closeE02Workspace() {
   e02Active.value = false
   e02Layer.value = 'overview'
-  e02CategoryFilter.value = 'ALL'
+  e02CategoryFilter.value = 'POLLUTION'
+  e02ObjectScope.value = 'key'
   e02SelectedIssueId.value = null
   e02Issues.value = []
   gisPanelRef.value?.restoreMapState()
@@ -224,7 +251,8 @@ async function openE03Workspace() {
   }
   e03Active.value = true
   e03Layer.value = 'overview'
-  e03CategoryFilter.value = 'ALL'
+  e03CategoryFilter.value = 'SPOIL'
+  e03ObjectScope.value = 'key'
   e03SelectedIssueId.value = null
   activeKpiKey.value = null
   activeTopicDetail.value = null
@@ -234,7 +262,8 @@ async function openE03Workspace() {
 function closeE03Workspace() {
   e03Active.value = false
   e03Layer.value = 'overview'
-  e03CategoryFilter.value = 'ALL'
+  e03CategoryFilter.value = 'SPOIL'
+  e03ObjectScope.value = 'key'
   e03SelectedIssueId.value = null
   e03Issues.value = []
   gisPanelRef.value?.restoreMapState()
@@ -293,7 +322,8 @@ async function openS02Workspace(options?: { sourceId?: string | null }) {
   }
   s02Active.value = true
   s02Layer.value = 'overview'
-  s02CategoryFilter.value = 'ALL'
+  s02CategoryFilter.value = 'MAJOR_SOURCE'
+  s02ObjectScope.value = 'key'
   s02SelectedRiskId.value = null
   s02PendingSelectCode.value = options?.sourceId || null
   activeKpiKey.value = null
@@ -304,14 +334,15 @@ async function openS02Workspace(options?: { sourceId?: string | null }) {
 function closeS02Workspace() {
   s02Active.value = false
   s02Layer.value = 'overview'
-  s02CategoryFilter.value = 'ALL'
+  s02CategoryFilter.value = 'MAJOR_SOURCE'
+  s02ObjectScope.value = 'key'
   s02SelectedRiskId.value = null
   s02Risks.value = []
   s02PendingSelectCode.value = null
   gisPanelRef.value?.restoreMapState()
 }
 
-function handleE03OverviewReady(issues: E03EcoObjectItem[]) {
+function handleE03OverviewReady(issues: E03WaterObjectItem[]) {
   e03Issues.value = issues
   e03SelectedIssueId.value = null
   fitCurrentE03Category()
@@ -324,7 +355,14 @@ function handleE03ChangeCategory(category: E03CategoryFilter) {
   fitCurrentE03Category()
 }
 
-function handleE03SelectIssue(issue: E03EcoObjectItem) {
+function handleE03ChangeScope(scope: E03ObjectScope) {
+  e03ObjectScope.value = scope
+  e03SelectedIssueId.value = null
+  e03Layer.value = 'overview'
+  fitCurrentE03Category()
+}
+
+function handleE03SelectIssue(issue: E03WaterObjectItem) {
   if (e03SelectedIssueId.value === issue.id) {
     handleE03ClearSelection()
     return
@@ -347,7 +385,7 @@ function handleE03ClearSelection() {
   e03Layer.value = 'overview'
 }
 
-function handleE02OverviewReady(issues: E02ObjectItem[]) {
+function handleE02OverviewReady(issues: E02IssueItem[]) {
   e02Issues.value = issues
   e02SelectedIssueId.value = null
   fitCurrentE02Category()
@@ -360,7 +398,14 @@ function handleE02ChangeCategory(category: E02CategoryFilter) {
   fitCurrentE02Category()
 }
 
-function handleE02SelectIssue(issue: E02ObjectItem) {
+function handleE02ChangeScope(scope: E02ObjectScope) {
+  e02ObjectScope.value = scope
+  e02SelectedIssueId.value = null
+  e02Layer.value = 'overview'
+  fitCurrentE02Category()
+}
+
+function handleE02SelectIssue(issue: E02IssueItem) {
   if (e02SelectedIssueId.value === issue.id) {
     handleE02ClearSelection()
     return
@@ -403,6 +448,13 @@ function handleS02ChangeCategory(category: S02CategoryFilter) {
   fitCurrentS02Category()
 }
 
+function handleS02ChangeScope(scope: S02ObjectScope) {
+  s02ObjectScope.value = scope
+  s02SelectedRiskId.value = null
+  s02Layer.value = 'overview'
+  fitCurrentS02Category()
+}
+
 function handleS02SelectRisk(risk: S02RiskItem) {
   if (s02SelectedRiskId.value === risk.id) {
     handleS02ClearSelection()
@@ -433,15 +485,19 @@ function handleE01OverviewReady(points: E01OpenPoint[]) {
 }
 
 function handleE01ChangeCategory(category: E01CategoryFilter) {
-  const same = e01CategoryFilter.value === category
   e01CategoryFilter.value = category
   e01SelectedPointId.value = null
   e01Layer.value = 'overview'
-  if (same) {
-    fitCurrentCategory()
-  } else {
-    fitCurrentCategory()
-  }
+  fitCurrentCategory()
+}
+
+function handleE01ChangeScope(scope: E01PointScope) {
+  e01PointScope.value = scope
+  // All-mode must surface air/water/noise together; risk keeps a business category.
+  e01CategoryFilter.value = scope === 'all' ? 'ALL' : (e01CategoryFilter.value === 'ALL' ? 'AIR' : e01CategoryFilter.value)
+  e01SelectedPointId.value = null
+  e01Layer.value = 'overview'
+  fitCurrentCategory()
 }
 
 function handleE01SelectPoint(point: E01OpenPoint) {
@@ -466,6 +522,30 @@ function handleE01ClearSelection() {
   e01SelectedPointId.value = null
   e01Layer.value = 'overview'
   fitCurrentCategory()
+}
+
+/** S02 map popup → G02 重大风险专项方案（不改首页 KPI 卡） */
+async function handleOpenSpecialPlanFromS02(risk: S02RiskItem) {
+  if (s02Active.value) closeS02Workspace()
+  if (e01Active.value) closeE01Workspace()
+  if (e02Active.value) closeE02Workspace()
+  if (e03Active.value) closeE03Workspace()
+  if (e04Active.value) closeE04Workspace()
+  const kpiKey = 'G02' as KpiKey
+  const detail = await getDashboardKpiDetail(kpiKey)
+  if (detail) {
+    apiKpiDetails.value[kpiKey] = detail
+  } else if (kpiDetails[kpiKey]) {
+    apiKpiDetails.value[kpiKey] = kpiDetails[kpiKey]
+  }
+  kpiFocusContext.value = {
+    sourceId: risk.businessCode,
+    from: 'dashboard',
+    title: risk.specialPlanName || risk.title,
+  }
+  activeKpiKey.value = kpiKey
+  activeTopicDetail.value = null
+  lockBodyScroll()
 }
 
 async function handleKpiSelect(key: string) {
@@ -786,13 +866,13 @@ onUnmounted(() => {
                 :e01-visible-points="e01VisiblePoints"
                 :e01-selected-point-id="e01SelectedPointId"
                 :e02-active="e02Active"
-                :e02-issues="e02Issues"
+                :e02-issues="e02VisibleIssues"
                 :e02-selected-issue-id="e02SelectedIssueId"
                 :e03-active="e03Active"
-                :e03-issues="e03Issues"
+                :e03-issues="e03VisibleIssues"
                 :e03-selected-issue-id="e03SelectedIssueId"
                 :s02-active="s02Active"
-                :s02-risks="s02Risks"
+                :s02-risks="s02VisibleRisks"
                 :s02-selected-risk-id="s02SelectedRiskId"
                 @open-kpi-source="openKpiFromBusinessLink"
                 @e01-point-select="handleE01PointSelectFromMap"
@@ -803,6 +883,7 @@ onUnmounted(() => {
                 @e03-clear-selection="handleE03ClearSelection"
                 @s02-risk-select="handleS02RiskSelectFromMap"
                 @s02-clear-selection="handleS02ClearSelection"
+                @open-special-plan="handleOpenSpecialPlanFromS02"
               />
               <GisOverviewPanel v-else />
             </div>
@@ -820,8 +901,10 @@ onUnmounted(() => {
                 :selected-point-id="e01SelectedPointId"
                 :layer="e01Layer"
                 :category-filter="e01CategoryFilter"
+                :point-scope="e01PointScope"
                 @close="closeE01Workspace"
                 @change-category="handleE01ChangeCategory"
+                @change-scope="handleE01ChangeScope"
                 @select-point="handleE01SelectPoint"
                 @clear-selection="handleE01ClearSelection"
                 @overview-ready="handleE01OverviewReady"
@@ -831,8 +914,10 @@ onUnmounted(() => {
                 :selected-issue-id="e02SelectedIssueId"
                 :layer="e02Layer"
                 :category-filter="e02CategoryFilter"
+                :object-scope="e02ObjectScope"
                 @close="closeE02Workspace"
                 @change-category="handleE02ChangeCategory"
+                @change-scope="handleE02ChangeScope"
                 @select-issue="handleE02SelectIssue"
                 @clear-selection="handleE02ClearSelection"
                 @overview-ready="handleE02OverviewReady"
@@ -842,8 +927,10 @@ onUnmounted(() => {
                 :selected-issue-id="e03SelectedIssueId"
                 :layer="e03Layer"
                 :category-filter="e03CategoryFilter"
+                :object-scope="e03ObjectScope"
                 @close="closeE03Workspace"
                 @change-category="handleE03ChangeCategory"
+                @change-scope="handleE03ChangeScope"
                 @select-issue="handleE03SelectIssue"
                 @clear-selection="handleE03ClearSelection"
                 @overview-ready="handleE03OverviewReady"
@@ -862,8 +949,10 @@ onUnmounted(() => {
                 :selected-risk-id="s02SelectedRiskId"
                 :layer="s02Layer"
                 :category-filter="s02CategoryFilter"
+                :object-scope="s02ObjectScope"
                 @close="closeS02Workspace"
                 @change-category="handleS02ChangeCategory"
+                @change-scope="handleS02ChangeScope"
                 @select-risk="handleS02SelectRisk"
                 @clear-selection="handleS02ClearSelection"
                 @overview-ready="handleS02OverviewReady"

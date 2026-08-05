@@ -1,49 +1,56 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getE03EcoObjectDetail, getE03EcoObjects } from '@/services/api'
+import { getE03WaterObjects } from '@/services/api'
+import { isE03KeyObject } from '@/data/e03-water.mock'
 import type {
   E03CategoryFilter,
-  E03EcoObjectDetail,
-  E03EcoObjectItem,
-  E03EcoObjectsPayload,
+  E03ObjectScope,
+  E03ObjectType,
   E03PanelLayer,
+  E03WaterObjectItem,
+  E03WaterObjectsPayload,
 } from '@/types/e03'
-import { typeWithSection } from '@/utils/section-label'
 
 const props = defineProps<{
   selectedIssueId: number | null
   layer: E03PanelLayer
   categoryFilter: E03CategoryFilter
+  objectScope: E03ObjectScope
 }>()
 
 const emit = defineEmits<{
   close: []
   changeCategory: [category: E03CategoryFilter]
-  selectIssue: [issue: E03EcoObjectItem]
+  changeScope: [scope: E03ObjectScope]
+  selectIssue: [issue: E03WaterObjectItem]
   clearSelection: []
-  overviewReady: [issues: E03EcoObjectItem[]]
+  overviewReady: [issues: E03WaterObjectItem[]]
 }>()
 
 const PAGE_SIZE = 3
 const loading = ref(false)
 const error = ref('')
-const payload = ref<E03EcoObjectsPayload | null>(null)
-const detail = ref<E03EcoObjectDetail | null>(null)
-const detailLoading = ref(false)
+const payload = ref<E03WaterObjectsPayload | null>(null)
 const page = ref(1)
 
 const overview = computed(() => payload.value?.overview || {
-  areaCount: 0,
-  protectedCount: 0,
-  riskCount: 0,
-  riskStatus: '正常',
+  objectCount: 0,
+  keyCount: 0,
+  areaTotalHa: 0,
+  pendingApproval: 0,
+  byType: { SPOIL: 0, TEMP_LAND: 0, TOPSOIL: 0, REGREEN: 0 },
 })
 
 const objects = computed(() => payload.value?.objects || [])
 
+const scopedObjects = computed(() => {
+  if (props.objectScope === 'all') return objects.value
+  return objects.value.filter(isE03KeyObject)
+})
+
 const filteredObjects = computed(() => {
-  if (props.categoryFilter === 'ALL') return objects.value
-  return objects.value.filter((o) => o.objectKind === props.categoryFilter)
+  if (props.categoryFilter === 'ALL') return scopedObjects.value
+  return scopedObjects.value.filter((o) => o.objectType === props.categoryFilter)
 })
 
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredObjects.value.length / PAGE_SIZE)))
@@ -59,54 +66,32 @@ const pagerSummary = computed(
 
 const showPageControls = computed(() => filteredObjects.value.length > PAGE_SIZE)
 
-const selected = computed(() => {
-  if (props.selectedIssueId == null) return null
-  return objects.value.find((o) => o.id === props.selectedIssueId) || null
-})
-
-const statsCells = computed(() => [
-  {
-    key: 'ALL' as E03CategoryFilter,
-    label: '全部对象',
-    value: String(overview.value.areaCount + overview.value.protectedCount),
-    clickable: true,
-  },
-  {
-    key: 'SENSITIVE' as E03CategoryFilter,
-    label: '敏感区域',
-    value: String(overview.value.areaCount),
-    clickable: true,
-  },
-  {
-    key: 'PROTECTED' as E03CategoryFilter,
-    label: '保护对象',
-    value: String(overview.value.protectedCount),
-    clickable: true,
-  },
-  {
-    key: null as E03CategoryFilter | null,
-    label: '风险状态',
-    value: overview.value.riskStatus || '正常',
-    clickable: false,
-  },
+const summaryTabs = computed(() => [
+  { label: '对象', value: overview.value.objectCount },
+  { label: '重点', value: overview.value.keyCount },
+  { label: '面积ha', value: overview.value.areaTotalHa },
+  { label: '待批', value: overview.value.pendingApproval },
 ])
 
-function display(value: unknown) {
-  if (value === null || value === undefined || value === '') return '—'
-  return String(value)
+function categoryCount(key: E03ObjectType) {
+  const base = objects.value.filter((o) => o.objectType === key)
+  return props.objectScope === 'all' ? base.length : base.filter(isE03KeyObject).length
 }
 
-function typeLine(item: E03EcoObjectItem) {
-  return typeWithSection(item.objectKindLabel || '生态对象', item.sectionCode || '')
-}
+const categoryTabs = computed(() => [
+  { key: 'SPOIL' as const, label: '弃土场', value: categoryCount('SPOIL') },
+  { key: 'TEMP_LAND' as const, label: '临时占地', value: categoryCount('TEMP_LAND') },
+  { key: 'TOPSOIL' as const, label: '表土剥离', value: categoryCount('TOPSOIL') },
+  { key: 'REGREEN' as const, label: '复绿区域', value: categoryCount('REGREEN') },
+])
 
 async function loadOverview() {
   loading.value = true
   error.value = ''
   try {
-    const res = await getE03EcoObjects()
+    const res = await getE03WaterObjects()
     if (!res || res.code !== 0 || !res.data) {
-      error.value = 'E03 Demo 生态对象暂不可用，请检查服务后重试'
+      error.value = 'E03 Demo 数据暂不可用'
       payload.value = null
       emit('overviewReady', [])
       return
@@ -114,7 +99,7 @@ async function loadOverview() {
     payload.value = res.data
     emit('overviewReady', res.data.objects || [])
   } catch {
-    error.value = 'E03 数据加载失败，请稍后重试'
+    error.value = 'E03 数据加载失败'
     payload.value = null
     emit('overviewReady', [])
   } finally {
@@ -122,61 +107,39 @@ async function loadOverview() {
   }
 }
 
-async function loadDetail(id: number) {
-  detailLoading.value = true
-  detail.value = null
-  try {
-    const res = await getE03EcoObjectDetail(id)
-    if (res && res.code === 0 && res.data) detail.value = res.data
-  } finally {
-    detailLoading.value = false
-  }
+function handleScopeClick(scope: E03ObjectScope) {
+  if (props.objectScope === scope) return
+  page.value = 1
+  emit('clearSelection')
+  emit('changeScope', scope)
 }
 
-function handleCategoryClick(key: E03CategoryFilter | null) {
-  if (!key) return
-  if (props.categoryFilter === key) {
-    emit('clearSelection')
-    emit('changeCategory', key)
-    return
-  }
+function handleCategoryClick(key: E03ObjectType) {
   page.value = 1
   emit('clearSelection')
   emit('changeCategory', key)
 }
 
-function handleSelectIssue(issue: E03EcoObjectItem) {
+function handleSelectIssue(issue: E03WaterObjectItem) {
   emit('selectIssue', issue)
 }
 
 function goPage(next: number) {
   if (next < 1 || next > totalPages.value) return
   page.value = next
+  emit('clearSelection')
 }
 
 watch(
-  () => props.categoryFilter,
+  () => [props.categoryFilter, props.objectScope] as const,
   () => {
     page.value = 1
   },
 )
 
 watch(filteredObjects, (list) => {
-  if (page.value > Math.max(1, Math.ceil(list.length / PAGE_SIZE))) {
-    page.value = 1
-  }
+  if (page.value > Math.max(1, Math.ceil(list.length / PAGE_SIZE))) page.value = 1
 })
-
-watch(
-  () => props.selectedIssueId,
-  (id) => {
-    if (id == null) {
-      detail.value = null
-      return
-    }
-    void loadDetail(id)
-  },
-)
 
 onMounted(() => {
   void loadOverview()
@@ -188,112 +151,103 @@ defineExpose({ reload: loadOverview, payload, objects })
 <template>
   <aside class="e03-panel">
     <header class="e03-head">
-      <h2>生态保护管控</h2>
+      <h2>水保与复绿</h2>
       <button type="button" class="e03-close" aria-label="关闭E03" @click="emit('close')">×</button>
     </header>
 
     <div v-if="loading" class="e03-state">正在加载…</div>
     <div v-else-if="error" class="e03-state is-error">
       {{ error }}
-      <button class="e03-retry" @click="loadOverview">重试</button>
+      <button type="button" class="e03-retry" @click="loadOverview">重试</button>
     </div>
     <template v-else>
-      <section class="e03-stats" aria-label="生态保护摘要">
+      <section class="e03-stats" aria-label="水保对象摘要">
+        <div v-for="tab in summaryTabs" :key="tab.label" class="e03-stats__cell">
+          <span>{{ tab.label }}</span>
+          <strong>{{ tab.value }}</strong>
+        </div>
+      </section>
+
+      <div class="e03-scope-row" role="tablist" aria-label="对象范围">
         <button
-          v-for="tab in statsCells"
-          :key="tab.label"
           type="button"
-          class="e03-stats__cell"
-          :class="{ active: tab.clickable && categoryFilter === tab.key, 'is-static': !tab.clickable }"
-          :disabled="!tab.clickable"
+          role="tab"
+          class="e03-scope"
+          :class="{ active: objectScope === 'key' }"
+          @click="handleScopeClick('key')"
+        >
+          重点对象
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="e03-scope"
+          :class="{ active: objectScope === 'all' }"
+          @click="handleScopeClick('all')"
+        >
+          全部对象
+        </button>
+      </div>
+
+      <div class="e03-cat-row" aria-label="水保业务分类">
+        <button
+          v-for="tab in categoryTabs"
+          :key="tab.key"
+          type="button"
+          class="e03-cat"
+          :class="{ active: categoryFilter === tab.key }"
           @click="handleCategoryClick(tab.key)"
         >
           <span>{{ tab.label }}</span>
-          <strong :class="{ 'is-text': !tab.clickable }">{{ tab.value }}</strong>
+          <em>{{ tab.value }}</em>
         </button>
-      </section>
+      </div>
 
       <div class="e03-body">
-        <div class="e03-col e03-col--list">
-          <div class="e03-list-title">生态敏感区 / 保护对象</div>
-          <div class="e03-list">
-            <button
-              v-for="item in pagedObjects"
-              :key="item.id"
-              type="button"
-              class="e03-row"
-              :class="{ active: selectedIssueId === item.id }"
-              @click="handleSelectIssue(item)"
-            >
-              <div class="e03-row__top">
-                <span class="e03-row__type">{{ typeLine(item) }}</span>
-                <em class="e03-row__status">风险 {{ item.riskLevel }}</em>
-              </div>
-              <div class="e03-row__title">{{ item.objectName }}</div>
-              <div class="e03-row__loc">{{ item.locationText || '—' }}</div>
-              <div class="e03-row__meta">
-                <span>{{ item.riskStatus }}</span>
-                <span>{{ item.responsibleUnit }}</span>
-              </div>
-            </button>
-
-            <p v-if="!pagedObjects.length" class="e03-empty">当前分类暂无生态保护对象</p>
-          </div>
-
-          <nav class="e03-pager" aria-label="对象分页">
-            <span class="e03-pager__summary">{{ pagerSummary }}</span>
-            <div v-if="showPageControls" class="e03-pager__controls">
-              <button type="button" :disabled="page <= 1" @click="goPage(page - 1)">‹</button>
-              <button
-                v-for="n in totalPages"
-                :key="n"
-                type="button"
-                :class="{ active: page === n }"
-                @click="goPage(n)"
-              >
-                {{ n }}
-              </button>
-              <button type="button" :disabled="page >= totalPages" @click="goPage(page + 1)">›</button>
+        <div class="e03-list-title">
+          {{ objectScope === 'key' ? '重点水保对象' : '全部水保对象' }}
+        </div>
+        <div class="e03-list">
+          <button
+            v-for="item in pagedObjects"
+            :key="item.id"
+            type="button"
+            class="e03-row"
+            :class="{ active: selectedIssueId === item.id, 'no-locate': !item.canLocate }"
+            @click="handleSelectIssue(item)"
+          >
+            <div class="e03-row__top">
+              <span class="e03-row__type">{{ item.objectName }}</span>
+              <em class="e03-row__status">{{ item.status }}</em>
             </div>
-          </nav>
+            <div class="e03-row__loc">
+              <b>{{ item.objectTypeLabel }}</b>
+              {{ item.locationText }}
+            </div>
+            <div class="e03-row__factor">
+              <span>面积 {{ item.areaHa }} ha</span>
+              <span v-if="!item.canLocate" class="warn">无法定位</span>
+            </div>
+          </button>
+          <p v-if="!pagedObjects.length" class="e03-empty">当前分类暂无对象</p>
         </div>
 
-        <div class="e03-col e03-col--detail">
-          <div class="e03-list-title">对象详情</div>
-          <div v-if="!selected" class="e03-empty e03-empty--detail">请选择左侧对象查看详情</div>
-          <div v-else-if="detailLoading" class="e03-state">正在加载详情…</div>
-          <div v-else class="e03-detail">
-            <section class="e03-section">
-              <h3>对象信息</h3>
-              <dl>
-                <div><dt>名称</dt><dd>{{ display(detail?.objectName || selected.objectName) }}</dd></div>
-                <div><dt>编码</dt><dd>{{ display(detail?.objectCode || selected.objectCode) }}</dd></div>
-                <div><dt>类型</dt><dd>{{ display(detail?.objectKindLabel || selected.objectKindLabel) }}</dd></div>
-                <div><dt>责任单位</dt><dd>{{ display(detail?.responsibleUnit || selected.responsibleUnit) }}</dd></div>
-              </dl>
-            </section>
-            <section class="e03-section">
-              <h3>位置</h3>
-              <p>{{ display(detail?.locationText || selected.locationText) }}</p>
-            </section>
-            <section class="e03-section">
-              <h3>保护要求</h3>
-              <p>{{ display(detail?.protectionRequirement || selected.protectionRequirement) }}</p>
-            </section>
-            <section class="e03-section">
-              <h3>风险状态</h3>
-              <p>
-                {{ display(detail?.riskLevel || selected.riskLevel) }}
-                ·
-                {{ display(detail?.riskStatus || selected.riskStatus) }}
-              </p>
-            </section>
-            <section class="e03-section">
-              <h3>关联事项</h3>
-              <p>{{ display(detail?.relatedMatter || selected.relatedMatter) }}</p>
-            </section>
+        <nav class="e03-pager" aria-label="对象分页">
+          <span class="e03-pager__summary">{{ pagerSummary }}</span>
+          <div v-if="showPageControls" class="e03-pager__controls">
+            <button type="button" :disabled="page <= 1" @click="goPage(page - 1)">上一页</button>
+            <button
+              v-for="n in totalPages"
+              :key="n"
+              type="button"
+              :class="{ active: page === n }"
+              @click="goPage(n)"
+            >
+              {{ n }}
+            </button>
+            <button type="button" :disabled="page >= totalPages" @click="goPage(page + 1)">下一页</button>
           </div>
-        </div>
+        </nav>
       </div>
     </template>
   </aside>
@@ -312,48 +266,25 @@ defineExpose({ reload: loadOverview, payload, objects })
   color: #d7e6f5;
   overflow: hidden;
 }
-
 .e03-head {
   flex-shrink: 0;
-  height: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
-
-  h2 {
-    margin: 0;
-    font-size: 19px;
-    font-weight: 700;
-    color: #f3f8ff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    &::before {
-      content: '';
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #69e36f;
-      box-shadow: 0 0 0 3px rgba(105, 227, 111, 0.18);
-    }
-  }
+  h2 { margin: 0; font-size: 22px; font-weight: 700; color: #f3f8ff; }
 }
-
 .e03-close {
   width: 30px;
   height: 30px;
   font-size: 18px;
-  line-height: 1;
   border: 1px solid rgba(105, 227, 111, 0.35);
   background: rgba(8, 40, 69, 0.72);
   color: #f3f8ff;
   border-radius: 6px;
   cursor: pointer;
 }
-
 .e03-state {
   padding: 24px 8px;
   text-align: center;
@@ -361,295 +292,160 @@ defineExpose({ reload: loadOverview, payload, objects })
   font-size: 13px;
   &.is-error { color: #ff9f2f; }
 }
-
 .e03-retry {
   display: block;
   margin: 10px auto 0;
   padding: 4px 14px;
-  font-size: 13px;
   border: 1px solid rgba(105, 227, 111, 0.35);
   background: rgba(8, 40, 69, 0.72);
   color: #69e36f;
   border-radius: 4px;
   cursor: pointer;
 }
-
 .e03-stats {
   flex-shrink: 0;
-  height: 58px;
+  height: 64px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid rgba(105, 227, 111, 0.22);
   border-radius: 6px;
   background: rgba(8, 40, 69, 0.4);
   margin-bottom: 10px;
-  overflow: hidden;
 }
-
 .e03-stats__cell {
-  border: 0;
-  border-right: 1px solid rgba(105, 227, 111, 0.16);
-  background: transparent;
-  color: #8ba6c3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-right: 1px solid rgba(105, 227, 111, 0.12);
+  &:last-child { border-right: 0; }
+  span { font-size: 12px; color: #8ba6c3; }
+  strong { font-size: 18px; color: #69e36f; font-weight: 700; }
+}
+.e03-scope-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.e03-scope {
+  height: 34px;
+  border: 1px solid rgba(105, 227, 111, 0.25);
+  background: rgba(8, 40, 69, 0.45);
+  color: #9fb6cd;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 13px;
+  &.active {
+    color: #f3f8ff;
+    border-color: rgba(105, 227, 111, 0.55);
+    background: rgba(105, 227, 111, 0.16);
+  }
+}
+.e03-cat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.e03-cat {
+  height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  position: relative;
-  min-width: 0;
-  padding: 0 4px;
-
-  &:last-child { border-right: 0; }
-
-  span {
-    font-size: 12px;
-    line-height: 1.2;
-  }
-
-  strong {
-    font-size: 18px;
-    line-height: 1.1;
-    font-family: Bahnschrift, "DIN Alternate", Arial, sans-serif;
-    color: #d7e6f5;
-    font-weight: 700;
-
-    &.is-text {
-      font-size: 14px;
-      font-family: inherit;
-      color: #69e36f;
-    }
-  }
-
+  border: 1px solid rgba(105, 227, 111, 0.2);
+  background: rgba(8, 40, 69, 0.4);
+  border-radius: 6px;
+  color: #9fb6cd;
+  cursor: pointer;
+  font-size: 11px;
   &.active {
-    color: #c8f5cb;
-    strong { color: #69e36f; }
-    &::after {
-      content: '';
-      position: absolute;
-      left: 18%;
-      right: 18%;
-      bottom: 0;
-      height: 2px;
-      background: #69e36f;
-    }
+    color: #f3f8ff;
+    border-color: rgba(105, 227, 111, 0.5);
+    background: rgba(105, 227, 111, 0.14);
   }
-
-  &.is-static {
-    cursor: default;
-  }
-
-  &:disabled {
-    cursor: default;
-  }
+  em { font-style: normal; font-size: 16px; font-weight: 700; color: #69e36f; }
 }
-
 .e03-body {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
-
-.e03-col {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  &--list { flex: 0 1 48%; }
-  &--detail { flex: 1 1 52%; }
-}
-
-.e03-list-title {
-  flex-shrink: 0;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #8ba6c3;
-}
-
-.e03-list,
-.e03-detail {
+.e03-list-title { font-size: 13px; color: #8ba6c3; margin-bottom: 8px; }
+.e03-list {
   flex: 1;
   min-height: 0;
-  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: hidden;
 }
-
 .e03-row {
-  flex-shrink: 0;
-  width: 100%;
   text-align: left;
-  border: 1px solid rgba(105, 227, 111, 0.2);
+  padding: 10px 12px;
+  border: 1px solid rgba(105, 227, 111, 0.18);
   border-radius: 6px;
-  background: rgba(8, 40, 69, 0.45);
+  background: rgba(8, 40, 69, 0.5);
   color: inherit;
   cursor: pointer;
-  padding: 10px 10px 10px 12px;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 2px;
-    border-radius: 2px;
-    background: transparent;
-  }
-
-  &:hover {
-    border-color: rgba(105, 227, 111, 0.45);
-    background: rgba(12, 52, 42, 0.35);
-  }
-
   &.active {
-    border-color: rgba(105, 227, 111, 0.7);
-    background: rgba(24, 70, 48, 0.35);
-    &::before { background: #69e36f; }
+    border-color: rgba(105, 227, 111, 0.65);
+    background: rgba(105, 227, 111, 0.12);
   }
 }
-
 .e03-row__top {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  align-items: center;
+  margin-bottom: 4px;
 }
-
-.e03-row__type {
-  font-size: 13px;
-  color: #c3d4e8;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.e03-row__status {
-  flex-shrink: 0;
-  font-style: normal;
+.e03-row__type { font-size: 14px; font-weight: 700; color: #f3f8ff; }
+.e03-row__status { font-style: normal; font-size: 12px; color: #ffb347; }
+.e03-row__loc {
   font-size: 12px;
-  color: #69e36f;
-  border: 1px solid rgba(105, 227, 111, 0.45);
-  border-radius: 3px;
-  padding: 1px 6px;
-  background: rgba(105, 227, 111, 0.08);
+  color: #9fb6cd;
+  margin-bottom: 4px;
+  b { color: #69e36f; margin-right: 6px; }
 }
-
-.e03-row__title {
-  margin-top: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #e8f3ff;
-  line-height: 1.4;
-}
-
-.e03-row__loc,
-.e03-row__meta {
-  margin-top: 3px;
-  font-size: 12px;
-  color: #8ba6c3;
-}
-
-.e03-row__meta {
+.e03-row__factor {
   display: flex;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.e03-empty {
-  margin: 16px 0 0;
-  text-align: center;
-  font-size: 13px;
+  gap: 10px;
+  font-size: 12px;
   color: #8ba6c3;
-
-  &--detail { margin-top: 24px; }
+  .warn { color: #ff9f2f; }
 }
-
+.e03-empty {
+  margin: 24px 0;
+  text-align: center;
+  color: #8ba6c3;
+  font-size: 13px;
+}
 .e03-pager {
   flex-shrink: 0;
   margin-top: 8px;
-  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
 }
-
-.e03-pager__summary {
-  font-size: 12px;
-  color: #8ba6c3;
-  white-space: nowrap;
-}
-
+.e03-pager__summary { font-size: 12px; color: #8ba6c3; }
 .e03-pager__controls {
   display: flex;
-  gap: 6px;
-
+  gap: 4px;
   button {
-    min-width: 26px;
+    min-width: 28px;
     height: 26px;
-    border: 1px solid rgba(105, 227, 111, 0.28);
-    border-radius: 4px;
+    border: 1px solid rgba(105, 227, 111, 0.25);
     background: rgba(8, 40, 69, 0.5);
-    color: #8ba6c3;
+    color: #9fb6cd;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
-
-    &.active {
-      color: #69e36f;
-      border-color: rgba(105, 227, 111, 0.7);
-      background: rgba(105, 227, 111, 0.12);
-    }
-
-    &:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-  }
-}
-
-.e03-section {
-  border: 1px solid rgba(105, 227, 111, 0.18);
-  border-radius: 6px;
-  background: rgba(8, 40, 69, 0.4);
-  padding: 10px;
-
-  h3 {
-    margin: 0 0 8px;
-    font-size: 13px;
-    color: #69e36f;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    font-size: 13px;
-    color: #d7e6f5;
-    line-height: 1.5;
-  }
-
-  dl {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    div {
-      display: grid;
-      grid-template-columns: 64px 1fr;
-      gap: 6px;
-      font-size: 12px;
-    }
-
-    dt { color: #8ba6c3; }
-    dd { margin: 0; color: #e8f3ff; }
+    &.active { color: #f3f8ff; border-color: rgba(105, 227, 111, 0.55); }
+    &:disabled { opacity: 0.4; cursor: default; }
   }
 }
 </style>

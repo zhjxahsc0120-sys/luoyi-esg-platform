@@ -2,7 +2,7 @@ export interface DesignKmlLayerDefinition {
   id: string;
   name: string;
   file: string;
-  format: "kml";
+  format: "kml" | "kmz" | "geojson" | "compact-json";
   defaultVisible: boolean;
   loadMode: "eager" | "onDemand" | "manual";
   clampToGround: boolean;

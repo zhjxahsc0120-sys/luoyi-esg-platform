@@ -22,11 +22,17 @@ const chartEl = ref<HTMLDivElement | null>(null)
 let chart: echarts.ECharts | null = null
 let loadSeq = 0
 
-const title = computed(
+const title = computed(() => {
+  const code = props.point?.pointCode
+  const name = trend.value?.point.pointName || props.point?.pointName
+  if (code && name && !name.includes(code)) return `${code} ${name}`
+  return name || code || props.point?.locationText || '监测点'
+})
+
+const locationText = computed(
   () => trend.value?.point.locationText
     || props.point?.locationText
-    || props.point?.pointName
-    || '监测点',
+    || '—',
 )
 
 const typeLine = computed(() => {
@@ -57,6 +63,16 @@ const eventFactor = computed(() => {
   const code = (activeFactorCode.value || trend.value?.factor.factorCode || '').toUpperCase()
   if (!code || !props.point?.factors?.length) return null
   return props.point.factors.find((f) => String(f.factorCode).toUpperCase() === code) || null
+})
+
+const displayFactor = computed(() => {
+  return eventFactor.value || props.point?.factors?.[0] || null
+})
+
+const exceedText = computed(() => {
+  const multi = displayFactor.value?.exceedMultiple
+  if (multi == null || Number.isNaN(Number(multi)) || Number(multi) <= 1) return null
+  return `${Number(multi).toFixed(2)}倍`
 })
 
 const latestExceeded = computed(() => Boolean(trend.value?.stats.latestExceeded))
@@ -244,6 +260,11 @@ onBeforeUnmount(() => {
       <span>{{ dateOnly(trend?.point.discoveredAt || point.discoveredAt) }}</span>
     </div>
 
+    <p class="e01-map-summary__loc">
+      <span>位置</span>
+      {{ locationText }}
+    </p>
+
     <div v-if="factorTabs.length > 1" class="e01-map-summary__tabs" role="tablist" aria-label="监测因子">
       <button
         v-for="tab in factorTabs"
@@ -261,36 +282,35 @@ onBeforeUnmount(() => {
 
     <div class="e01-map-summary__metrics">
       <div>
-        <span>因子</span>
-        <strong>{{ trend?.factor.factorName || point.factors[0]?.factorName || '—' }}</strong>
+        <span>监测指标</span>
+        <strong>{{ trend?.factor.factorName || displayFactor?.factorName || '—' }}</strong>
       </div>
       <div>
-        <span>最新实测</span>
-        <strong :class="{ warn: latestExceeded }">
-          {{ valueText(trend?.stats.latestValue ?? point.factors[0]?.detectedValue, trend?.factor.unit || point.factors[0]?.unit) }}
+        <span>当前值</span>
+        <strong :class="{ warn: latestExceeded || (displayFactor?.exceedMultiple != null && Number(displayFactor.exceedMultiple) > 1) }">
+          {{ valueText(trend?.stats.latestValue ?? displayFactor?.detectedValue, trend?.factor.unit || displayFactor?.unit) }}
         </strong>
       </div>
       <div>
-        <span>限值</span>
-        <strong>{{ valueText(trend?.factor.limitValue ?? point.factors[0]?.limitValue, trend?.factor.unit || point.factors[0]?.unit) }}</strong>
+        <span>标准值</span>
+        <strong>{{ valueText(trend?.factor.limitValue ?? displayFactor?.limitValue, trend?.factor.unit || displayFactor?.unit) }}</strong>
       </div>
       <div>
-        <span>超限次数</span>
-        <strong :class="{ warn: (trend?.stats.exceedCount || 0) > 0 }">
-          {{ trend ? `${trend.stats.exceedCount}/${trend.stats.sampleCount}` : '—' }}
+        <span>超标情况</span>
+        <strong :class="{ warn: Boolean(exceedText) }">
+          {{ exceedText || (trend ? `${trend.stats.exceedCount}/${trend.stats.sampleCount}` : '—') }}
         </strong>
       </div>
     </div>
 
-    <p v-if="eventFactor" class="e01-map-summary__event">
+    <p v-if="eventFactor && eventFactor.exceedMultiple != null" class="e01-map-summary__event">
       事件初检
       <b>{{ valueText(eventFactor.detectedValue, eventFactor.unit) }}</b>
-      <template v-if="eventFactor.exceedMultiple != null">
-        · 超标 {{ eventFactor.exceedMultiple }} 倍
-      </template>
+      · 超标 {{ eventFactor.exceedMultiple }} 倍
     </p>
 
     <div class="e01-map-summary__chart-wrap">
+      <div class="e01-map-summary__trend-label">趋势</div>
       <div v-if="loading && !trend" class="e01-map-summary__state">加载趋势…</div>
       <div v-else-if="error && !trend" class="e01-map-summary__state is-error">{{ error }}</div>
       <div v-show="trend" ref="chartEl" class="e01-map-summary__chart" />
@@ -377,6 +397,19 @@ onBeforeUnmount(() => {
   }
 }
 
+.e01-map-summary__loc {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #e8f3ff;
+  line-height: 1.45;
+
+  span {
+    display: inline-block;
+    margin-right: 6px;
+    color: #7f95ad;
+  }
+}
+
 .e01-map-summary__tabs {
   margin-top: 8px;
   display: flex;
@@ -460,6 +493,16 @@ onBeforeUnmount(() => {
   border-radius: 5px;
   background: rgba(8, 40, 69, 0.35);
   overflow: hidden;
+}
+
+.e01-map-summary__trend-label {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  z-index: 1;
+  font-size: 10px;
+  color: #7f95ad;
+  pointer-events: none;
 }
 
 .e01-map-summary__chart {

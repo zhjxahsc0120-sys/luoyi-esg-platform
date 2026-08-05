@@ -32,7 +32,10 @@ defineProps<{
       <span class="group-letter" :class="`theme-${group.theme}`">{{ group.letter }}</span>
       <span class="group-title">{{ group.title }}</span>
     </div>
-    <div class="group-items">
+    <div
+      class="group-items"
+      :style="{ '--kpi-item-cols': String(Math.max(group.items.length, 1)) }"
+    >
       <MasterKpiSubCard
         v-for="item in group.items"
         :key="item.key"

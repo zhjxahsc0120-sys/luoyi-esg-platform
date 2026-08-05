@@ -42,7 +42,10 @@ function handleSelect(key: string) {
       </div>
       <div class="kpi-group-status">{{ group.status }}</div>
     </div>
-    <div class="kpi-items">
+    <div
+      class="kpi-items"
+      :style="{ '--kpi-item-cols': String(Math.max(group.items.length, 1)) }"
+    >
       <KpiCard v-for="item in group.items" :key="item.key" :item="item" :theme="group.theme" @select="handleSelect" />
     </div>
   </div>

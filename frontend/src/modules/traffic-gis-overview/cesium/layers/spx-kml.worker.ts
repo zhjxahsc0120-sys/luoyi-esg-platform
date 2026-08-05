@@ -53,7 +53,41 @@ function parseCoordinates(
 async function parse(url: string) {
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`SPX KML 加载失败（HTTP ${response.status}）`);
+    throw new Error(`批量线图层加载失败（HTTP ${response.status}）`);
+  }
+  if (url.toLowerCase().endsWith(".json")) {
+    const source = (await response.json()) as {
+      batches?: Array<{
+        color: string;
+        width: number;
+        positions: number[];
+        indices: number[];
+        lineCount: number;
+      }>;
+    };
+    const result = (source.batches || []).map((batch) => ({
+      color: batch.color,
+      width: batch.width,
+      positions: new Float64Array(batch.positions),
+      indices: new Uint32Array(batch.indices),
+      lineCount: batch.lineCount,
+    }));
+    const transfers = result.flatMap((batch) => [
+      batch.positions.buffer,
+      batch.indices.buffer,
+    ]);
+    workerScope.postMessage(
+      {
+        type: "success",
+        batches: result,
+        placemarkCount: result.reduce(
+          (sum, batch) => sum + batch.lineCount,
+          0,
+        ),
+      },
+      transfers,
+    );
+    return;
   }
   const source = await response.text();
   const batches = new Map<string, MutableBatch>();
