@@ -7,6 +7,7 @@ import {
   KPI_HOME_HIDDEN_KEYS,
   type KpiHomeCode,
 } from '@/data/kpi-catalog'
+import { applyDisplayTestBaselinePin } from '@/data/display-test-baseline'
 
 /** Homepage-only G04 display overlay: days + 天（does not call S01 / API). */
 function applyG04HomeDemoDisplay(item: KpiItem): KpiItem {
@@ -20,6 +21,10 @@ function applyG04HomeDemoDisplay(item: KpiItem): KpiItem {
   }
 }
 
+function applyHomeValueOverlay(item: KpiItem): KpiItem {
+  return applyDisplayTestBaselinePin(applyG04HomeDemoDisplay(item))
+}
+
 /** Overlay homepage display labels so API/mock old titles never surface on cards. */
 export function applyKpiHomeCatalogLabels(groups: KpiGroup[]): KpiGroup[] {
   return groups.map((group) => ({
@@ -29,14 +34,13 @@ export function applyKpiHomeCatalogLabels(groups: KpiGroup[]): KpiGroup[] {
       .map((item) => {
         const code = item.key as KpiHomeCode
         const cat = KPI_HOME_CATALOG[code]
-        if (!cat) return applyG04HomeDemoDisplay(item)
-        return applyG04HomeDemoDisplay({
+        if (!cat) return applyHomeValueOverlay(item)
+        return applyHomeValueOverlay({
           ...item,
           label: cat.label,
           fullName: cat.fullName,
-          // falsy catalog unit → keep API/mock unit (e.g. G01 Demo「100%」)
           unit: cat.unit ? cat.unit : item.unit,
-        })
+        } as KpiItem)
       }),
   }))
 }

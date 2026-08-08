@@ -27,15 +27,37 @@ function formatValue(value: string | number) {
   return value
 }
 
+/** 「0项」「90天」「100%」这类 数值+单位 的 displayText，拆回数值/单位两段，与 value+unit 同一字号体系 */
+const SIMPLE_DISPLAY_TEXT = /^([0-9][0-9,.]*)\s*([^\s0-9]{1,3})$/
+
+const splitDisplayText = computed(() => {
+  const text = props.item.displayText
+  if (!text) return null
+  const matched = SIMPLE_DISPLAY_TEXT.exec(text.trim())
+  if (!matched) return null
+  return { value: matched[1], unit: matched[2] }
+})
+
 const primaryText = computed(() => {
+  if (splitDisplayText.value) return splitDisplayText.value.value
   if (props.item.displayText) return props.item.displayText
   return formatValue(props.item.value)
 })
 
+const unitText = computed(() => {
+  if (splitDisplayText.value) return splitDisplayText.value.unit
+  return props.item.unit
+})
+
 const showUnit = computed(() => {
+  if (splitDisplayText.value) return true
+  // 复合 displayText 自带单位，避免重复渲染
   if (props.item.displayText) return false
   return Boolean(props.item.unit)
 })
+
+/** 仅「3/3 100.0%」这类复合文本走缩小字号 */
+const isTextValue = computed(() => Boolean(props.item.displayText) && !splitDisplayText.value)
 
 const isLongValue = computed(() => primaryText.value.length >= 5)
 
@@ -53,7 +75,7 @@ function handleClick() {
     :class="{
       'kpi-card--long-value': isLongValue,
       'kpi-card--long-label': isLongLabel,
-      'kpi-card--text-value': Boolean(item.displayText),
+      'kpi-card--text-value': isTextValue,
     }"
     :data-kpi-key="item.key"
     role="button"
@@ -67,7 +89,7 @@ function handleClick() {
       <span class="kpi-value" :style="{ color: themeColors[theme] }">
         {{ primaryText }}
       </span>
-      <span v-if="showUnit" class="kpi-unit">{{ item.unit }}</span>
+      <span v-if="showUnit" class="kpi-unit">{{ unitText }}</span>
     </div>
   </div>
 </template>

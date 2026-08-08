@@ -146,8 +146,12 @@ onUnmounted(() => {
           <HeaderNav active-key="workspace" @navigate="handlePlatformNav" />
         </div>
 
-        <!-- 治理能力入口依赖二级导航；智能入库页也保留导航以便切换 -->
-        <WorkspaceNav :active-nav="activeNav" @navigate="handleNavigate" />
+        <!-- 智能入库页隐藏工作台内部导航，仅保留页面内数据表目录工作流 -->
+        <WorkspaceNav
+          v-if="activeNav !== 'smart-upload'"
+          :active-nav="activeNav"
+          @navigate="handleNavigate"
+        />
 
         <main class="workspace-main">
           <WorkspaceHome
